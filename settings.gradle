@@ -6,6 +6,10 @@ pluginManagement {
             url = 'https://maven.minecraftforge.net/'
         }
     }
+
+    repositories {
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
 }
 
 plugins {
