@@ -1,9 +1,13 @@
 package com.github.andre2xu.endgamebosses;
 
 import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,5 +48,18 @@ public class EndgameBosses {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {}
+
+        @SubscribeEvent
+        public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(BossRegistry.MECHALODON.get(), MechalodonRenderer::new);
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class GeneralModEvents {
+        @SubscribeEvent
+        public static void createEntityAttributes(EntityAttributeCreationEvent event) {
+            event.put(BossRegistry.MECHALODON.get(), MechalodonEntity.createAttributes());
+        }
     }
 }
