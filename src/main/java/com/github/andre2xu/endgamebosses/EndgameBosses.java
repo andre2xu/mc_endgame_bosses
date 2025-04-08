@@ -4,8 +4,10 @@ import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +67,10 @@ public class EndgameBosses {
                 EndDragonFight dragon_fight = serverLevel.getDragonFight();
 
                 if (dragon_fight != null && dragon_fight.hasPreviouslyKilledDragon()) {
-                    System.out.println("Endgame bosses can now be fought");
+                    // send a message to all players
+                    for (Player p : serverLevel.players()) {
+                        p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                    }
                 }
             }
         }
@@ -75,8 +80,16 @@ public class EndgameBosses {
     public void onEntityDeath(final LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
 
-        if (entity.getType() == EntityType.ENDER_DRAGON) {
-            System.out.println("Endgame bosses can now be fought");
+        // check if the entity that died is an Ender Dragon and if it was killed by a player
+        if (entity.getType() == EntityType.ENDER_DRAGON && entity.level() instanceof ServerLevel serverLevel) {
+            Entity killer = event.getSource().getEntity();
+
+            if (killer != null && killer.getType() == EntityType.PLAYER) {
+                // send a message to all players
+                for (Player p : serverLevel.players()) {
+                    p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                }
+            }
         }
     }
 
