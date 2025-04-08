@@ -59,7 +59,7 @@ public class EndgameBosses {
     public void onPlayerChangedDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
         ResourceKey<Level> level = event.getTo();
 
-        // if a player goes to the End, check if the Ender Dragon has already been killed before
+        // if a player goes to the End, check if the Ender Dragon has already been killed before. This is for players who have already killed the Ender Dragon before installing the mod
         if (level.equals(Level.END)) {
             Player player = event.getEntity();
 
