@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses;
 
+import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,6 +25,9 @@ public class EndgameBosses {
 
         // register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        // register boss types
+        BossRegistry.register(modEventBus);
 
         // register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
