@@ -34,6 +34,9 @@ import org.slf4j.Logger;
 public class EndgameBosses {
     public static final String MODID = "endgamebosses";
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final String[] BOSSES = {
+            "mechalodon"
+    };
 
 
 
@@ -80,6 +83,9 @@ public class EndgameBosses {
                             // mark the Ender Dragon as dead (set persistent flag)
                             boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
 
+                            // add new bosses
+                            boss_state_data.addBosses(BOSSES);
+
                             // send a message to all players
                             for (Player p : serverLevel.players()) {
                                 p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
@@ -110,6 +116,9 @@ public class EndgameBosses {
                     if (boss_state_data.isBossAlive(boss_name)) {
                         // mark the Ender Dragon as dead (set persistent flag)
                         boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+
+                        // add new bosses
+                        boss_state_data.addBosses(BOSSES);
 
                         // send a message to all players
                         for (Player p : serverLevel.players()) {
