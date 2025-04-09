@@ -13,12 +13,24 @@ import java.util.Map;
 public class BossStateData extends SavedData {
     public enum State {ALIVE, DEAD, DOES_NOT_EXIST}
     private final HashMap<String, State> BOSS_STATES = new HashMap<>();
+    private static final String[] BOSS_NAMES = {
+            "ender_dragon"
+            // add names of custom bosses under the Ender Dragon
+    };
 
 
 
     public BossStateData() {
         // add bosses to hash map and give them a default state
-        BOSS_STATES.put("ender_dragon", State.ALIVE);
+
+        BOSS_STATES.put(BOSS_NAMES[0], State.ALIVE); // Ender Dragon
+
+        if (BOSS_NAMES.length > 1) {
+            // custom bosses
+            for (int i = 1; i < BOSS_NAMES.length; i++) {
+                BOSS_STATES.put(BOSS_NAMES[i], State.DOES_NOT_EXIST); // their state will be set to ALIVE when the Ender Dragon is killed
+            }
+        }
     }
 
     public void setBossState(String bossName, State state) {
@@ -60,11 +72,7 @@ public class BossStateData extends SavedData {
 
         BossStateData boss_state_data = new BossStateData();
 
-        String[] boss_names = {
-                "ender_dragon"
-        };
-
-        for (String boss_name : boss_names) {
+        for (String boss_name : BOSS_NAMES) {
             int state_as_integer = pTag.getInt(boss_name);
 
             if (state_as_integer == 1) {
