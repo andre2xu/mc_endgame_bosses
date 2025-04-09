@@ -3,9 +3,11 @@ package com.github.andre2xu.endgamebosses;
 import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
+import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -67,9 +69,22 @@ public class EndgameBosses {
                 EndDragonFight dragon_fight = serverLevel.getDragonFight();
 
                 if (dragon_fight != null && dragon_fight.hasPreviouslyKilledDragon()) {
-                    // send a message to all players
-                    for (Player p : serverLevel.players()) {
-                        p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                    MinecraftServer server = player.getServer();
+
+                    if (server != null) {
+                        // get data storage
+                        BossStateData boss_state_data = BossStateData.createOrGet(server);
+                        String boss_name = "ender_dragon";
+
+                        if (boss_state_data.isBossAlive(boss_name)) {
+                            // mark the Ender Dragon as dead (set persistent flag)
+                            boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+
+                            // send a message to all players
+                            for (Player p : serverLevel.players()) {
+                                p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                            }
+                        }
                     }
                 }
             }
@@ -85,9 +100,22 @@ public class EndgameBosses {
             Entity killer = event.getSource().getEntity();
 
             if (killer != null && killer.getType() == EntityType.PLAYER) {
-                // send a message to all players
-                for (Player p : serverLevel.players()) {
-                    p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                MinecraftServer server = killer.getServer();
+
+                if (server != null) {
+                    // get data storage
+                    BossStateData boss_state_data = BossStateData.createOrGet(server);
+                    String boss_name = "ender_dragon";
+
+                    if (boss_state_data.isBossAlive(boss_name)) {
+                        // mark the Ender Dragon as dead (set persistent flag)
+                        boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+
+                        // send a message to all players
+                        for (Player p : serverLevel.players()) {
+                            p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                        }
+                    }
                 }
             }
         }
