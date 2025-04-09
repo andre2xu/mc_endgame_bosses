@@ -13,7 +13,7 @@ public class BossRegistry {
     public static DeferredRegister<EntityType<?>> BOSS_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, EndgameBosses.MODID);
 
     // TYPES
-    public static RegistryObject<EntityType<MechalodonEntity>> MECHALODON = BOSS_TYPES.register("mechalodon", () -> EntityType.Builder.of(MechalodonEntity::new, MobCategory.MONSTER).build("mechalodon"));
+    public static RegistryObject<EntityType<MechalodonEntity>> MECHALODON = BOSS_TYPES.register("mechalodon", () -> EntityType.Builder.of(MechalodonEntity::new, MobCategory.MONSTER).sized(10f, 4.5f).build("mechalodon"));
 
 
 
