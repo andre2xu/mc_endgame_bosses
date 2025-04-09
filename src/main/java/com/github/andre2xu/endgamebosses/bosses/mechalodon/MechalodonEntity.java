@@ -28,6 +28,9 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 .build();
     }
 
+
+
+    // GECKOLIB SETUP
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // add triggerable animations
