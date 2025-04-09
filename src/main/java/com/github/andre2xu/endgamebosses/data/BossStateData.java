@@ -12,24 +12,23 @@ import java.util.Map;
 
 public class BossStateData extends SavedData {
     public enum State {ALIVE, DEAD, DOES_NOT_EXIST}
-    private final HashMap<String, State> BOSS_STATES = new HashMap<>();
-    private static final String[] BOSS_NAMES = {
-            "ender_dragon"
-            // add names of custom bosses under the Ender Dragon
-    };
+    private static final HashMap<String, State> BOSS_STATES = new HashMap<>();
 
 
 
     public BossStateData() {
-        // add bosses to hash map and give them a default state
+        BOSS_STATES.put("ender_dragon", State.ALIVE); // set default state of Ender Dragon
+    }
 
-        BOSS_STATES.put(BOSS_NAMES[0], State.ALIVE); // Ender Dragon
-
-        if (BOSS_NAMES.length > 1) {
-            // custom bosses
-            for (int i = 1; i < BOSS_NAMES.length; i++) {
-                BOSS_STATES.put(BOSS_NAMES[i], State.DOES_NOT_EXIST); // their state will be set to ALIVE when the Ender Dragon is killed
+    public void addBosses(String[] bossNames) {
+        if (bossNames.length > 0) {
+            for (String boss_name : bossNames) {
+                if (!BOSS_STATES.containsKey(boss_name)) {
+                    BOSS_STATES.put(boss_name, State.ALIVE);
+                }
             }
+
+            this.setDirty();
         }
     }
 
@@ -52,6 +51,8 @@ public class BossStateData extends SavedData {
         return this.getBossState(bossName) == State.ALIVE;
     }
 
+
+
     public static BossStateData createOrGet(MinecraftServer server) {
         /*
         CALL THIS METHOD INSTEAD OF CREATING AN INSTANCE OF THE CLASS
@@ -72,7 +73,7 @@ public class BossStateData extends SavedData {
 
         BossStateData boss_state_data = new BossStateData();
 
-        for (String boss_name : BOSS_NAMES) {
+        for (String boss_name : BOSS_STATES.keySet()) {
             int state_as_integer = pTag.getInt(boss_name);
 
             if (state_as_integer == 1) {
