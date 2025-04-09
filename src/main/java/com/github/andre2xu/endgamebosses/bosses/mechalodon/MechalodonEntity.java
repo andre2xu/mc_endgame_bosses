@@ -97,10 +97,14 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     // CUSTOM GOALS
     private static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
         public SelectTargetGoal(Mob pMob) {
+            // this is a custom constructor made to reduce the amount of parameters. It doesn't override any constructor from the parent
+
             this(pMob, Player.class, 10, true, false, null);
         }
 
         public SelectTargetGoal(Mob pMob, Class<Player> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, @Nullable Predicate<LivingEntity> pTargetPredicate) {
+            // this is the main constructor where the target conditions are set (see NearestAttackableTargetGoal). It was overridden to increase how far the Mechalodon can spot targets
+
             super(pMob, pTargetType, pRandomInterval, pMustSee, pMustReach, pTargetPredicate);
 
             final double MAX_TARGET_DISTANCE = 50d; // blocks
