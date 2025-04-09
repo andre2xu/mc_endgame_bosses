@@ -1,16 +1,14 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -64,8 +62,33 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
-        if (this.level() instanceof ServerLevel) {
-            System.out.println(this.getTarget());
+        LivingEntity target = this.getTarget();
+
+        if (target != null) {
+            // move towards front of target
+            Vec3 current_pos = this.position();
+            Vec3 target_pos = target.position();
+            Vec3 pos_in_front_of_target = target.getEyePosition().add(target.getLookAngle().scale(20));
+
+            this.setDeltaMovement(this.getDeltaMovement().add(
+                    new Vec3(
+                        (pos_in_front_of_target.x) - current_pos.x,
+                        (target_pos.y + 4) - current_pos.y, // fly above target
+                        (pos_in_front_of_target.z) - current_pos.z).scale(0.1)
+                    )
+            );
+
+            // rotate to face target
+            double d1 = target.getX() - this.getX();
+            double d2 = target.getZ() - this.getZ();
+
+            float angle_towards_target = (float) Mth.atan2(d1, d2); // angle is in radians
+            float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
+            float new_yaw = -(angle_towards_target) * radians_to_degrees;
+
+            this.setYRot(new_yaw);
+            this.setYBodyRot(new_yaw);
+            this.setYHeadRot(new_yaw); // required
         }
     }
 
