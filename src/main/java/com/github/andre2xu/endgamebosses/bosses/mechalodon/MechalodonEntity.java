@@ -112,19 +112,18 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             this.setYHeadRot(new_yaw);
 
             // set pitch to face target
-            double pitch_dy = this.getY() - target.getY();
-            double pitch_dx = Math.abs(this.getX() - target.getX());
-            double pitch_dz = Math.abs(this.getZ() - target.getZ());
-            double hypotenuse = Math.sqrt((pitch_dx * pitch_dx) + (pitch_dz * pitch_dz));
-
-            float pitch_angle_towards_target = (float) Mth.atan2(pitch_dy, hypotenuse); // angle is in radians
-            float new_pitch = -(pitch_angle_towards_target) * radians_to_degrees;
+            this.getLookControl().setLookAt(target); // update value of this.getXRot (i.e. the pitch)
 
             if (target_pos.y != this.target_prev_posY) {
-                this.entityData.set(BODY_PITCH, new_pitch);
+                float new_pitch = this.getXRot();
+                float pitch_adjustment = 0.5f;
+
+                new_pitch = new_pitch + pitch_adjustment;
+
+                this.entityData.set(BODY_PITCH, (float) -Math.toRadians(Mth.rotLerp(0.5f, this.getXRot(), new_pitch))); // GeckoLib uses radians
             }
 
-            this.target_prev_posY = target_pos.y;
+            this.target_prev_posY = target_pos.y; // update the target's previous y-position
         }
     }
 
