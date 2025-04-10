@@ -100,8 +100,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             ));
 
             // set yaw to face target
-            double yaw_dx = target.getX() - this.getX();
-            double yaw_dz = target.getZ() - this.getZ();
+            double yaw_dx = target_pos.x - this.getX();
+            double yaw_dz = target_pos.z - this.getZ();
 
             float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians
             float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
@@ -114,13 +114,12 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             // set pitch to face target
             this.getLookControl().setLookAt(target); // update value of this.getXRot (i.e. the pitch)
 
-            if (target_pos.y != this.target_prev_posY) {
-                float new_pitch = this.getXRot();
-                float pitch_adjustment = 0.5f;
+            float new_pitch = this.getXRot();
 
-                new_pitch = new_pitch + pitch_adjustment;
+            if (new_pitch > 0) {
+                float pitch_adjustment = 0.2f;
 
-                this.entityData.set(BODY_PITCH, (float) -Math.toRadians(Mth.rotLerp(0.5f, this.getXRot(), new_pitch))); // GeckoLib uses radians
+                this.entityData.set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians
             }
 
             this.target_prev_posY = target_pos.y; // update the target's previous y-position
