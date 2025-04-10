@@ -140,7 +140,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 double yaw_dx = target_pos.x - this.mob.getX();
                 double yaw_dz = target_pos.z - this.mob.getZ();
 
-                float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians
+                float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
                 float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
                 float new_yaw = -(yaw_angle_towards_target) * radians_to_degrees;
 
@@ -156,7 +156,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 if (new_pitch > 0) {
                     float pitch_adjustment = 0.2f;
 
-                    this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians
+                    this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
                 }
             }
         }
