@@ -85,17 +85,17 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            // move towards front of target
-            Vec3 current_pos = this.position();
             Vec3 target_pos = target.position();
-            Vec3 pos_in_front_of_target = target.getEyePosition().add(target.getLookAngle().scale(20));
+
+            // move towards target
+            Vec3 current_pos = this.position();
 
             this.setDeltaMovement(this.getDeltaMovement().add(
                 new Vec3(
-                    (pos_in_front_of_target.x) - current_pos.x,
-                    (target_pos.y + 4) - current_pos.y, // fly above target
-                    (pos_in_front_of_target.z) - current_pos.z
-                ).scale(0.1)
+                    target_pos.x - current_pos.x,
+                    (target_pos.y + 4) - current_pos.y,
+                    target_pos.z - current_pos.z
+                ).scale(0.01)
             ));
 
             // set yaw to face target
