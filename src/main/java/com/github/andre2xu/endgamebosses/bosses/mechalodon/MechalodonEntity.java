@@ -71,20 +71,20 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             Vec3 pos_in_front_of_target = target.getEyePosition().add(target.getLookAngle().scale(20));
 
             this.setDeltaMovement(this.getDeltaMovement().add(
-                    new Vec3(
-                        (pos_in_front_of_target.x) - current_pos.x,
-                        (target_pos.y + 4) - current_pos.y, // fly above target
-                        (pos_in_front_of_target.z) - current_pos.z).scale(0.1)
-                    )
-            );
+                new Vec3(
+                    (pos_in_front_of_target.x) - current_pos.x,
+                    (target_pos.y + 4) - current_pos.y, // fly above target
+                    (pos_in_front_of_target.z) - current_pos.z
+                ).scale(0.1)
+            ));
 
-            // rotate to face target
-            double d1 = target.getX() - this.getX();
-            double d2 = target.getZ() - this.getZ();
+            // rotate yaw to face target
+            double yaw_dx = target.getX() - this.getX();
+            double yaw_dz = target.getZ() - this.getZ();
 
-            float angle_towards_target = (float) Mth.atan2(d1, d2); // angle is in radians
+            float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians
             float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
-            float new_yaw = -(angle_towards_target) * radians_to_degrees;
+            float new_yaw = -(yaw_angle_towards_target) * radians_to_degrees;
 
             this.setYRot(new_yaw);
             this.setYBodyRot(new_yaw);
