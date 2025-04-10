@@ -87,17 +87,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         if (target != null) {
             Vec3 target_pos = target.position();
 
-            // move towards target
-            Vec3 current_pos = this.position();
-
-            this.setDeltaMovement(this.getDeltaMovement().add(
-                new Vec3(
-                    target_pos.x - current_pos.x,
-                    (target_pos.y + 4) - current_pos.y,
-                    target_pos.z - current_pos.z
-                ).scale(0.01)
-            ));
-
             // set yaw to face target
             double yaw_dx = target_pos.x - this.getX();
             double yaw_dz = target_pos.z - this.getZ();
@@ -119,6 +108,19 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 float pitch_adjustment = 0.2f;
 
                 this.entityData.set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians
+            }
+
+            // move close to target
+            Vec3 current_pos = this.position();
+
+            if (this.distanceTo(target) > 20) {
+                this.setDeltaMovement(this.getDeltaMovement().add(
+                        new Vec3(
+                                target_pos.x - current_pos.x,
+                                (target_pos.y + 4) - current_pos.y,
+                                target_pos.z - current_pos.z
+                        ).scale(0.1)
+                ));
             }
         }
     }
