@@ -1,5 +1,8 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -9,6 +12,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -18,6 +22,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
+    private double target_prev_posY = 0;
+    private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
 
     // ANIMATIONS
@@ -47,6 +53,21 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // DATA
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+
+        // give data accessors starting values
+        pBuilder.define(BODY_PITCH, 0.0f);
+    }
+
+    public float getBodyPitch() {
+        return this.entityData.get(BODY_PITCH);
     }
 
 
@@ -88,7 +109,22 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
             this.setYRot(new_yaw);
             this.setYBodyRot(new_yaw);
-            this.setYHeadRot(new_yaw); // required
+            this.setYHeadRot(new_yaw);
+
+            // set pitch to face target
+            double pitch_dy = this.getY() - target.getY();
+            double pitch_dx = Math.abs(this.getX() - target.getX());
+            double pitch_dz = Math.abs(this.getZ() - target.getZ());
+            double hypotenuse = Math.sqrt((pitch_dx * pitch_dx) + (pitch_dz * pitch_dz));
+
+            float pitch_angle_towards_target = (float) Mth.atan2(pitch_dy, hypotenuse); // angle is in radians
+            float new_pitch = -(pitch_angle_towards_target) * radians_to_degrees;
+
+            if (target_pos.y != this.target_prev_posY) {
+                this.entityData.set(BODY_PITCH, new_pitch);
+            }
+
+            this.target_prev_posY = target_pos.y;
         }
     }
 
