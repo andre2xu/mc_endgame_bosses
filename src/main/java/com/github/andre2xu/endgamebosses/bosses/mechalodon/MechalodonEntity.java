@@ -22,7 +22,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
-    private double target_prev_posY = 0;
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -121,8 +120,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                 this.entityData.set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians
             }
-
-            this.target_prev_posY = target_pos.y; // update the target's previous y-position
         }
     }
 
