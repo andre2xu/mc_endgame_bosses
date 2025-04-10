@@ -78,7 +78,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 ).scale(0.1)
             ));
 
-            // rotate yaw to face target
+            // set yaw to face target
             double yaw_dx = target.getX() - this.getX();
             double yaw_dz = target.getZ() - this.getZ();
 
