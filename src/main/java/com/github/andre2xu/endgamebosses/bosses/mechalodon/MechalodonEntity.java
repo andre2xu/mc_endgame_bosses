@@ -86,6 +86,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        this.noPhysics = true; // ignore block collisions (only enabled in the first phase)
+
         LivingEntity target = this.getTarget();
 
         if (target != null) {
@@ -98,10 +100,12 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 this.setDeltaMovement(this.getDeltaMovement().add(
                         new Vec3(
                                 target_pos.x - current_pos.x,
-                                (target_pos.y + 4) - current_pos.y,
+                                (target_pos.y - 2) - current_pos.y,
                                 target_pos.z - current_pos.z
-                        ).scale(0.1)
+                        ).scale(0.01)
                 ));
+
+                this.triggerAnim("swim_fast_anim_controller", "swim_fast");
             }
         }
     }
