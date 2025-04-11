@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -23,10 +24,22 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
+    // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
-    private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Integer> ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
+
+    // ACTIONS
+    private enum Action {;
+        enum Move {
+            IDLE,
+            FOLLOW_TARGET,
+            CIRCLE_AROUND_TARGET
+        }
+    }
 
     // ANIMATIONS
+    private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation SWIM_FAST_ANIM = RawAnimation.begin().then("animation.mechalodon.swim_fast", Animation.LoopType.PLAY_ONCE);
 
 
@@ -66,6 +79,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         // give data accessors starting values
         pBuilder.define(BODY_PITCH, 0.0f);
+        pBuilder.define(ACTION, 0); // idle
+        pBuilder.define(ANCHOR_POINT, new Vector3f(0,0,0));
     }
 
     public float getBodyPitch() {
@@ -75,6 +90,30 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
 
     // AI
+    private void setMoveAction(Action.Move moveAction) {
+        int action_id = switch (moveAction) {
+            case Action.Move.FOLLOW_TARGET -> 1;
+            case Action.Move.CIRCLE_AROUND_TARGET -> 2;
+            default -> 0; // idle
+        };
+
+        this.entityData.set(ACTION, action_id);
+    }
+
+    private Action.Move getMoveAction() {
+        int action_id = this.entityData.get(ACTION);
+
+        return switch (action_id) {
+            case 1 -> Action.Move.FOLLOW_TARGET;
+            case 2 -> Action.Move.CIRCLE_AROUND_TARGET;
+            default -> Action.Move.IDLE;
+        };
+    }
+
+    private void resetAnchorPoint() {
+        this.entityData.set(ANCHOR_POINT, new Vector3f(0,0,0));
+    }
+
     @Override
     protected void registerGoals() {
         // find and select a target
@@ -90,15 +129,21 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
+            Vec3 current_pos = this.position();
             Vec3 target_pos = target.position();
 
-            // look at target
-            this.getLookControl().setLookAt(target);
+            int allowed_distance_from_target = 20;
 
-            // move close to target
-            Vec3 current_pos = this.position();
+            if (this.distanceTo(target) > allowed_distance_from_target) {
+                // OBJECTIVE: Follow target until close enough to circle around them
 
-            if (this.distanceTo(target) > 20) {
+                this.setMoveAction(Action.Move.FOLLOW_TARGET);
+                this.resetAnchorPoint();
+
+                // look at target
+                this.getLookControl().setLookAt(target);
+
+                // move to target
                 this.setDeltaMovement(this.getDeltaMovement().add(
                         new Vec3(
                                 target_pos.x - current_pos.x,
@@ -107,7 +152,25 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         ).scale(0.01)
                 ));
 
+                // run swim animation
                 this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+            }
+            else if (this.getMoveAction() == Action.Move.FOLLOW_TARGET) {
+                // OBJECTIVE: Once the allowed distance has been reached, set the flag that allows the Mechalodon to circle around the target and save the target's position as an anchor point (it will be the circle's center)
+
+                this.setMoveAction(Action.Move.CIRCLE_AROUND_TARGET);
+
+                // save the player's position as the anchor point
+                Vector3f anchor_point = new Vector3f((float) target_pos.x, (float) target_pos.y, (float) target_pos.z);
+                this.entityData.set(ANCHOR_POINT, anchor_point);
+
+                System.out.println("Mechalodon has stopped following");
+            }
+
+            if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
+                Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
+
+                System.out.println("Mechalodon is circling target");
             }
         }
     }
