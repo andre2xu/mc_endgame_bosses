@@ -149,7 +149,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                 target_pos.x - current_pos.x,
                                 (target_pos.y - 2) - current_pos.y,
                                 target_pos.z - current_pos.z
-                        ).scale(0.01)
+                        ).normalize().scale(0.1)
                 ));
 
                 // run swim animation
