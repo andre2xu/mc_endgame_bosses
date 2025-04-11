@@ -21,11 +21,16 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
     // GENERAL
     private Vec3 current_point_in_circle = new Vec3(0,0,0);
+    private int angle_needed_to_find_next_circle_point;
+    private final ArrayList<Integer> all_angles_needed_to_find_circle_points = new ArrayList<>();
+    private Iterator<Integer> circle_point_angles_array_iterator;
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
@@ -50,6 +55,20 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public MechalodonEntity(EntityType<? extends FlyingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
+        // get all the angles needed to make the Mechalodon circle around a target
+        int current_degree = 0;
+        int degree_change = 45;
+        int num_of_points = 360 / degree_change;
+
+        for (int i = 0; i < num_of_points; i++) {
+            this.all_angles_needed_to_find_circle_points.add(current_degree);
+            current_degree += degree_change;
+        }
+
+        this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+        this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // initialize with first value of circle point angles array
+
+        // add custom controls
         this.lookControl = new MechalodonLookControl(this); // change the default look control
     }
 
@@ -186,13 +205,17 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
                 // Objective: Circle around anchor point
 
+                // find the next point on the circle
                 Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
+
                 Vec3 next_point = this.getNextPointOnCircle(
                         this.current_point_in_circle.distanceTo(new Vec3(anchor_point.x, anchor_point.y, anchor_point.z)),
-                        45
+                        this.angle_needed_to_find_next_circle_point
                 );
 
-                if (Math.sqrt(this.distanceToSqr(next_point)) > 5) {
+                if (Math.sqrt(this.distanceToSqr(next_point)) > 10) {
+                    // this block handles the movement of the Mechalodon to the next point on the circle
+
                     // look at point
                     this.getLookControl().setLookAt(next_point);
 
@@ -200,16 +223,23 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     this.setDeltaMovement(this.getDeltaMovement().add(
                             new Vec3(
                                     next_point.x - this.getX(),
-                                    (target_pos.y - 2) - this.getY(),
+                                    (target_pos.y - 2) - this.getY(), // move underground
                                     next_point.z - this.getZ()
-                            ).normalize().scale(0.1)
+                            ).normalize().scale(0.18)
                     ));
 
                     // run swim animation
                     this.triggerAnim("swim_fast_anim_controller", "swim_fast");
                 }
                 else {
-                    System.out.println("POINT REACHED");
+                    // this block changes the angle used for calculating the next point on the circle
+
+                    if (!this.circle_point_angles_array_iterator.hasNext()) {
+                        // get a new iterator to restart the circling
+                        this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                    }
+
+                    this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
                 }
             }
         }
