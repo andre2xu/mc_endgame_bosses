@@ -24,6 +24,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
+    // GENERAL
+    private Vec3 current_point_in_circle = new Vec3(0,0,0);
+
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
     private static final EntityDataAccessor<Integer> ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
@@ -114,6 +117,18 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         this.entityData.set(ANCHOR_POINT, new Vector3f(0,0,0));
     }
 
+    private Vec3 getNextPointOnCircle(double radius, double degree_change) {
+        Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
+        degree_change = Math.toRadians(degree_change);
+
+        // get next point on circle
+        double new_x = anchor_point.x + radius * Math.cos(degree_change);
+        double new_y = anchor_point.y;
+        double new_z = anchor_point.z + radius * Math.sin(degree_change);
+
+        return new Vec3(new_x, new_y, new_z);
+    }
+
     @Override
     protected void registerGoals() {
         // find and select a target
@@ -134,7 +149,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
             int allowed_distance_from_target = 20;
 
-            if (this.distanceTo(target) > allowed_distance_from_target) {
+            if (this.getMoveAction() != Action.Move.CIRCLE_AROUND_TARGET && this.distanceTo(target) > allowed_distance_from_target) {
                 // OBJECTIVE: Follow target until close enough to circle around them
 
                 this.setMoveAction(Action.Move.FOLLOW_TARGET);
@@ -164,13 +179,38 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 Vector3f anchor_point = new Vector3f((float) target_pos.x, (float) target_pos.y, (float) target_pos.z);
                 this.entityData.set(ANCHOR_POINT, anchor_point);
 
-                System.out.println("Mechalodon has stopped following");
+                // initialize the starting point on the circle
+                this.current_point_in_circle = this.position();
             }
 
             if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
-                Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
+                // Objective: Circle around anchor point
 
-                System.out.println("Mechalodon is circling target");
+                Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
+                Vec3 next_point = this.getNextPointOnCircle(
+                        this.current_point_in_circle.distanceTo(new Vec3(anchor_point.x, anchor_point.y, anchor_point.z)),
+                        45
+                );
+
+                if (Math.sqrt(this.distanceToSqr(next_point)) > 5) {
+                    // look at point
+                    this.getLookControl().setLookAt(next_point);
+
+                    // move to point
+                    this.setDeltaMovement(this.getDeltaMovement().add(
+                            new Vec3(
+                                    next_point.x - this.getX(),
+                                    (target_pos.y - 2) - this.getY(),
+                                    next_point.z - this.getZ()
+                            ).normalize().scale(0.1)
+                    ));
+
+                    // run swim animation
+                    this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+                }
+                else {
+                    System.out.println("POINT REACHED");
+                }
             }
         }
     }
