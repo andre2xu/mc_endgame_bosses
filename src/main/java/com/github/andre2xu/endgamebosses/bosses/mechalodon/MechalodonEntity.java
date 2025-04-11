@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +33,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
     public MechalodonEntity(EntityType<? extends FlyingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        this.lookControl = new MechalodonLookControl(this); // change the default look control
     }
 
     public static AttributeSupplier createAttributes() {
@@ -77,9 +79,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     protected void registerGoals() {
         // find and select a target
         this.targetSelector.addGoal(1, new SelectTargetGoal(this));
-
-        // look at target
-        this.goalSelector.addGoal(1, new LookAtTargetGoal(this, Player.class, 50f));
     }
 
     @Override
@@ -92,6 +91,9 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         if (target != null) {
             Vec3 target_pos = target.position();
+
+            // look at target
+            this.getLookControl().setLookAt(target);
 
             // move close to target
             Vec3 current_pos = this.position();
@@ -106,6 +108,43 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 ));
 
                 this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+            }
+        }
+    }
+
+
+
+    // CONTROLS
+    private static class MechalodonLookControl extends LookControl {
+        public MechalodonLookControl(Mob pMob) {
+            super(pMob);
+        }
+
+        @Override
+        public void setLookAt(@NotNull Entity pEntity) {
+            super.setLookAt(pEntity); // update value of 'this.mob.getXRot'
+
+            Vec3 target_pos = pEntity.position();
+
+            // set yaw to face target
+            double yaw_dx = target_pos.x - this.mob.getX();
+            double yaw_dz = target_pos.z - this.mob.getZ();
+
+            float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
+            float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
+            float new_yaw = -(yaw_angle_towards_target) * radians_to_degrees;
+
+            this.mob.setYRot(new_yaw);
+            this.mob.setYBodyRot(new_yaw);
+            this.mob.setYHeadRot(new_yaw);
+
+            // set pitch to face target
+            float new_pitch = this.mob.getXRot();
+
+            if (new_pitch > 0) {
+                float pitch_adjustment = 0.2f;
+
+                this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
             }
         }
     }
@@ -127,42 +166,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
             final double MAX_TARGET_DISTANCE = 50d; // blocks
             this.targetConditions = TargetingConditions.forCombat().range(MAX_TARGET_DISTANCE).selector(pTargetPredicate);
-        }
-    }
-
-    private static class LookAtTargetGoal extends LookAtPlayerGoal {
-        public LookAtTargetGoal(Mob pMob, Class<? extends LivingEntity> pLookAtType, float pLookDistance) {
-            super(pMob, pLookAtType, pLookDistance);
-        }
-
-        @Override
-        public void tick() {
-            if (this.lookAt != null && this.lookAt.isAlive()) {
-                Vec3 target_pos = this.lookAt.position();
-
-                // set yaw to face target
-                double yaw_dx = target_pos.x - this.mob.getX();
-                double yaw_dz = target_pos.z - this.mob.getZ();
-
-                float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
-                float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
-                float new_yaw = -(yaw_angle_towards_target) * radians_to_degrees;
-
-                this.mob.setYRot(new_yaw);
-                this.mob.setYBodyRot(new_yaw);
-                this.mob.setYHeadRot(new_yaw);
-
-                // set pitch to face target
-                this.mob.getLookControl().setLookAt(this.lookAt); // update value of this.getXRot (i.e. the pitch)
-
-                float new_pitch = this.mob.getXRot();
-
-                if (new_pitch > 0) {
-                    float pitch_adjustment = 0.2f;
-
-                    this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
-                }
-            }
         }
     }
 }
