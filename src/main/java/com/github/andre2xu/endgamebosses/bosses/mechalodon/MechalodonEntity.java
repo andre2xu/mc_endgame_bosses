@@ -194,8 +194,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             double yaw_dz = target_pos.z - this.mob.getZ();
 
             float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
-            float radians_to_degrees = 180.0F / (float) Math.PI; // converts radians to degrees
-            float new_yaw = -(yaw_angle_towards_target) * radians_to_degrees;
+            float new_yaw = (float) Math.toDegrees(-yaw_angle_towards_target);
 
             this.mob.setYRot(new_yaw);
             this.mob.setYBodyRot(new_yaw);
@@ -209,6 +208,25 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                 this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
             }
+        }
+
+        @Override
+        public void setLookAt(@NotNull Vec3 pLookVector) {
+            super.setLookAt(pLookVector);
+
+            // set yaw to face look vector
+            double yaw_dx = pLookVector.x - this.mob.getX();
+            double yaw_dz = pLookVector.z - this.mob.getZ();
+
+            float yaw_angle_towards_look_vector = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
+            float new_yaw = (float) Math.toDegrees(-yaw_angle_towards_look_vector);
+
+            this.mob.setYRot(new_yaw);
+            this.mob.setYBodyRot(new_yaw);
+            this.mob.setYHeadRot(new_yaw);
+
+            // set pitch to default (i.e. body is straight)
+            this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(0)); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
         }
     }
 
