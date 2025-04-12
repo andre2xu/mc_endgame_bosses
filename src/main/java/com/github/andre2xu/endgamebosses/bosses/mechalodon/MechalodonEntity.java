@@ -65,6 +65,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public MechalodonEntity(EntityType<? extends FlyingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
+        this.noPhysics = true; // ignore block collisions
+
         // get all the angles needed to make the Mechalodon circle around a target
         int current_degree = 0;
         int degree_change = 45;
@@ -184,8 +186,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-
-        this.noPhysics = true; // ignore block collisions (only enabled in the first phase)
 
         LivingEntity target = this.getTarget();
 
