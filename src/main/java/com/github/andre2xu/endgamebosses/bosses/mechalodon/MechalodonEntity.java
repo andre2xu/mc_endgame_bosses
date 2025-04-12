@@ -37,6 +37,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
     private static final EntityDataAccessor<Integer> MOVE_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
     // ACTIONS
@@ -45,6 +46,12 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             IDLE,
             FOLLOW_TARGET,
             CIRCLE_AROUND_TARGET
+        }
+
+        enum Attack {
+            NONE,
+            MELEE,
+            RANGE
         }
     }
 
@@ -104,6 +111,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         // give data accessors starting values
         pBuilder.define(BODY_PITCH, 0.0f);
         pBuilder.define(MOVE_ACTION, 0); // idle
+        pBuilder.define(ATTACK_ACTION, 0); // none
         pBuilder.define(ANCHOR_POINT, new Vector3f(0,0,0));
     }
 
@@ -131,6 +139,26 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             case 1 -> Action.Move.FOLLOW_TARGET;
             case 2 -> Action.Move.CIRCLE_AROUND_TARGET;
             default -> Action.Move.IDLE;
+        };
+    }
+
+    private void setAttackAction(Action.Attack attackAction) {
+        int action_id = switch (attackAction) {
+            case Action.Attack.MELEE -> 1;
+            case Action.Attack.RANGE -> 2;
+            default -> 0; // none
+        };
+
+        this.entityData.set(ATTACK_ACTION, action_id);
+    }
+
+    private Action.Attack getAttackAction() {
+        int action_id = this.entityData.get(ATTACK_ACTION);
+
+        return switch (action_id) {
+            case 1 -> Action.Attack.MELEE;
+            case 2 -> Action.Attack.RANGE;
+            default -> Action.Attack.NONE;
         };
     }
 
