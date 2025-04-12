@@ -215,7 +215,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                             BlockPos block_pos = new BlockPos((int) next_point.x, (int) next_point.y, (int) next_point.z);
 
-                            if (level.getBlockState(block_pos).isAir()) {
+                            // check if the block at the current circle point and the block below it are solid
+                            if (level.getBlockState(block_pos).isAir() && level.getBlockState(block_pos.below()).isAir()) {
                                 this.setMoveAction(Action.Move.FOLLOW_TARGET);
                                 break;
                             }
