@@ -163,83 +163,92 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            Vec3 current_pos = this.position();
-            Vec3 target_pos = target.position();
+            if (target.onGround()) {
+                Vec3 current_pos = this.position();
+                Vec3 target_pos = target.position();
 
-            int allowed_distance_from_target = 20;
+                int allowed_distance_from_target = 20;
 
-            if (this.getMoveAction() != Action.Move.CIRCLE_AROUND_TARGET && this.distanceTo(target) > allowed_distance_from_target) {
-                // OBJECTIVE: Follow target until close enough to circle around them
+                if (this.getMoveAction() != Action.Move.CIRCLE_AROUND_TARGET && this.distanceTo(target) > allowed_distance_from_target) {
+                    // OBJECTIVE: Follow target until close enough to circle around them
 
-                this.setMoveAction(Action.Move.FOLLOW_TARGET);
-                this.resetAnchorPoint();
+                    this.setMoveAction(Action.Move.FOLLOW_TARGET);
+                    this.resetAnchorPoint();
 
-                // look at target
-                this.getLookControl().setLookAt(target);
+                    // look at target
+                    this.getLookControl().setLookAt(target);
 
-                // move to target
-                this.setDeltaMovement(this.getDeltaMovement().add(
-                        new Vec3(
-                                target_pos.x - current_pos.x,
-                                (target_pos.y - 2) - current_pos.y,
-                                target_pos.z - current_pos.z
-                        ).normalize().scale(0.1)
-                ));
-
-                // run swim animation
-                this.triggerAnim("swim_fast_anim_controller", "swim_fast");
-            }
-            else if (this.getMoveAction() == Action.Move.FOLLOW_TARGET) {
-                // OBJECTIVE: Once the allowed distance has been reached, set the flag that allows the Mechalodon to circle around the target and save the target's position as an anchor point (it will be the circle's center)
-
-                this.setMoveAction(Action.Move.CIRCLE_AROUND_TARGET);
-
-                // save the player's position as the anchor point
-                Vector3f anchor_point = new Vector3f((float) target_pos.x, (float) target_pos.y, (float) target_pos.z);
-                this.entityData.set(ANCHOR_POINT, anchor_point);
-
-                // initialize the starting point on the circle
-                this.current_point_in_circle = this.position();
-            }
-
-            if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
-                // Objective: Circle around anchor point
-
-                // find the next point on the circle
-                Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
-
-                Vec3 next_point = this.getNextPointOnCircle(
-                        this.current_point_in_circle.distanceTo(new Vec3(anchor_point.x, anchor_point.y, anchor_point.z)),
-                        this.angle_needed_to_find_next_circle_point
-                );
-
-                if (Math.sqrt(this.distanceToSqr(next_point)) > 10) {
-                    // this block handles the movement of the Mechalodon to the next point on the circle
-
-                    // look at point
-                    this.getLookControl().setLookAt(next_point);
-
-                    // move to point
+                    // move to target
                     this.setDeltaMovement(this.getDeltaMovement().add(
                             new Vec3(
-                                    next_point.x - this.getX(),
-                                    (target_pos.y - 2) - this.getY(), // move underground
-                                    next_point.z - this.getZ()
-                            ).normalize().scale(0.18)
+                                    target_pos.x - current_pos.x,
+                                    (target_pos.y - 2) - current_pos.y,
+                                    target_pos.z - current_pos.z
+                            ).normalize().scale(0.2) // follow speed
                     ));
 
                     // run swim animation
                     this.triggerAnim("swim_fast_anim_controller", "swim_fast");
                 }
-                else {
-                    // this block changes the angle used for calculating the next point on the circle
+                else if (this.getMoveAction() == Action.Move.FOLLOW_TARGET) {
+                    // OBJECTIVE: Once the allowed distance has been reached, set the flag that allows the Mechalodon to circle around the target and save the target's position as an anchor point (it will be the circle's center)
 
-                    if (!this.circle_point_angles_array_iterator.hasNext()) {
-                        // get a new iterator to restart the circling
-                        this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                    this.setMoveAction(Action.Move.CIRCLE_AROUND_TARGET);
+
+                    // save the player's position as the anchor point
+                    Vector3f anchor_point = new Vector3f((float) target_pos.x, (float) target_pos.y, (float) target_pos.z);
+                    this.entityData.set(ANCHOR_POINT, anchor_point);
+
+                    // initialize the starting point on the circle
+                    this.current_point_in_circle = this.position();
+                }
+
+                if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
+                    // OBJECTIVE: Check if the target is inside the circle (i.e. near anchor point) and move around them. Follow the target again if they leave the circle
+
+                    Vector3f ap = this.entityData.get(ANCHOR_POINT);
+                    Vec3 anchor_point = new Vec3(ap.x, ap.y, ap.z);
+
+                    if (Math.sqrt(target.distanceToSqr(anchor_point)) < allowed_distance_from_target) {
+                        // find the next point on the circle
+                        Vec3 next_point = this.getNextPointOnCircle(
+                                this.current_point_in_circle.distanceTo(anchor_point),
+                                this.angle_needed_to_find_next_circle_point
+                        );
+
+                        if (Math.sqrt(this.distanceToSqr(next_point)) > 10) {
+                            // this block handles the movement of the Mechalodon to the next point on the circle
+
+                            // look at point
+                            this.getLookControl().setLookAt(next_point);
+
+                            // move to point
+                            this.setDeltaMovement(this.getDeltaMovement().add(
+                                    new Vec3(
+                                            next_point.x - this.getX(),
+                                            (target_pos.y - 2) - this.getY(), // move underground
+                                            next_point.z - this.getZ()
+                                    ).normalize().scale(0.18) // circling speed
+                            ));
+
+                            // run swim animation
+                            this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+                        }
+                        else {
+                            // this block changes the angle used for calculating the next point on the circle
+
+                            if (!this.circle_point_angles_array_iterator.hasNext()) {
+                                // get a new iterator to restart the circling
+                                this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                            }
+
+                            this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
+                        }
                     }
-
-                    this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
+                    else {
+                        // change movement flag to follow target
+                        this.setMoveAction(Action.Move.FOLLOW_TARGET);
+                    }
                 }
             }
         }
