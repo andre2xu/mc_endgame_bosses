@@ -1,8 +1,10 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -201,6 +204,23 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                     // initialize the starting point on the circle
                     this.current_point_in_circle = this.position();
+
+                    // verify that the circle is completely on solid ground. If not, cancel the circling and continue following the target
+                    if (this.level() instanceof ServerLevel level) {
+                        for (int angle : this.all_angles_needed_to_find_circle_points) {
+                            Vec3 next_point = this.getNextPointOnCircle(
+                                    this.current_point_in_circle.distanceTo(new Vec3(anchor_point.x, anchor_point.y, anchor_point.z)),
+                                    angle
+                            );
+
+                            BlockPos block_pos = new BlockPos((int) next_point.x, (int) next_point.y, (int) next_point.z);
+
+                            if (level.getBlockState(block_pos).isAir()) {
+                                this.setMoveAction(Action.Move.FOLLOW_TARGET);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 if (this.getMoveAction() == Action.Move.CIRCLE_AROUND_TARGET) {
