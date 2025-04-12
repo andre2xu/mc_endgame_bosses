@@ -134,10 +134,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         };
     }
 
-    private void resetAnchorPoint() {
-        this.entityData.set(ANCHOR_POINT, new Vector3f(0,0,0));
-    }
-
     private Vec3 getNextPointOnCircle(double radius, double degree_change) {
         Vector3f anchor_point = this.entityData.get(ANCHOR_POINT);
         degree_change = Math.toRadians(degree_change);
@@ -175,7 +171,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     // OBJECTIVE: Follow target until close enough to circle around them
 
                     this.setMoveAction(Action.Move.FOLLOW_TARGET);
-                    this.resetAnchorPoint();
 
                     // look at target
                     this.getLookControl().setLookAt(target);
