@@ -213,9 +213,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             );
 
                             BlockPos block_pos = new BlockPos((int) next_point.x, (int) next_point.y, (int) next_point.z);
+                            BlockPos block_pos_below1 = block_pos.below();
+                            BlockPos block_pos_below2 = block_pos_below1.below();
 
                             // check if the block at the current circle point and the block below it are solid
-                            if (level.getBlockState(block_pos).isAir() && level.getBlockState(block_pos.below()).isAir()) {
+                            if (level.getBlockState(block_pos).isAir() && level.getBlockState(block_pos_below1).isAir() && level.getBlockState(block_pos_below2).isAir()) {
                                 this.setMoveAction(Action.Move.FOLLOW_TARGET);
                                 break;
                             }
@@ -345,7 +347,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             super(pMob, pTargetType, pRandomInterval, pMustSee, pMustReach, pTargetPredicate);
 
             final double MAX_TARGET_DISTANCE = 50d; // blocks
-            this.targetConditions = TargetingConditions.forCombat().range(MAX_TARGET_DISTANCE).selector(pTargetPredicate);
+            this.targetConditions = TargetingConditions
+                    .forCombat()
+                    .ignoreLineOfSight() // ensures target can be seen even through blocks (this is needed since Mechalodon can move underground)
+                    .range(MAX_TARGET_DISTANCE)
+                    .selector(pTargetPredicate);
         }
     }
 }
