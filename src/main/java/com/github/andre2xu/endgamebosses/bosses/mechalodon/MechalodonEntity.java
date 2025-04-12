@@ -36,7 +36,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
-    private static final EntityDataAccessor<Integer> ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> MOVE_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
     // ACTIONS
@@ -103,7 +103,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         // give data accessors starting values
         pBuilder.define(BODY_PITCH, 0.0f);
-        pBuilder.define(ACTION, 0); // idle
+        pBuilder.define(MOVE_ACTION, 0); // idle
         pBuilder.define(ANCHOR_POINT, new Vector3f(0,0,0));
     }
 
@@ -121,11 +121,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             default -> 0; // idle
         };
 
-        this.entityData.set(ACTION, action_id);
+        this.entityData.set(MOVE_ACTION, action_id);
     }
 
     private Action.Move getMoveAction() {
-        int action_id = this.entityData.get(ACTION);
+        int action_id = this.entityData.get(MOVE_ACTION);
 
         return switch (action_id) {
             case 1 -> Action.Move.FOLLOW_TARGET;
