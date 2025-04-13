@@ -10,6 +10,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +25,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -206,7 +208,16 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     @Override
     protected void registerGoals() {
         // find and select a target
-        this.targetSelector.addGoal(1, new SelectTargetGoal(this));
+        this.targetSelector.addGoal(2, new SelectTargetGoal(this));
+
+        /*
+        HOW ATTACKING WORKS:
+        - There are two types: MELEE and RANGE (see Action.AttackType enums)
+        - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with SelectTargetGoal. The priority of 1 means they will be executed instead of the SelectTargetGoal
+        - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the SelectTargetGoal when an attack goal is run
+        - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
+        */
+        this.goalSelector.addGoal(1, new ChargeAttackGoal(this));
     }
 
     @Override
@@ -239,8 +250,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                         if (should_attack) {
                             this.setAttackAction(Action.Attack.CHARGE);
-
-                            System.out.println("GOING TO ATTACK WHILE FOLLOWING");
                         }
                         else {
                             // move to target
@@ -420,6 +429,21 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     .ignoreLineOfSight() // ensures target can be seen even through blocks (this is needed since Mechalodon can move underground)
                     .range(MAX_TARGET_DISTANCE)
                     .selector(pTargetPredicate);
+        }
+    }
+
+    private static class ChargeAttackGoal extends Goal {
+        protected final MechalodonEntity mechalodon;
+        private boolean attack_is_finished = false;
+
+        public ChargeAttackGoal(MechalodonEntity mechalodon) {
+            this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.CHARGE;
         }
     }
 }
