@@ -24,10 +24,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
@@ -309,7 +306,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         }
                     }
 
-                    // whether this conditional block runs or not depends on the above conditional blocks
                     current_move_action = this.getMoveAction(); // update flag
 
                     if (current_move_action == Action.Move.CIRCLE_AROUND_TARGET) {
@@ -357,6 +353,30 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         else {
                             // change movement flag to follow target
                             this.setMoveAction(Action.Move.FOLLOW_TARGET);
+                        }
+                    }
+                    else {
+                        // OBJECTIVE: If circling around isn't possible, attack the target in other ways
+
+                        int random_number = new Random().nextInt(1, 21); // pick a number from 1-20
+
+                        if (distance_to_target >= 5) {
+                            // look at target
+                            this.getLookControl().setLookAt(target);
+
+                            // choose a melee attack that doesn't require the Mechalodon to get close
+                            boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/20 chance to do this
+                            boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/20 chance to do this
+
+                            if (perform_charge_attack) {
+                                this.setAttackAction(Action.Attack.CHARGE);
+                            }
+                            else if (perform_leap_forward_attack) {
+                                System.out.println("LEAP FORWARD");
+                            }
+                        }
+                        else {
+                            System.out.println("BITE OR TAIL WHIP");
                         }
                     }
                 }
