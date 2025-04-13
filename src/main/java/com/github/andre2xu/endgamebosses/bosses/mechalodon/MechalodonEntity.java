@@ -43,19 +43,19 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
     // ACTIONS
-    private enum Action {;
-        enum Move {
+    public enum Action {;
+        public enum Move {
             IDLE,
             FOLLOW_TARGET,
             CIRCLE_AROUND_TARGET
         }
 
-        enum AttackType {
+        public enum AttackType {
             MELEE,
             RANGE
         }
 
-        enum Attack {
+        public enum Attack {
             NONE,
             CHARGE,
             HOMING_MISSILE
@@ -185,6 +185,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         }
 
         return attack_action;
+    }
+
+    public Action.AttackType getAttackType() {
+        return this.attack_type;
     }
 
     private Vec3 getNextPointOnCircle(double radius, double degree_change) {
