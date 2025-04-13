@@ -433,7 +433,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     }
 
     private static class ChargeAttackGoal extends Goal {
-        protected final MechalodonEntity mechalodon;
+        private final MechalodonEntity mechalodon;
+        private LivingEntity target = null;
         private int attack_duration; // see resetAttack
         private boolean attack_is_finished = false;
 
@@ -449,6 +450,15 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         private void resetAttack() {
             this.attack_duration = 20 * 6; // 6 seconds
             this.attack_is_finished = false;
+            this.target = null;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
+            this.target = this.mechalodon.getTarget();
+
+            super.start();
         }
 
         @Override
@@ -466,15 +476,40 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
             if (this.attack_duration == 0) {
                 this.attack_is_finished = true;
-
-                System.out.println("CHARGE IS OVER");
             }
             else {
-                this.decrementAttackDuration();
+                if (this.target != null && this.target.isAlive()) {
+                    // move towards target
+                    Vec3 current_pos = this.mechalodon.position();
+                    Vec3 target_pos = target.position();
 
-                if (this.attack_duration % 20 == 0) {
-                    System.out.println("CHARGING");
+                    this.mechalodon.setDeltaMovement(this.mechalodon.getDeltaMovement().add(
+                            new Vec3(
+                                    target_pos.x - current_pos.x,
+                                    (target_pos.y - 2) - current_pos.y,
+                                    target_pos.z - current_pos.z
+                            ).normalize().scale(1) // follow speed
+                    ));
+
+                    // run swim animation
+                    this.mechalodon.triggerAnim("swim_fast_anim_controller", "swim_fast");
+
+                    // check if collision occurred
+                    boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                    if (has_collided_with_target) {
+                        // damage target
+                        System.out.println("CHOMP CHOMP");
+
+                        this.attack_is_finished = true; // stop attack
+                    }
                 }
+                else {
+                    // stop attack if target doesn't exist or is dead
+                    this.attack_is_finished = true;
+                }
+
+                this.decrementAttackDuration();
             }
         }
 
