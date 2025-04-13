@@ -434,11 +434,48 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
     private static class ChargeAttackGoal extends Goal {
         protected final MechalodonEntity mechalodon;
+        private int attack_duration; // see resetAttack
         private boolean attack_is_finished = false;
 
         public ChargeAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        private void decrementAttackDuration() {
+            this.attack_duration--;
+        }
+
+        private void resetAttack() {
+            this.attack_duration = 20 * 6; // 6 seconds
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            // OBJECTIVE: Move towards the target really quickly and try to collide with them before the attack duration drops to zero. If the collision is successful, deal damage to the target
+
+            if (this.attack_duration == 0) {
+                this.attack_is_finished = true;
+
+                System.out.println("CHARGE IS OVER");
+            }
+            else {
+                this.decrementAttackDuration();
+
+                if (this.attack_duration % 20 == 0) {
+                    System.out.println("CHARGING");
+                }
+            }
         }
 
         @Override
