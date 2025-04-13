@@ -245,9 +245,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                 if (!is_attacking) {
                     int allowed_distance_from_target = 20;
+                    float distance_to_target = this.distanceTo(target);
                     Action.Move current_move_action = this.getMoveAction();
 
-                    if (current_move_action != Action.Move.CIRCLE_AROUND_TARGET && this.distanceTo(target) > allowed_distance_from_target) {
+                    if (current_move_action != Action.Move.CIRCLE_AROUND_TARGET && distance_to_target > allowed_distance_from_target) {
                         // OBJECTIVE: Follow target until close enough to circle around them
 
                         this.setMoveAction(Action.Move.FOLLOW_TARGET);
@@ -275,7 +276,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             this.triggerAnim("swim_fast_anim_controller", "swim_fast");
                         }
                     }
-                    else if (current_move_action == Action.Move.FOLLOW_TARGET) {
+                    else if (current_move_action == Action.Move.FOLLOW_TARGET && distance_to_target <= allowed_distance_from_target) {
                         // OBJECTIVE: Once the allowed distance has been reached, set the flag that allows the Mechalodon to circle around the target and save the target's position as an anchor point (it will be the circle's center)
 
                         this.setMoveAction(Action.Move.CIRCLE_AROUND_TARGET);
