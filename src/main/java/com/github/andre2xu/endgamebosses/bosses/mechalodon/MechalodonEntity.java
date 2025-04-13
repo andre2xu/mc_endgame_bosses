@@ -246,7 +246,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         this.getLookControl().setLookAt(target);
 
                         // decide whether to attack or not while following. The attack involves movement towards the target as well so it's like an alternative way to follow the target
-                        boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances to attack
+                        boolean should_attack = new Random().nextInt(1, 6) == 1; // 1 in 5 chances to attack
 
                         if (should_attack) {
                             this.setAttackAction(Action.Attack.CHARGE);
