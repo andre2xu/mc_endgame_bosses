@@ -227,7 +227,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            if (target.onGround() || target.isInWaterRainOrBubble()) {
+            if (!target.isFallFlying()) {
                 Vec3 current_pos = this.position();
                 Vec3 target_pos = target.position();
 
