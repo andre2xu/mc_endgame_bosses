@@ -31,6 +31,16 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends FlyingMob implements GeoEntity {
+    /*
+    See 'CHANGE LATER' comments
+
+    TODO:
+    - Increase MAX_HEALTH attribute
+    - Increase damage dealt to target from charging
+    */
+
+
+
     // GENERAL
     private Vec3 current_point_in_circle = new Vec3(0,0,0);
     private int angle_needed_to_find_next_circle_point;
@@ -435,6 +445,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private static class ChargeAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration; // see resetAttack
         private boolean attack_is_finished = false;
 
@@ -499,9 +510,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                     if (has_collided_with_target) {
                         // damage target
-                        System.out.println("CHOMP CHOMP");
+                        this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
 
-                        this.attack_is_finished = true; // stop attack
+                        // stop attack
+                        this.attack_is_finished = true;
                     }
                 }
                 else {
