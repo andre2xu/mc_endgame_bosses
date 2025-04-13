@@ -34,6 +34,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private int angle_needed_to_find_next_circle_point;
     private final ArrayList<Integer> all_angles_needed_to_find_circle_points = new ArrayList<>();
     private Iterator<Integer> circle_point_angles_array_iterator;
+    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
@@ -49,10 +50,15 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             CIRCLE_AROUND_TARGET
         }
 
-        enum Attack {
-            NONE,
+        enum AttackType {
             MELEE,
             RANGE
+        }
+
+        enum Attack {
+            NONE,
+            CHARGE,
+            HOMING_MISSILE
         }
     }
 
@@ -146,23 +152,39 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     }
 
     private void setAttackAction(Action.Attack attackAction) {
-        int action_id = switch (attackAction) {
-            case Action.Attack.MELEE -> 1;
-            case Action.Attack.RANGE -> 2;
-            default -> 0; // none
-        };
+        int action_id = 0; // none
+
+        switch (attackAction) {
+            case Action.Attack.CHARGE:
+                action_id = 1;
+                this.attack_type = Action.AttackType.MELEE;
+                break;
+            case Action.Attack.HOMING_MISSILE:
+                action_id = 2;
+                this.attack_type = Action.AttackType.RANGE;
+                break;
+            default:
+        }
 
         this.entityData.set(ATTACK_ACTION, action_id);
     }
 
     private Action.Attack getAttackAction() {
+        Action.Attack attack_action = Action.Attack.NONE;
+
         int action_id = this.entityData.get(ATTACK_ACTION);
 
-        return switch (action_id) {
-            case 1 -> Action.Attack.MELEE;
-            case 2 -> Action.Attack.RANGE;
-            default -> Action.Attack.NONE;
-        };
+        switch (action_id) {
+            case 1:
+                attack_action = Action.Attack.CHARGE;
+                break;
+            case 2:
+                attack_action = Action.Attack.HOMING_MISSILE;
+                break;
+            default:
+        }
+
+        return attack_action;
     }
 
     private Vec3 getNextPointOnCircle(double radius, double degree_change) {
@@ -212,7 +234,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances to attack
 
                         if (should_attack) {
-                            this.setAttackAction(Action.Attack.MELEE);
+                            this.setAttackAction(Action.Attack.CHARGE);
 
                             System.out.println("GOING TO ATTACK WHILE FOLLOWING");
                         }
