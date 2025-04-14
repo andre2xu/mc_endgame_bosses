@@ -681,7 +681,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             this.landing_position.x - current_pos.x,
                             this.landing_position.y - current_pos.y,
                             this.landing_position.z - current_pos.z
-                    ).normalize().scale(0.4)); // fall speed
+                    ).normalize().scale(0.7)); // fall speed
                 }
 
                 // check for collision with target while leaping
