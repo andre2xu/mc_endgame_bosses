@@ -34,6 +34,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     TODO:
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from charging
+    - Increase damage dealt to target from leaping forward
     */
 
 
@@ -255,6 +256,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
         this.goalSelector.addGoal(1, new ChargeAttackGoal(this));
+        this.goalSelector.addGoal(1, new LeapForwardAttackGoal(this));
     }
 
     @Override
@@ -402,7 +404,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                 this.setAttackAction(Action.Attack.CHARGE);
                             }
                             else if (perform_leap_forward_attack) {
-                                System.out.println("LEAP FORWARD");
+                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
                             }
                         }
                         else {
@@ -579,6 +581,50 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.CHARGE;
+        }
+    }
+
+    private static class LeapForwardAttackGoal extends Goal {
+        private final MechalodonEntity mechalodon;
+        private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
+        private boolean attack_is_finished = false;
+
+        public LeapForwardAttackGoal(MechalodonEntity mechalodon) {
+            this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+            this.target = null;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
+            this.target = this.mechalodon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            System.out.println("LEAP FORWARD");
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.LEAP_FORWARD;
         }
     }
 }
