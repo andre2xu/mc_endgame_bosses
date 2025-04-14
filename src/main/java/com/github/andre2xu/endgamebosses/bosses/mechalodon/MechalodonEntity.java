@@ -128,13 +128,18 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // add triggerable animations
-        controllers.add(new AnimationController<>(this, "swim_fast_anim_controller", state -> PlayState.STOP).triggerableAnim("swim_fast", SWIM_FAST_ANIM));
-        controllers.add(new AnimationController<>(this, "swim_slow_anim_controller", state -> PlayState.STOP).triggerableAnim("swim_slow", SWIM_SLOW_ANIM));
-        controllers.add(new AnimationController<>(this, "bite_anim_controller", state -> PlayState.STOP).triggerableAnim("bite", BITE_ANIM));
-        controllers.add(new AnimationController<>(this, "mouth_open_anim_controller", state -> PlayState.STOP).triggerableAnim("mouth_open", MOUTH_OPEN_ANIM));
-        controllers.add(new AnimationController<>(this, "mouth_close_anim_controller", state -> PlayState.STOP).triggerableAnim("mouth_close", MOUTH_CLOSE_ANIM));
-        controllers.add(new AnimationController<>(this, "show_cannon_anim_controller", state -> PlayState.STOP).triggerableAnim("show_cannon", SHOW_CANNON_ANIM));
-        controllers.add(new AnimationController<>(this, "hide_cannon_anim_controller", state -> PlayState.STOP).triggerableAnim("hide_cannon", HIDE_CANNON_ANIM));
+        controllers.add(new AnimationController<>(this, "movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("swim_fast", SWIM_FAST_ANIM)
+                .triggerableAnim("swim_slow", SWIM_SLOW_ANIM)
+        );
+        
+        controllers.add(new AnimationController<>(this, "attack_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("bite", BITE_ANIM)
+                .triggerableAnim("mouth_open", MOUTH_OPEN_ANIM)
+                .triggerableAnim("mouth_close", MOUTH_CLOSE_ANIM)
+                .triggerableAnim("show_cannon", SHOW_CANNON_ANIM)
+                .triggerableAnim("hide_cannon", HIDE_CANNON_ANIM)
+        );
     }
 
     @Override
@@ -320,7 +325,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             ));
 
                             // run swim animation
-                            this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+                            this.triggerAnim("movement_trigger_anim_controller", "swim_fast");
                         }
                     }
                     else if (current_move_action == Action.Move.FOLLOW_TARGET && distance_to_target <= allowed_distance_from_target) {
@@ -387,7 +392,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                 ));
 
                                 // run swim animation
-                                this.triggerAnim("swim_fast_anim_controller", "swim_fast");
+                                this.triggerAnim("movement_trigger_anim_controller", "swim_fast");
                             }
                             else {
                                 // this block changes the angle used for calculating the next point on the circle
@@ -581,7 +586,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     ));
 
                     // run swim animation
-                    this.mechalodon.triggerAnim("swim_fast_anim_controller", "swim_fast");
+                    this.mechalodon.triggerAnim("movement_trigger_anim_controller", "swim_fast");
 
                     // check if collision occurred
                     boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
