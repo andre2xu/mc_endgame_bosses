@@ -85,6 +85,12 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation SWIM_FAST_ANIM = RawAnimation.begin().then("animation.mechalodon.swim_fast", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation SWIM_SLOW_ANIM = RawAnimation.begin().then("animation.mechalodon.swim_slow", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation BITE_ANIM = RawAnimation.begin().then("animation.mechalodon.bite", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation MOUTH_OPEN_ANIM = RawAnimation.begin().then("animation.mechalodon.mouth_open", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation MOUTH_CLOSE_ANIM = RawAnimation.begin().then("animation.mechalodon.mouth_close", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation SHOW_CANNON_ANIM = RawAnimation.begin().then("animation.mechalodon.show_cannon", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation HIDE_CANNON_ANIM = RawAnimation.begin().then("animation.mechalodon.hide_cannon", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -123,6 +129,12 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // add triggerable animations
         controllers.add(new AnimationController<>(this, "swim_fast_anim_controller", state -> PlayState.STOP).triggerableAnim("swim_fast", SWIM_FAST_ANIM));
+        controllers.add(new AnimationController<>(this, "swim_slow_anim_controller", state -> PlayState.STOP).triggerableAnim("swim_slow", SWIM_SLOW_ANIM));
+        controllers.add(new AnimationController<>(this, "bite_anim_controller", state -> PlayState.STOP).triggerableAnim("bite", BITE_ANIM));
+        controllers.add(new AnimationController<>(this, "mouth_open_anim_controller", state -> PlayState.STOP).triggerableAnim("mouth_open", MOUTH_OPEN_ANIM));
+        controllers.add(new AnimationController<>(this, "mouth_close_anim_controller", state -> PlayState.STOP).triggerableAnim("mouth_close", MOUTH_CLOSE_ANIM));
+        controllers.add(new AnimationController<>(this, "show_cannon_anim_controller", state -> PlayState.STOP).triggerableAnim("show_cannon", SHOW_CANNON_ANIM));
+        controllers.add(new AnimationController<>(this, "hide_cannon_anim_controller", state -> PlayState.STOP).triggerableAnim("hide_cannon", HIDE_CANNON_ANIM));
     }
 
     @Override
