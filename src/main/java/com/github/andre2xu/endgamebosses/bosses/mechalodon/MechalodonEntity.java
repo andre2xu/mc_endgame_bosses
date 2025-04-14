@@ -658,6 +658,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     // stop attack if target is a player in creative/spectator mode
                     this.attack_is_finished = true;
 
+                    // close mouth if it was opened
+                    if (this.landing_position != null) {
+                        this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
+                    }
+
                     return;
                 }
 
