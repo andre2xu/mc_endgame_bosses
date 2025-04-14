@@ -619,7 +619,20 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         @Override
         public void tick() {
-            System.out.println("LEAP FORWARD");
+            if (this.target != null && this.target.isAlive()) {
+                if (this.target instanceof Player player && (player.isCreative() || player.isSpectator())) {
+                    // stop attack if target is a player in creative/spectator mode
+                    this.attack_is_finished = true;
+
+                    return;
+                }
+
+                System.out.println("LEAP FORWARD");
+            }
+            else {
+                // stop attack if target doesn't exist or is dead
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
