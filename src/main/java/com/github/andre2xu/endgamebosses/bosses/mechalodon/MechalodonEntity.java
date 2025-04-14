@@ -35,7 +35,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from charging
     - Increase damage dealt to target from leaping forward
-    - Add 'open mouth' animation for leap forward attack
+    - Add sounds for Mechalodon
     */
 
 
