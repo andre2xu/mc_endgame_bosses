@@ -321,7 +321,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                             target_pos.x - current_pos.x,
                                             (target_pos.y - 2) - current_pos.y,
                                             target_pos.z - current_pos.z
-                                    ).normalize().scale(0.3) // follow speed
+                                    ).normalize().scale(0.5) // follow speed
                             ));
 
                             // run swim animation
@@ -392,7 +392,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                 ));
 
                                 // run swim animation
-                                this.triggerAnim("movement_trigger_anim_controller", "swim_fast");
+                                this.triggerAnim("movement_trigger_anim_controller", "swim_slow");
                             }
                             else {
                                 // this block changes the angle used for calculating the next point on the circle
