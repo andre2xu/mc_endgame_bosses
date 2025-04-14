@@ -35,6 +35,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from charging
     - Increase damage dealt to target from leaping forward
+    - Add 'open mouth' animation for leap forward attack
     */
 
 
@@ -594,6 +595,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private static class LeapForwardAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private Vec3 landing_position = null;
+        private double leap_highest_point;
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
@@ -605,6 +608,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         private void resetAttack() {
             this.attack_is_finished = false;
             this.target = null;
+            this.landing_position = null;
+            this.leap_highest_point = 0;
         }
 
         @Override
@@ -634,7 +639,63 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     return;
                 }
 
-                System.out.println("LEAP FORWARD");
+                Vec3 current_pos = this.mechalodon.position();
+                Vec3 target_pos = this.target.position();
+
+                // get landing position
+                if (this.landing_position == null) {
+                    // look at target
+                    this.mechalodon.getLookControl().setLookAt(this.target);
+
+                    // calculate landing position
+                    Vec3 vector_towards_target = new Vec3(
+                            target_pos.x - current_pos.x,
+                            (target_pos.y - 2) - current_pos.y,
+                            target_pos.z - current_pos.z
+                    ).normalize(); // normalize reduces the vector distance to 1 block
+
+                    double xz_scale = 18; // leap distance
+                    this.landing_position = target_pos.add(vector_towards_target.multiply(xz_scale, 1, xz_scale)); // towards target but "behind" them (i.e. extend the vector that points towards the target)
+
+                    // get the point in the leap where the y-position of the Mechalodon should be at its highest
+                    double starting_distance_to_landing_point = Math.sqrt(this.mechalodon.distanceToSqr(this.landing_position));
+                    this.leap_highest_point = starting_distance_to_landing_point * 0.4;
+                }
+
+                // leap towards landing position
+                double distance_to_landing_pos = Math.sqrt(this.mechalodon.distanceToSqr(this.landing_position));
+
+                if (distance_to_landing_pos > this.leap_highest_point) {
+                    // OBJECTIVE: Move up to the highest point
+
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            this.landing_position.x - current_pos.x,
+                            (target_pos.y + 4) - current_pos.y,
+                            this.landing_position.z - current_pos.z
+                    ).normalize().scale(0.9)); // jump speed
+                }
+                else {
+                    // OBJECTIVE: Move down to the landing position
+
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            this.landing_position.x - current_pos.x,
+                            this.landing_position.y - current_pos.y,
+                            this.landing_position.z - current_pos.z
+                    ).normalize().scale(0.4)); // fall speed
+                }
+
+                // check for collision with target while leaping
+                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                if (has_collided_with_target) {
+                    // damage target
+                    this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                }
+
+                // check if landing position has been reached and stop attack
+                if (distance_to_landing_pos <= 1) {
+                    this.attack_is_finished = true;
+                }
             }
             else {
                 // stop attack if target doesn't exist or is dead
