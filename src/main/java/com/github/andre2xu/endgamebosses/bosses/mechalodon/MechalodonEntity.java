@@ -245,6 +245,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     }
 
     @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
     protected void registerGoals() {
         // find and select a target
         this.targetSelector.addGoal(2, new SelectTargetGoal(this));
