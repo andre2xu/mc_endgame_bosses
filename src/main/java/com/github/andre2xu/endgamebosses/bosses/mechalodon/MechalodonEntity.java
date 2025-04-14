@@ -53,6 +53,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
     // ACTIONS
     public enum Action {;
+        // these determine which attack goal is run OR how the Mechalodon will move (see aiStep)
+
         public enum Move {
             IDLE,
             FOLLOW_TARGET,
