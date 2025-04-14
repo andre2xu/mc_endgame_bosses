@@ -682,6 +682,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     // get the point in the leap where the y-position of the Mechalodon should be at its highest
                     double starting_distance_to_landing_point = Math.sqrt(this.mechalodon.distanceToSqr(this.landing_position));
                     this.leap_highest_point = starting_distance_to_landing_point * 0.4;
+
+                    // run animations (these are only played at the start of the leap since this entire block is only executed at that time)
+                    this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_open");
+                    this.mechalodon.triggerAnim("movement_trigger_anim_controller", "swim_fast");
                 }
 
                 // leap towards landing position
@@ -712,16 +716,27 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 if (has_collided_with_target) {
                     // damage target
                     this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                    // close mouth
+                    this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
                 }
 
                 // check if landing position has been reached and stop attack
                 if (distance_to_landing_pos <= 1) {
                     this.attack_is_finished = true;
+
+                    // close mouth if it's still open
+                    if (!has_collided_with_target) {
+                        this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
+                    }
                 }
             }
             else {
                 // stop attack if target doesn't exist or is dead
                 this.attack_is_finished = true;
+
+                // close mouth
+                this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
             }
         }
 
