@@ -391,15 +391,15 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     else {
                         // OBJECTIVE: If circling around isn't possible, attack the target in other ways
 
-                        int random_number = new Random().nextInt(1, 21); // pick a number from 1-20
+                        int random_number = new Random().nextInt(1, 7); // pick a number from 1-6
 
                         if (distance_to_target >= 5) {
                             // look at target
                             this.getLookControl().setLookAt(target);
 
                             // choose a melee attack that doesn't require the Mechalodon to get close
-                            boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/20 chance to do this
-                            boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/20 chance to do this
+                            boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/6 chance to do this
+                            boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/6 chance to do this
 
                             if (perform_charge_attack) {
                                 this.setAttackAction(Action.Attack.CHARGE);
