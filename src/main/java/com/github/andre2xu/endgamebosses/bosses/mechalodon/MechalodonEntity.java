@@ -75,7 +75,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             CHARGE,
             LEAP_FORWARD,
             BITE,
-            TAIL_WHIP,
 
             // range
             HOMING_MISSILE
@@ -204,12 +203,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 action_id = 3;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
-            case Action.Attack.TAIL_WHIP:
-                action_id = 4;
-                this.attack_type = Action.AttackType.MELEE;
-                break;
             case Action.Attack.HOMING_MISSILE:
-                action_id = 5;
+                action_id = 4;
                 this.attack_type = Action.AttackType.RANGE;
                 break;
             default:
@@ -234,9 +229,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 attack_action = Action.Attack.BITE;
                 break;
             case 4:
-                attack_action = Action.Attack.TAIL_WHIP;
-                break;
-            case 5:
                 attack_action = Action.Attack.HOMING_MISSILE;
                 break;
             default:
@@ -431,7 +423,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             }
                         }
                         else {
-                            System.out.println("BITE OR TAIL WHIP");
+                            System.out.println("BITE");
                         }
                     }
                 }
