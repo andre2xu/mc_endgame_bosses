@@ -543,6 +543,13 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             }
             else {
                 if (this.target != null && this.target.isAlive()) {
+                    if (this.target instanceof Player player && (player.isCreative() || player.isSpectator())) {
+                        // stop attack if target is a player in creative/spectator mode
+                        this.attack_is_finished = true;
+
+                        return;
+                    }
+
                     // move towards target
                     Vec3 current_pos = this.mechalodon.position();
                     Vec3 target_pos = target.position();
