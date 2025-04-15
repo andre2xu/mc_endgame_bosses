@@ -36,6 +36,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     - Increase damage dealt to target from charging
     - Increase damage dealt to target from leaping forward
     - Increase damage dealt to target from biting
+    - Increase damage dealt to target from the underground surprise attack
     - Add sounds for Mechalodon
     */
 
