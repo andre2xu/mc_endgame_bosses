@@ -35,6 +35,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from charging
     - Increase damage dealt to target from leaping forward
+    - Increase damage dealt to target from biting
     - Add sounds for Mechalodon
     */
 
@@ -272,6 +273,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         */
         this.goalSelector.addGoal(1, new ChargeAttackGoal(this));
         this.goalSelector.addGoal(1, new LeapForwardAttackGoal(this));
+        this.goalSelector.addGoal(1, new BiteAttackGoal(this));
     }
 
     @Override
@@ -423,7 +425,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             }
                         }
                         else {
-                            System.out.println("BITE");
+                            // bite target if they get too close
+                            this.setAttackAction(Action.Attack.BITE);
                         }
                     }
                 }
@@ -740,6 +743,49 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.LEAP_FORWARD;
+        }
+    }
+
+    private static class BiteAttackGoal extends Goal {
+        private final MechalodonEntity mechalodon;
+        private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
+        private boolean attack_is_finished = false;
+
+        public BiteAttackGoal(MechalodonEntity mechalodon) {
+            this.mechalodon = mechalodon;
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+            this.target = null;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
+            this.target = this.mechalodon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.BITE;
         }
     }
 }
