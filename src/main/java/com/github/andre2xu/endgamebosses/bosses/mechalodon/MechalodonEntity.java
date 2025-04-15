@@ -389,14 +389,52 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                 this.triggerAnim("movement_trigger_anim_controller", "swim_slow");
                             }
                             else {
-                                // this block changes the angle used for calculating the next point on the circle
+                                // decide whether to attack or get the next point on the circle
 
-                                if (!this.circle_point_angles_array_iterator.hasNext()) {
-                                    // get a new iterator to restart the circling
-                                    this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                                boolean should_attack = new Random().nextInt(1,4) == 1; // 1 in 3 chances to attack
+
+                                if (should_attack) {
+                                    // choose an attack
+                                    int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
+
+                                    switch (random_number) {
+                                        case 1:
+                                            this.getLookControl().setLookAt(target);
+                                            this.setAttackAction(Action.Attack.CHARGE);
+                                            break;
+                                        case 2:
+                                            this.getLookControl().setLookAt(target);
+                                            this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                            break;
+                                        case 3:
+                                        default:
+                                            System.out.println("SURPRISE ATTACK FROM BELOW");
+                                    }
+
+                                    // update the angle needed for the next point so that the next point will roughly be where the Mechalodon is after the chosen attack (i.e. behind the player)
+                                    int current_angle = this.angle_needed_to_find_next_circle_point;
+                                    int new_angle = (current_angle + 180) + 45;
+
+                                    this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator(); // refresh the iterator so that it points to the beginning of the array
+
+                                    int iterator_angle = this.circle_point_angles_array_iterator.next();
+
+                                    while (this.circle_point_angles_array_iterator.hasNext() && iterator_angle != new_angle) {
+                                        iterator_angle = this.circle_point_angles_array_iterator.next();
+                                    }
+
+                                    this.angle_needed_to_find_next_circle_point = iterator_angle;
                                 }
+                                else {
+                                    // get the angle used for calculating the next point on the circle
 
-                                this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
+                                    if (!this.circle_point_angles_array_iterator.hasNext()) {
+                                        // get a new iterator to restart the circling
+                                        this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                                    }
+
+                                    this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
+                                }
                             }
                         }
                         else {
