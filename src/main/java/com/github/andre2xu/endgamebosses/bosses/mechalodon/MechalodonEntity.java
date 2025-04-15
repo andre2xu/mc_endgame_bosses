@@ -846,7 +846,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 }
             }
             else {
-                // cancel attack
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
                 this.attack_is_finished = true;
             }
         }
