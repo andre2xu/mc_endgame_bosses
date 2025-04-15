@@ -610,7 +610,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private Vec3 landing_position = null;
-        private double leap_highest_point;
+        private float leap_highest_point;
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
@@ -680,7 +680,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                     // get the point in the leap where the y-position of the Mechalodon should be at its highest
                     double starting_distance_to_landing_point = Math.sqrt(this.mechalodon.distanceToSqr(this.landing_position));
-                    this.leap_highest_point = starting_distance_to_landing_point * 0.4;
+                    this.leap_highest_point = (float) starting_distance_to_landing_point * 0.4f;
 
                     // run animations (these are only played at the start of the leap since this entire block is only executed at that time)
                     this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_open");
