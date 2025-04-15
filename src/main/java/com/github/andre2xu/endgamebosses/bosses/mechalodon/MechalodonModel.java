@@ -41,6 +41,9 @@ public class MechalodonModel extends GeoModel<MechalodonEntity> {
             if (Objects.equals(running_animation_name, "animation.mechalodon.face_up") || Objects.equals(running_animation_name, "animation.mechalodon.face_down")) {
                 rotate_body = false;
             }
+            else if (Objects.equals(running_animation_name, "animation.mechalodon.face_up_reverse") || Objects.equals(running_animation_name, "animation.mechalodon.face_down_reverse")) {
+                rotate_body = animationState.getController().hasAnimationFinished();
+            }
         }
 
         // this is for 'LookControl.setLookAt' to work
