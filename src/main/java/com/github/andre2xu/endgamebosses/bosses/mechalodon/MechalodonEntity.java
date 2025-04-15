@@ -91,6 +91,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     protected static final RawAnimation MOUTH_CLOSE_ANIM = RawAnimation.begin().then("animation.mechalodon.mouth_close", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation SHOW_CANNON_ANIM = RawAnimation.begin().then("animation.mechalodon.show_cannon", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation HIDE_CANNON_ANIM = RawAnimation.begin().then("animation.mechalodon.hide_cannon", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation FACE_UP_ANIM = RawAnimation.begin().then("animation.mechalodon.face_up", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation FACE_DOWN_ANIM = RawAnimation.begin().then("animation.mechalodon.face_down", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -139,6 +141,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 .triggerableAnim("mouth_close", MOUTH_CLOSE_ANIM)
                 .triggerableAnim("show_cannon", SHOW_CANNON_ANIM)
                 .triggerableAnim("hide_cannon", HIDE_CANNON_ANIM)
+        );
+
+        controllers.add(new AnimationController<>(this, "rotation_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("face_up", FACE_UP_ANIM)
+                .triggerableAnim("face_down", FACE_DOWN_ANIM)
         );
     }
 
