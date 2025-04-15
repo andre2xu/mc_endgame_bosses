@@ -414,6 +414,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                     // choose an attack
                                     int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
 
+                                    random_number = 3;
+
                                     switch (random_number) {
                                         case 1:
                                             this.setAttackAction(Action.Attack.CHARGE);
@@ -925,6 +927,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             this.mechalodon = mechalodon;
         }
 
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
             this.attack_is_finished = false;
             this.target = null;
@@ -949,7 +955,13 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         @Override
         public void tick() {
-            super.tick();
+            if (this.canAttack()) {
+                System.out.println("GOING TO ATTACK FROM BELOW");
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
