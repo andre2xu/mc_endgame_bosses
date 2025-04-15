@@ -391,7 +391,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                             else {
                                 // decide whether to attack or get the next point on the circle
 
-                                boolean should_attack = new Random().nextInt(1,4) == 1; // 1 in 3 chances to attack
+                                boolean should_attack = new Random().nextInt(1,3) == 1; // 1 in 2 chances to attack
 
                                 if (should_attack) {
                                     // choose an attack
