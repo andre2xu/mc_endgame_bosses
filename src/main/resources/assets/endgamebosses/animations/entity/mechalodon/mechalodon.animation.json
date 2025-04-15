@@ -419,6 +419,28 @@
 				}
 			}
 		},
+		"animation.mechalodon.face_up_reverse": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.375,
+			"bones": {
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [-80, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				}
+			}
+		},
 		"animation.mechalodon.face_down": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.375,
@@ -430,6 +452,28 @@
 						},
 						"0.25": {
 							"vector": [80, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				}
+			}
+		},
+		"animation.mechalodon.face_down_reverse": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.375,
+			"bones": {
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [80, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
 						}
 					},
 					"position": {
