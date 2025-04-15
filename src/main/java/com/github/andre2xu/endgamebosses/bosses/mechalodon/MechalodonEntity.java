@@ -529,6 +529,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             this.attack_duration--;
         }
 
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
             this.attack_duration = 20 * 6; // 6 seconds
             this.attack_is_finished = false;
@@ -560,14 +564,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 this.attack_is_finished = true;
             }
             else {
-                if (this.target != null && this.target.isAlive()) {
-                    if (this.target instanceof Player player && (player.isCreative() || player.isSpectator())) {
-                        // stop attack if target is a player in creative/spectator mode
-                        this.attack_is_finished = true;
-
-                        return;
-                    }
-
+                if (this.canAttack()) {
                     // move towards target
                     Vec3 current_pos = this.mechalodon.position();
                     Vec3 target_pos = target.position();
@@ -595,7 +592,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                     }
                 }
                 else {
-                    // stop attack if target doesn't exist or is dead
+                    // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
                     this.attack_is_finished = true;
                 }
 
