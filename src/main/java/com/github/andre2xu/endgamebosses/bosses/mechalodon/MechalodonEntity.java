@@ -409,7 +409,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                         int random_number = new Random().nextInt(1, 7); // pick a number from 1-6
 
-                        if (distance_to_target >= 5) {
+                        if (distance_to_target >= 10) {
                             // look at target
                             this.getLookControl().setLookAt(target);
 
@@ -749,16 +749,32 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private static class BiteAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private Vec3 target_pos = null;
         private final float attack_damage = 1f; // CHANGE LATER
+        private float attack_cooldown = 0; // no cooldown for the first bite
         private boolean attack_is_finished = false;
 
         public BiteAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
         }
 
+        private void decrementCooldown() {
+            // this runs whenever the 'canUse' method is called
+
+            if (this.attack_cooldown > 0) {
+                this.attack_cooldown--;
+            }
+        }
+
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
             this.attack_is_finished = false;
             this.target = null;
+            this.target_pos = null;
+            this.attack_cooldown = 20f; // 1 second
         }
 
         @Override
@@ -780,12 +796,66 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         @Override
         public void tick() {
-            super.tick();
+            if (this.canAttack()) {
+                // save target position before going in for the bite. This is done so the target isn't followed which allows them to dodge
+                Vec3 target_pos = this.target.position();
+
+                if (this.target_pos == null) {
+                    if (Math.sqrt(this.mechalodon.distanceToSqr(target_pos)) <= 10) {
+                        this.target_pos = target_pos.subtract(0, 1, 0); // towards target but 1 block below them
+
+                        // look at saved target position
+                        this.mechalodon.getLookControl().setLookAt(this.target_pos);
+                    }
+                    else {
+                        // cancel attack since target was far away
+                        this.attack_is_finished = true;
+
+                        return;
+                    }
+                }
+
+                // move to saved target position
+                Vec3 current_pos = this.mechalodon.position();
+
+                this.mechalodon.setDeltaMovement(new Vec3(
+                        this.target_pos.x - current_pos.x,
+                        this.target_pos.y - current_pos.y,
+                        this.target_pos.z - current_pos.z
+                ).normalize().scale(0.3)); // movement speed
+
+                // check if collision occurred
+                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                if (has_collided_with_target) {
+                    // run bite animation
+                    this.mechalodon.triggerAnim("attack_trigger_anim_controller", "bite");
+
+                    // damage target
+                    this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                    // stop attack
+                    this.attack_is_finished = true;
+
+                    return;
+                }
+
+                // check if saved target position has been reached and stop attack
+                if (Math.sqrt(this.mechalodon.distanceToSqr(this.target_pos)) <= 1) {
+                    this.attack_is_finished = true;
+                }
+            }
+            else {
+                // cancel attack
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
         public boolean canUse() {
-            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.BITE;
+            this.decrementCooldown();
+
+            return !this.attack_is_finished && this.attack_cooldown == 0 && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.BITE;
         }
     }
 }
