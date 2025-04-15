@@ -645,6 +645,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         @Override
         public void tick() {
+            // OBJECTIVE: Leap towards the target's saved position (the one at the start of the attack) and land directly behind. If a collision occurred with the target during the leap, deal damage to them
+
             if (this.target != null && this.target.isAlive()) {
                 if (this.target instanceof Player player && (player.isCreative() || player.isSpectator())) {
                     // stop attack if target is a player in creative/spectator mode
@@ -793,6 +795,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
         @Override
         public void tick() {
+            // OBJECTIVE: Move towards the target's saved position (the one at the start of the attack) and deal damage to the target if a collision occurred while doing so
+
             if (this.canAttack()) {
                 // save target position before going in for the bite. This is done so the target isn't followed which allows them to dodge
                 Vec3 target_pos = this.target.position();
