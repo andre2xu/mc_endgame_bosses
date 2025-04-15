@@ -421,14 +421,14 @@
 		},
 		"animation.mechalodon.face_up_reverse": {
 			"loop": "hold_on_last_frame",
-			"animation_length": 0.375,
+			"animation_length": 1.25,
 			"bones": {
 				"body": {
 					"rotation": {
 						"0.0": {
 							"vector": [-80, 0, 0]
 						},
-						"0.25": {
+						"1.0": {
 							"vector": [0, 0, 0]
 						}
 					},
@@ -465,14 +465,14 @@
 		},
 		"animation.mechalodon.face_down_reverse": {
 			"loop": "hold_on_last_frame",
-			"animation_length": 0.375,
+			"animation_length": 1.25,
 			"bones": {
 				"body": {
 					"rotation": {
 						"0.0": {
 							"vector": [80, 0, 0]
 						},
-						"0.25": {
+						"1.0": {
 							"vector": [0, 0, 0]
 						}
 					},
