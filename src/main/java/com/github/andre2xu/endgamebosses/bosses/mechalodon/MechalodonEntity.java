@@ -411,7 +411,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                                     // update the angle needed for the next point so that the next point will roughly be where the Mechalodon is after the chosen attack (i.e. behind the player)
                                     int current_angle = this.angle_needed_to_find_next_circle_point;
-                                    int new_angle = (current_angle + 180) + 45;
+                                    int new_angle = (current_angle + 180) + 45; // NOTE: 45 is the change in degrees per point (see constructor)
 
                                     this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator(); // refresh the iterator so that it points to the beginning of the array
 
