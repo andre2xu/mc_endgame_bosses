@@ -418,8 +418,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                     // choose an attack
                                     int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
 
-                                    random_number = 3;
-
                                     switch (random_number) {
                                         case 1:
                                             this.setAttackAction(Action.Attack.CHARGE);
@@ -428,8 +426,9 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                                             this.setAttackAction(Action.Attack.LEAP_FORWARD);
                                             break;
                                         case 3:
-                                        default:
                                             this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
+                                            break;
+                                        default:
                                     }
 
                                     // update the angle needed for the next point so that the next point will roughly be where the Mechalodon is after the chosen attack (i.e. behind the player)
@@ -925,12 +924,20 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private Vec3 target_pos = null;
+        private boolean has_resurfaced = false;
+        private float stop_attack_delay; // this delay makes the animation reset, which occurs after the attack, look smoother
         private final float attack_damage = 1f; // CHANGE LATER
         private float attack_countdown; // countdown for surprise attack (starts decrementing when Mechalodon is directly below target)
         private boolean attack_is_finished = false;
 
         public SurpriseFromBelowAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
+        }
+
+        private void decrementStopAttackDelay() {
+            if (this.stop_attack_delay > 0) {
+                this.stop_attack_delay--;
+            }
         }
 
         private void decrementAttackCountdown() {
@@ -947,6 +954,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             this.attack_is_finished = false;
             this.target = null;
             this.target_pos = null;
+            this.has_resurfaced = false;
         }
 
         @Override
@@ -957,19 +965,18 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             // reset countdown
             this.attack_countdown = 20 * 4; // 4 seconds
 
+            // reset the delay
+            this.stop_attack_delay = 10; // 0.5 seconds
+
             super.start();
         }
 
         @Override
         public void stop() {
-            // stop animations
-            if (this.target_pos != null) {
-                this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
-            }
-
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+            this.mechalodon.setMoveAction(Action.Move.FOLLOW_TARGET); // stop circling
 
             super.stop();
         }
@@ -980,52 +987,59 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 Vec3 current_pos = this.mechalodon.position();
                 Vec3 target_pos = this.target.position();
 
+                // move to the target and stay below them until the countdown falls to zero
                 if (this.attack_countdown > 0) {
-                    // move below target
                     this.mechalodon.setDeltaMovement(new Vec3(
                             target_pos.x - current_pos.x,
                             (target_pos.y - 10) - current_pos.y,
                             target_pos.z - current_pos.z
                     ).normalize().scale(0.8)); // movement speed
 
-                    // continue counting down
                     this.decrementAttackCountdown();
                 }
-
-                // check if the countdown has finished and save the target's last position
-                if (this.target_pos == null && this.attack_countdown == 0) {
-                    this.target_pos = target_pos;
-                }
-
-                if (this.target_pos != null) {
-                    // OBJECTIVE: Stop moving and do surprise attack (doesn't matter if the target has moved or not)
-
-                    this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_up");
-                    this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_open");
-
-                    this.mechalodon.setDeltaMovement(new Vec3(
-                            this.target_pos.x - current_pos.x,
-                            (this.target_pos.y - 1) - current_pos.y,
-                            this.target_pos.z - current_pos.z
-                    ).normalize().scale(1)); // movement speed
-
-                    // check if collision occurred
-                    boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
-
-                    if (has_collided_with_target) {
-                        // damage target
-                        this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
-
-                        // stop attack
-                        this.attack_is_finished = true;
-
-                        return;
+                else {
+                    // check if the countdown has finished and save the target's last position
+                    if (this.target_pos == null) {
+                        this.target_pos = target_pos;
                     }
 
-                    // check if the last position of the target has been reached and stop the attack
-                    if (Math.sqrt(this.mechalodon.distanceToSqr(this.target_pos)) <= 1) {
-                        // stop attack
-                        this.attack_is_finished = true;
+                    // once the target's last position has been saved, launch surprise attack
+                    if (!this.has_resurfaced) {
+                        // OBJECTIVE: Stop moving and do surprise attack (doesn't matter if the target has moved or not)
+
+                        this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_up");
+                        this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_open");
+
+                        this.mechalodon.setDeltaMovement(new Vec3(
+                                this.target_pos.x - current_pos.x,
+                                this.target_pos.y - current_pos.y,
+                                this.target_pos.z - current_pos.z
+                        ).normalize().scale(1)); // movement speed
+
+                        // check if collision occurred
+                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                        if (has_collided_with_target) {
+                            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                        }
+
+                        // check if the last position of the target has been reached
+                        if (this.mechalodon.position().y >= this.target_pos.y - 1) {
+                            this.has_resurfaced = true;
+                        }
+                    }
+                    else {
+                        // stop attack after a delay
+                        if (this.stop_attack_delay > 0) {
+                            this.decrementStopAttackDelay();
+                        }
+                        else {
+                            // reset animations
+                            this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_up_reverse");
+                            this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
+
+                            this.attack_is_finished = true;
+                        }
                     }
                 }
             }
