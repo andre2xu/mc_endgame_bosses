@@ -920,11 +920,19 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private static class SurpriseFromBelowAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private Vec3 target_pos = null;
         private final float attack_damage = 1f; // CHANGE LATER
+        private float attack_countdown; // countdown for surprise attack (starts decrementing when Mechalodon is directly below target)
         private boolean attack_is_finished = false;
 
         public SurpriseFromBelowAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
+        }
+
+        private void decrementAttackCountdown() {
+            if (this.attack_countdown > 0) {
+                this.attack_countdown--;
+            }
         }
 
         private boolean canAttack() {
@@ -934,6 +942,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         private void resetAttack() {
             this.attack_is_finished = false;
             this.target = null;
+            this.target_pos = null;
         }
 
         @Override
@@ -941,11 +950,19 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
             // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
             this.target = this.mechalodon.getTarget();
 
+            // reset countdown
+            this.attack_countdown = 20 * 4; // 4 seconds
+
             super.start();
         }
 
         @Override
         public void stop() {
+            // stop animations
+            if (this.target_pos != null) {
+                this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
+            }
+
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
@@ -956,7 +973,57 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("GOING TO ATTACK FROM BELOW");
+                Vec3 current_pos = this.mechalodon.position();
+                Vec3 target_pos = this.target.position();
+
+                if (this.attack_countdown > 0) {
+                    // move below target
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            target_pos.x - current_pos.x,
+                            (target_pos.y - 10) - current_pos.y,
+                            target_pos.z - current_pos.z
+                    ).normalize().scale(0.8)); // movement speed
+
+                    // continue counting down
+                    this.decrementAttackCountdown();
+                }
+
+                // check if the countdown has finished and save the target's last position
+                if (this.target_pos == null && this.attack_countdown == 0) {
+                    this.target_pos = target_pos;
+                }
+
+                if (this.target_pos != null) {
+                    // OBJECTIVE: Stop moving and do surprise attack (doesn't matter if the target has moved or not)
+
+                    this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_up");
+                    this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_open");
+
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            this.target_pos.x - current_pos.x,
+                            (this.target_pos.y - 1) - current_pos.y,
+                            this.target_pos.z - current_pos.z
+                    ).normalize().scale(1)); // movement speed
+
+                    // check if collision occurred
+                    boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                    if (has_collided_with_target) {
+                        // damage target
+                        this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                        // stop attack
+                        this.attack_is_finished = true;
+
+                        return;
+                    }
+
+                    // check if the last position of the target has been reached and stop the attack
+                    if (Math.sqrt(this.mechalodon.distanceToSqr(this.target_pos)) <= 1) {
+                        // stop attack
+                        this.attack_is_finished = true;
+                    }
+                }
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
