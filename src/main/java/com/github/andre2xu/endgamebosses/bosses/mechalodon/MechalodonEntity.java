@@ -399,11 +399,9 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
                                     switch (random_number) {
                                         case 1:
-                                            this.getLookControl().setLookAt(target);
                                             this.setAttackAction(Action.Attack.CHARGE);
                                             break;
                                         case 2:
-                                            this.getLookControl().setLookAt(target);
                                             this.setAttackAction(Action.Attack.LEAP_FORWARD);
                                             break;
                                         case 3:
@@ -448,9 +446,6 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                         int random_number = new Random().nextInt(1, 7); // pick a number from 1-6
 
                         if (distance_to_target >= 10) {
-                            // look at target
-                            this.getLookControl().setLookAt(target);
-
                             // choose a melee attack that doesn't require the Mechalodon to get close
                             boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/6 chance to do this
                             boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/6 chance to do this
@@ -581,6 +576,11 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
             this.target = this.mechalodon.getTarget();
+
+            if (this.canAttack()) {
+                // look at target
+                this.mechalodon.getLookControl().setLookAt(this.target);
+            }
 
             super.start();
         }
