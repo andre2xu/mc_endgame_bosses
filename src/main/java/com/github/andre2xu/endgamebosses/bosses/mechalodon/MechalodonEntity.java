@@ -95,8 +95,8 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     protected static final RawAnimation HIDE_CANNON_ANIM = RawAnimation.begin().then("animation.mechalodon.hide_cannon", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation FACE_UP_ANIM = RawAnimation.begin().then("animation.mechalodon.face_up", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation FACE_DOWN_ANIM = RawAnimation.begin().then("animation.mechalodon.face_down", Animation.LoopType.HOLD_ON_LAST_FRAME);
-    protected static final RawAnimation FACE_UP_REVERSE_ANIM = RawAnimation.begin().then("animation.mechalodon.face_up_reverse", Animation.LoopType.PLAY_ONCE);
-    protected static final RawAnimation FACE_DOWN_REVERSE_ANIM = RawAnimation.begin().then("animation.mechalodon.face_down_reverse", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation FACE_UP_REVERSE_ANIM = RawAnimation.begin().then("animation.mechalodon.face_up_reverse", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation FACE_DOWN_REVERSE_ANIM = RawAnimation.begin().then("animation.mechalodon.face_down_reverse", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
