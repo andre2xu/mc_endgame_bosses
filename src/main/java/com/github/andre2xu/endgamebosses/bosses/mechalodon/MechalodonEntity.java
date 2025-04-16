@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -309,14 +310,17 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected void registerGoals() {
+        // target the player that hurt the Mechalodon
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
+
         // find and select a target
-        this.targetSelector.addGoal(2, new SelectTargetGoal(this));
+        this.targetSelector.addGoal(3, new SelectTargetGoal(this));
 
         /*
         HOW ATTACKING WORKS:
         - There are two types: MELEE and RANGE (see Action.AttackType enums)
         - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with SelectTargetGoal. The priority of 1 means they will be executed instead of the SelectTargetGoal
-        - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the SelectTargetGoal when an attack goal is run
+        - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
         this.goalSelector.addGoal(1, new ChargeAttackGoal(this));
