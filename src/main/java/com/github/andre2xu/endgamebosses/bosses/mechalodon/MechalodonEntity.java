@@ -31,7 +31,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class MechalodonEntity extends FlyingMob implements GeoEntity {
+public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     /*
     See 'CHANGE LATER' comments
 
@@ -111,7 +111,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
 
 
-    public MechalodonEntity(EntityType<? extends FlyingMob> pEntityType, Level pLevel) {
+    public MechalodonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
         this.noPhysics = true; // ignore block collisions
