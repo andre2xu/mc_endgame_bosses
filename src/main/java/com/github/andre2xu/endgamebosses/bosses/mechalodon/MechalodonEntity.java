@@ -851,6 +851,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         public BiteAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
         private void decrementCooldown() {
@@ -968,6 +969,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         public SurpriseFromBelowAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
         private void decrementStopAttackDelay() {
