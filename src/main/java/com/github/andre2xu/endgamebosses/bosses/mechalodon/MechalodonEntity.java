@@ -1,11 +1,15 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -48,6 +52,13 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     private final ArrayList<Integer> all_angles_needed_to_find_circle_points = new ArrayList<>();
     private Iterator<Integer> circle_point_angles_array_iterator;
     private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+
+    // BOSS FIGHT
+    private final ServerBossEvent server_boss_event = new ServerBossEvent(
+            Component.literal("Mechalodon"),
+            BossEvent.BossBarColor.RED,
+            BossEvent.BossBarOverlay.NOTCHED_12
+    );
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
@@ -180,6 +191,23 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
 
 
 
+    // BOSS FIGHT
+    @Override
+    public void startSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.startSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.addPlayer(pServerPlayer);
+    }
+
+    @Override
+    public void stopSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.stopSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.removePlayer(pServerPlayer);
+    }
+
+
+
     // AI
     private void setMoveAction(Action.Move moveAction) {
         int action_id = switch (moveAction) {
@@ -301,6 +329,10 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // update boss health bar
+        this.server_boss_event.setProgress(this.getHealth() / this.getMaxHealth());
+
+        // handle movement
         LivingEntity target = this.getTarget();
 
         if (target != null) {
