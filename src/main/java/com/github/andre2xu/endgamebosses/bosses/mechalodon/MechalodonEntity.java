@@ -781,7 +781,7 @@ public class MechalodonEntity extends FlyingMob implements GeoEntity {
                 }
 
                 // check if landing position has been reached and stop attack
-                if (distance_to_landing_pos <= 1) {
+                if (distance_to_landing_pos <= 2) {
                     this.attack_is_finished = true;
 
                     // close mouth if it's still open
