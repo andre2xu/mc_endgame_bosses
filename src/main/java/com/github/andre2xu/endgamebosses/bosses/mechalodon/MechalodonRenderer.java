@@ -3,7 +3,9 @@ package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -20,5 +22,11 @@ public class MechalodonRenderer extends GeoEntityRenderer<MechalodonEntity> {
         poseStack.scale(SIZE, SIZE, SIZE);
 
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    }
+
+    @Override
+    public boolean shouldRender(@NotNull MechalodonEntity pLivingEntity, @NotNull Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
+        // always render even when out of view
+        return true;
     }
 }

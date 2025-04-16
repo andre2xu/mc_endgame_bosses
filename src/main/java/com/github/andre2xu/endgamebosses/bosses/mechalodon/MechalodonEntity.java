@@ -117,6 +117,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         super(pEntityType, pLevel);
 
         this.noPhysics = true; // ignore block collisions
+        this.noCulling = true; // stay rendered even when out of view
 
         // get all the angles needed to make the Mechalodon circle around a target
         int current_degree = 0;
