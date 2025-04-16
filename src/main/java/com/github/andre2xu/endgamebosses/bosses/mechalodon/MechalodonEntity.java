@@ -613,7 +613,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         public ChargeAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
-            this.setFlags(EnumSet.of(Flag.TARGET));
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
         private void decrementAttackDuration() {
@@ -712,7 +712,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         public LeapForwardAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
-            this.setFlags(EnumSet.of(Flag.TARGET));
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK, Flag.JUMP));
         }
 
         private void resetAttack() {
