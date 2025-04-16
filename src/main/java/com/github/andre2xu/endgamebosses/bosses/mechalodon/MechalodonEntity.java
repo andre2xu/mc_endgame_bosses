@@ -319,7 +319,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         /*
         HOW ATTACKING WORKS:
         - There are two types: MELEE and RANGE (see Action.AttackType enums)
-        - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with SelectTargetGoal. The priority of 1 means they will be executed instead of the SelectTargetGoal
+        - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with the target selector goals. The priority of 1 means they will be executed instead of a target selector goal
         - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
