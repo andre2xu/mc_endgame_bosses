@@ -20,6 +20,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -306,6 +307,57 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     @Override
     public boolean fireImmune() {
         return true;
+    }
+
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
+        // taken from Minecraft's 'FlyingMob' class
+    }
+
+    @Override
+    public boolean onClimbable() {
+        // taken from Minecraft's 'FlyingMob' class
+
+        return false;
+    }
+
+    @Override
+    public void travel(@NotNull Vec3 pTravelVector) {
+        // taken from Minecraft's 'FlyingMob' class. This ensures the movement works properly and doesn't overshoot
+
+        if (this.isControlledByLocalInstance()) {
+            if (this.isInWater()) {
+                this.moveRelative(0.02F, pTravelVector);
+                this.move(MoverType.SELF, this.getDeltaMovement());
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
+            }
+            else if (this.isInLava()) {
+                this.moveRelative(0.02F, pTravelVector);
+                this.move(MoverType.SELF, this.getDeltaMovement());
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.5));
+            }
+            else {
+                BlockPos ground = getBlockPosBelowThatAffectsMyMovement();
+                float f = 0.91F;
+
+                if (this.onGround()) {
+                    f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+                }
+
+                float f1 = 0.16277137F / (f * f * f);
+                f = 0.91F;
+
+                if (this.onGround()) {
+                    f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+                }
+
+                this.moveRelative(this.onGround() ? 0.1F * f1 : 0.02F, pTravelVector);
+                this.move(MoverType.SELF, this.getDeltaMovement());
+                this.setDeltaMovement(this.getDeltaMovement().scale(f));
+            }
+        }
+
+        this.calculateEntityAnimation(false);
     }
 
     @Override
