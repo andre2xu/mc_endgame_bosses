@@ -1509,7 +1509,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
 
 
-
         private static class Missile extends AbstractHurtingProjectile {
             public Missile(double pX, double pY, double pZ, Vec3 pMovement, Level pLevel) {
                 super(EntityType.DRAGON_FIREBALL, pX, pY, pZ, pMovement, pLevel);
