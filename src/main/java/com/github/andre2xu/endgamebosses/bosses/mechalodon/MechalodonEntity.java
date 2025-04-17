@@ -596,6 +596,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             int random_number = new Random().nextInt(1, 13); // pick a number from 1-12
 
                             if (distance_to_target >= 10) {
+                                random_number = 6; // temp
+
                                 // choose a melee attack that doesn't require the Mechalodon to get close
                                 boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/12 chance to do this
                                 boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/12 chance to do this
@@ -1342,6 +1344,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
             this.target = this.mechalodon.getTarget();
 
+            // show cannon
+            this.mechalodon.triggerAnim("attack_trigger_anim_controller", "show_cannon");
+
             super.start();
         }
 
@@ -1351,13 +1356,17 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
 
+            // hide cannon
+            this.mechalodon.triggerAnim("attack_trigger_anim_controller", "hide_cannon");
+
             super.stop();
         }
 
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("FIRING HOMING MISSILES");
+                // look at target
+                this.mechalodon.getLookControl().setLookAt(this.target);
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
