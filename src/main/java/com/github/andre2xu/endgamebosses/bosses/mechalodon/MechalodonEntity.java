@@ -1431,10 +1431,12 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     Vec3 current_pos = this.mechalodon.position();
                     Vec3 target_pos = this.target.position();
 
-                    if (this.mechalodon.distanceTo(this.target) > 20) {
+                    double height_to_fire_at = target_pos.y + 10;
+
+                    if (this.mechalodon.distanceTo(this.target) > 20 || current_pos.y < height_to_fire_at) {
                         this.mechalodon.setDeltaMovement(new Vec3(
                                 target_pos.x - current_pos.x,
-                                (target_pos.y + 10) - current_pos.y,
+                                height_to_fire_at - current_pos.y,
                                 target_pos.z - current_pos.z
                         ).normalize().scale(0.6)); // flight speed
                     }
