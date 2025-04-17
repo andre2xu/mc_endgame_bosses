@@ -1251,10 +1251,12 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     Vec3 current_pos = this.mechalodon.position();
                     Vec3 target_pos = this.target.position();
 
+                    int height_to_dive_down = 30;
+
                     // move towards target
                     this.mechalodon.setDeltaMovement(new Vec3(
                             target_pos.x - current_pos.x,
-                            (target_pos.y + 15) - current_pos.y, // 15 blocks above target
+                            (target_pos.y + height_to_dive_down) - current_pos.y,
                             target_pos.z - current_pos.z
                     ).normalize().scale(0.8)); // movement speed
 
@@ -1263,7 +1265,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     target_pos = this.target.position();
 
                     // check if above target and save their position
-                    if (Math.round(current_pos.x) == Math.round(target_pos.x) && Math.round(current_pos.z) == Math.round(target_pos.z) && Math.round(current_pos.y) >= Math.round(target_pos.y + 15)) {
+                    if (Math.round(current_pos.x) == Math.round(target_pos.x) && Math.round(current_pos.z) == Math.round(target_pos.z) && Math.round(current_pos.y) >= Math.round(target_pos.y + height_to_dive_down)) {
                         this.target_pos = target_pos;
                     }
                 }
@@ -1282,7 +1284,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                 this.target_pos.x - current_pos.x,
                                 this.target_pos.y - current_pos.y,
                                 this.target_pos.z - current_pos.z
-                        ).normalize().scale(1)); // dive speed
+                        ).normalize().scale(2)); // dive speed
 
                         // check if collision occurred while diving
                         boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
