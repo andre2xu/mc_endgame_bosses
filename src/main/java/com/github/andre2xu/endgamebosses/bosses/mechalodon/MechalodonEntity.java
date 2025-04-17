@@ -95,7 +95,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             DIVE_FROM_ABOVE, // only in phase 2
 
             // range
-            HOMING_MISSILE // only in phase 2
+            HOMING_MISSILES // only in phase 2
         }
     }
 
@@ -258,7 +258,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 action_id = 5;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
-            case Action.Attack.HOMING_MISSILE:
+            case Action.Attack.HOMING_MISSILES:
                 action_id = 6;
                 this.attack_type = Action.AttackType.RANGE;
                 break;
@@ -290,7 +290,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 attack_action = Action.Attack.DIVE_FROM_ABOVE;
                 break;
             case 6:
-                attack_action = Action.Attack.HOMING_MISSILE;
+                attack_action = Action.Attack.HOMING_MISSILES;
                 break;
             default:
         }
