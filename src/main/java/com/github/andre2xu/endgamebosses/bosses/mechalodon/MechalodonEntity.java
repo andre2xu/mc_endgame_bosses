@@ -19,10 +19,12 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -1444,6 +1446,34 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.RANGE && this.mechalodon.getAttackAction() == Action.Attack.HOMING_MISSILES;
+        }
+
+
+
+
+        private static class HomingMissile extends AbstractHurtingProjectile {
+            public HomingMissile(double pX, double pY, double pZ, Vec3 pMovement, Level pLevel) {
+                super(EntityType.DRAGON_FIREBALL, pX, pY, pZ, pMovement, pLevel);
+            }
+
+            @Override
+            protected boolean shouldBurn() {
+                return false;
+            }
+
+            @Override
+            protected void onHitBlock(@NotNull BlockHitResult pResult) {
+                super.onHitBlock(pResult);
+
+                this.discard();
+            }
+
+            @Override
+            protected void onHitEntity(@NotNull EntityHitResult pResult) {
+                super.onHitEntity(pResult);
+
+                this.discard();
+            }
         }
     }
 }
