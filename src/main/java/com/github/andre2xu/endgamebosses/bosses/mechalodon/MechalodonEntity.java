@@ -92,7 +92,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             LEAP_FORWARD,
             BITE,
             SURPRISE_FROM_BELOW,
-            DIVE, // only in phase 2
+            DIVE_FROM_ABOVE, // only in phase 2
 
             // range
             HOMING_MISSILE // only in phase 2
@@ -254,7 +254,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 action_id = 4;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
-            case Action.Attack.DIVE:
+            case Action.Attack.DIVE_FROM_ABOVE:
                 action_id = 5;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
@@ -287,7 +287,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 attack_action = Action.Attack.SURPRISE_FROM_BELOW;
                 break;
             case 5:
-                attack_action = Action.Attack.DIVE;
+                attack_action = Action.Attack.DIVE_FROM_ABOVE;
                 break;
             case 6:
                 attack_action = Action.Attack.HOMING_MISSILE;
@@ -597,7 +597,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                 boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/12 chance to do this
                                 boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/12 chance to do this
                                 boolean perform_homing_missiles_attack = Set.of(6,7,8).contains(random_number); // 3/12 chance to do this
-                                boolean perform_dive_attack = Set.of(9,10,11).contains(random_number); // 3/12 chance to do this
+                                boolean perform_dive_from_above_attack = Set.of(9,10,11).contains(random_number); // 3/12 chance to do this
 
                                 if (perform_charge_attack) {
                                     this.setAttackAction(Action.Attack.CHARGE);
@@ -608,8 +608,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                 else if (perform_homing_missiles_attack) {
                                     System.out.println("FIRING HOMING MISSILES");
                                 }
-                                else if (perform_dive_attack) {
-                                    System.out.println("DIVING TOWARDS TARGET");
+                                else if (perform_dive_from_above_attack) {
+                                    System.out.println("DIVING TOWARDS TARGET FROM ABOVE");
                                 }
                             }
                             else {
