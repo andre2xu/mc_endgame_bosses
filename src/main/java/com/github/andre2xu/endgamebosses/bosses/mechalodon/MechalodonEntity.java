@@ -19,8 +19,11 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1322,12 +1325,45 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static class HomingMissilesAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private int wait_duration; // how long to wait for target to come out of hiding
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public HomingMissilesAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void decrementWaitDuration() {
+            if (this.wait_duration > 0) {
+                this.wait_duration--;
+            }
+        }
+
+        private void resetWaitDuration() {
+            this.wait_duration = 20 * 2; // 2 seconds
+        }
+
+        private boolean noObstaclesInTheWay() {
+            if (this.canAttack()) {
+                Level level = this.mechalodon.level();
+
+                // check if there are blocks in the way
+                BlockHitResult block_hit_result = level.clip(new ClipContext(
+                        this.mechalodon.getEyePosition(),
+                        this.target.position(),
+                        ClipContext.Block.COLLIDER,
+                        ClipContext.Fluid.NONE,
+                        this.mechalodon
+                ));
+
+                boolean no_obstacles = block_hit_result.getType() == HitResult.Type.MISS;
+                boolean within_firing_range = this.mechalodon.distanceTo(this.target) <= 30;
+
+                return no_obstacles && within_firing_range;
+            }
+
+            return false;
         }
 
         private boolean canAttack() {
@@ -1354,10 +1390,16 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         public void stop() {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
-            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
-
             // hide cannon
             this.mechalodon.triggerAnim("attack_trigger_anim_controller", "hide_cannon");
+
+            // decide next course of action
+            if (this.wait_duration == 0) {
+                this.mechalodon.setAttackAction(Action.Attack.CHARGE); // charge towards target that's hiding
+            }
+            else {
+                this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+            }
 
             super.stop();
         }
@@ -1365,8 +1407,33 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                // look at target
-                this.mechalodon.getLookControl().setLookAt(this.target);
+                if (this.noObstaclesInTheWay()) {
+                    // reset wait duration
+                    this.resetWaitDuration();
+
+                    // move close enough to target
+                    if (this.mechalodon.distanceTo(this.target) > 20) {
+                        Vec3 current_pos = this.mechalodon.position();
+                        Vec3 target_pos = this.target.position();
+
+                        this.mechalodon.setDeltaMovement(new Vec3(
+                                target_pos.x - current_pos.x,
+                                (target_pos.y + 10) - current_pos.y,
+                                target_pos.z - current_pos.z
+                        ).normalize().scale(0.6)); // flight speed
+                    }
+
+                    // look at target
+                    this.mechalodon.getLookControl().setLookAt(this.target);
+                }
+                else {
+                    this.decrementWaitDuration();
+
+                    if (this.wait_duration == 0) {
+                        // cancel attack
+                        this.attack_is_finished = true;
+                    }
+                }
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
