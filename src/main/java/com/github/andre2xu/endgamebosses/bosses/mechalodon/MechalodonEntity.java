@@ -1329,6 +1329,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int wait_duration; // how long to wait for target to come out of hiding
         private final float attack_damage = 1f; // CHANGE LATER
+        private int attack_cooldown = 0; // no cooldown for first attack
         private boolean attack_is_finished = false;
 
         public HomingMissilesAttackGoal(MechalodonEntity mechalodon) {
@@ -1344,6 +1345,16 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetWaitDuration() {
             this.wait_duration = 20 * 2; // 2 seconds
+        }
+
+        private void decrementAttackCooldown() {
+            if (this.attack_cooldown > 0) {
+                this.attack_cooldown--;
+            }
+        }
+
+        private void resetAttackCooldown() {
+            this.attack_cooldown = 20 * 3; // 3 seconds
         }
 
         private boolean noObstaclesInTheWay() {
@@ -1375,6 +1386,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private void resetAttack() {
             this.attack_is_finished = false;
             this.target = null;
+            this.attack_cooldown = 0;
         }
 
         @Override
@@ -1414,10 +1426,10 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     this.resetWaitDuration();
 
                     // move close enough to target
-                    if (this.mechalodon.distanceTo(this.target) > 20) {
-                        Vec3 current_pos = this.mechalodon.position();
-                        Vec3 target_pos = this.target.position();
+                    Vec3 current_pos = this.mechalodon.position();
+                    Vec3 target_pos = this.target.position();
 
+                    if (this.mechalodon.distanceTo(this.target) > 20) {
                         this.mechalodon.setDeltaMovement(new Vec3(
                                 target_pos.x - current_pos.x,
                                 (target_pos.y + 10) - current_pos.y,
@@ -1427,6 +1439,26 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                     // look at target
                     this.mechalodon.getLookControl().setLookAt(this.target);
+
+                    // shoot missile
+                    if (this.attack_cooldown == 0) {
+                        Level level = this.mechalodon.level();
+
+                        HomingMissile homing_missile = new HomingMissile(
+                                current_pos.x,
+                                current_pos.y + 1,
+                                current_pos.z,
+                                target_pos.subtract(current_pos), // towards target
+                                level
+                        );
+
+                        if (!level.isClientSide) {
+                            level.addFreshEntity(homing_missile);
+                        }
+
+                        // restart cooldown
+                        this.resetAttackCooldown();
+                    }
                 }
                 else {
                     this.decrementWaitDuration();
@@ -1436,6 +1468,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         this.attack_is_finished = true;
                     }
                 }
+
+                // decrease attack cooldown
+                this.decrementAttackCooldown();
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
