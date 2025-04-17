@@ -561,23 +561,53 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     else {
                         // OBJECTIVE: If circling around isn't possible, attack the target in other ways
 
-                        int random_number = new Random().nextInt(1, 7); // pick a number from 1-6
+                        if (this.boss_phase == 1) {
+                            int random_number = new Random().nextInt(1, 7); // pick a number from 1-6
 
-                        if (distance_to_target >= 10) {
-                            // choose a melee attack that doesn't require the Mechalodon to get close
-                            boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/6 chance to do this
-                            boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/6 chance to do this
+                            if (distance_to_target >= 10) {
+                                // choose a melee attack that doesn't require the Mechalodon to get close
+                                boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/6 chance to do this
+                                boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/6 chance to do this
 
-                            if (perform_charge_attack) {
-                                this.setAttackAction(Action.Attack.CHARGE);
+                                if (perform_charge_attack) {
+                                    this.setAttackAction(Action.Attack.CHARGE);
+                                }
+                                else if (perform_leap_forward_attack) {
+                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                }
                             }
-                            else if (perform_leap_forward_attack) {
-                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                            else {
+                                // bite target if they get too close
+                                this.setAttackAction(Action.Attack.BITE);
                             }
                         }
-                        else {
-                            // bite target if they get too close
-                            this.setAttackAction(Action.Attack.BITE);
+                        else if (this.boss_phase == 2) {
+                            int random_number = new Random().nextInt(1, 13); // pick a number from 1-12
+
+                            if (distance_to_target >= 10) {
+                                // choose a melee attack that doesn't require the Mechalodon to get close
+                                boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/12 chance to do this
+                                boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/12 chance to do this
+                                boolean perform_homing_missiles_attack = Set.of(6,7,8).contains(random_number); // 3/12 chance to do this
+                                boolean perform_dive_attack = Set.of(9,10,11).contains(random_number); // 3/12 chance to do this
+
+                                if (perform_charge_attack) {
+                                    this.setAttackAction(Action.Attack.CHARGE);
+                                }
+                                else if (perform_leap_forward_attack) {
+                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                }
+                                else if (perform_homing_missiles_attack) {
+                                    System.out.println("FIRING HOMING MISSILES");
+                                }
+                                else if (perform_dive_attack) {
+                                    System.out.println("DIVING TOWARDS TARGET");
+                                }
+                            }
+                            else {
+                                // bite target if they get too close
+                                this.setAttackAction(Action.Attack.BITE);
+                            }
                         }
                     }
                 }
