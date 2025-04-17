@@ -101,7 +101,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             DIVE_FROM_ABOVE, // only in phase 2
 
             // range
-            HOMING_MISSILES // only in phase 2
+            MISSILES // only in phase 2
         }
     }
 
@@ -264,7 +264,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 action_id = 5;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
-            case Action.Attack.HOMING_MISSILES:
+            case Action.Attack.MISSILES:
                 action_id = 6;
                 this.attack_type = Action.AttackType.RANGE;
                 break;
@@ -296,7 +296,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 attack_action = Action.Attack.DIVE_FROM_ABOVE;
                 break;
             case 6:
-                attack_action = Action.Attack.HOMING_MISSILES;
+                attack_action = Action.Attack.MISSILES;
                 break;
             default:
         }
@@ -396,7 +396,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new BiteAttackGoal(this));
         this.goalSelector.addGoal(1, new SurpriseFromBelowAttackGoal(this));
         this.goalSelector.addGoal(1, new DiveFromAboveAttackGoal(this));
-        this.goalSelector.addGoal(1, new HomingMissilesAttackGoal(this));
+        this.goalSelector.addGoal(1, new MissilesAttackGoal(this));
     }
 
     @Override
@@ -616,7 +616,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                     this.setAttackAction(Action.Attack.LEAP_FORWARD);
                                 }
                                 else if (perform_homing_missiles_attack) {
-                                    this.setAttackAction(Action.Attack.HOMING_MISSILES);
+                                    this.setAttackAction(Action.Attack.MISSILES);
                                 }
                                 else if (perform_dive_from_above_attack) {
                                     this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
@@ -1324,7 +1324,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private static class HomingMissilesAttackGoal extends Goal {
+    private static class MissilesAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private int wait_duration; // how long to wait for target to come out of hiding
@@ -1332,7 +1332,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private int attack_cooldown = 0; // no cooldown for first attack
         private boolean attack_is_finished = false;
 
-        public HomingMissilesAttackGoal(MechalodonEntity mechalodon) {
+        public MissilesAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
@@ -1421,7 +1421,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                // OBJECTIVE: Check if the target is NOT hiding behind something and shoot them with a homing missile. If they are hiding, wait a few seconds for them to come out. If they're still hiding, cancel the attack and charge towards them (charging is triggered by the 'stop' method)
+                // OBJECTIVE: Check if the target is NOT hiding behind something and shoot them with a missile. If they are hiding, wait a few seconds for them to come out. If they're still hiding, cancel the attack and charge towards them (charging is triggered by the 'stop' method)
 
                 if (this.noObstaclesInTheWay()) {
                     // reset wait duration
@@ -1449,7 +1449,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         Level level = this.mechalodon.level();
 
                         if (!level.isClientSide) {
-                            HomingMissile homing_missile = new HomingMissile(
+                            Missile missile = new Missile(
                                     current_pos.x,
                                     current_pos.y + 1,
                                     current_pos.z,
@@ -1457,7 +1457,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                     level
                             );
 
-                            level.addFreshEntity(homing_missile);
+                            level.addFreshEntity(missile);
                         }
 
                         // restart cooldown
@@ -1484,14 +1484,14 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.RANGE && this.mechalodon.getAttackAction() == Action.Attack.HOMING_MISSILES;
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.RANGE && this.mechalodon.getAttackAction() == Action.Attack.MISSILES;
         }
 
 
 
 
-        private static class HomingMissile extends AbstractHurtingProjectile {
-            public HomingMissile(double pX, double pY, double pZ, Vec3 pMovement, Level pLevel) {
+        private static class Missile extends AbstractHurtingProjectile {
+            public Missile(double pX, double pY, double pZ, Vec3 pMovement, Level pLevel) {
                 super(EntityType.DRAGON_FIREBALL, pX, pY, pZ, pMovement, pLevel);
             }
 
