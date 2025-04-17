@@ -1197,12 +1197,19 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private Vec3 target_pos = null;
+        private int attack_delay;
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public DiveFromAboveAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void decrementAttackDelay() {
+            if (this.attack_delay > 0) {
+                this.attack_delay--;
+            }
         }
 
         private boolean canAttack() {
@@ -1219,6 +1226,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
             this.target = this.mechalodon.getTarget();
+
+            // reset attack delay
+            this.attack_delay = 20; // 1 second
 
             super.start();
         }
@@ -1258,7 +1268,38 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     }
                 }
                 else {
-                    System.out.println("READY TO DIVE");
+                    if (this.attack_delay > 0) {
+                        this.decrementAttackDelay();
+                    }
+                    else {
+                        // rotate model to face downwards
+                        this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_down");
+
+                        // dive down
+                        Vec3 current_pos = this.mechalodon.position();
+
+                        this.mechalodon.setDeltaMovement(new Vec3(
+                                this.target_pos.x - current_pos.x,
+                                this.target_pos.y - current_pos.y,
+                                this.target_pos.z - current_pos.z
+                        ).normalize().scale(1)); // dive speed
+
+                        // check if collision occurred while diving
+                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+
+                        if (has_collided_with_target) {
+                            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                        }
+
+                        // check if the saved target position has been reached
+                        if (Math.sqrt(this.mechalodon.distanceToSqr(this.target_pos)) <= 2) {
+                            // straighten model again
+                            this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_down_reverse");
+
+                            // stop the attack
+                            this.attack_is_finished = true;
+                        }
+                    }
                 }
             }
             else {
