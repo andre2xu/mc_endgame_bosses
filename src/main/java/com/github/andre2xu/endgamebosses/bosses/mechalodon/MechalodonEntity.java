@@ -1289,10 +1289,10 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                 this.target_pos.x - current_pos.x,
                                 this.target_pos.y - current_pos.y,
                                 this.target_pos.z - current_pos.z
-                        ).normalize().scale(2)); // dive speed
+                        ).normalize().scale(1)); // dive speed
 
                         // check if collision occurred while diving
-                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                         if (has_collided_with_target) {
                             this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
