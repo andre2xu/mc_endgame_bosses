@@ -43,6 +43,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from leaping forward
     - Increase damage dealt to target from biting
     - Increase damage dealt to target from the underground surprise attack
+    - Increase damage dealt to target from the dive from above attack
     - Add sounds for Mechalodon
     */
 
@@ -389,6 +390,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new LeapForwardAttackGoal(this));
         this.goalSelector.addGoal(1, new BiteAttackGoal(this));
         this.goalSelector.addGoal(1, new SurpriseFromBelowAttackGoal(this));
+        this.goalSelector.addGoal(1, new DiveFromAboveAttackGoal(this));
     }
 
     @Override
@@ -609,7 +611,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                     System.out.println("FIRING HOMING MISSILES");
                                 }
                                 else if (perform_dive_from_above_attack) {
-                                    System.out.println("DIVING TOWARDS TARGET FROM ABOVE");
+                                    this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
                                 }
                             }
                             else {
@@ -1188,6 +1190,59 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.SURPRISE_FROM_BELOW;
+        }
+    }
+
+    private static class DiveFromAboveAttackGoal extends Goal {
+        private final MechalodonEntity mechalodon;
+        private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
+        private boolean attack_is_finished = false;
+
+        public DiveFromAboveAttackGoal(MechalodonEntity mechalodon) {
+            this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
+            this.target = this.mechalodon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                System.out.println("DIVING FROM ABOVE");
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.DIVE_FROM_ABOVE;
         }
     }
 }
