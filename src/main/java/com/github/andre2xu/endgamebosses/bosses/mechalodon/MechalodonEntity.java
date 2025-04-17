@@ -50,6 +50,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from the dive from above attack
     - Add sounds for Mechalodon
     - Implement attack for players using an elytra
+    - Add particles for movement & attacks
 
     OPTIONAL:
     - Add a dodge mechanism for mace
