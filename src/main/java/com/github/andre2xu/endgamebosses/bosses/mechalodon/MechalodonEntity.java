@@ -598,16 +598,14 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             }
                         }
                         else if (this.boss_phase == 2) {
-                            int random_number = new Random().nextInt(1, 13); // pick a number from 1-12
+                            int random_number = new Random().nextInt(1, 14); // pick a number from 1-13
 
                             if (distance_to_target >= 10) {
-                                random_number = 6; // temp
-
                                 // choose a melee attack that doesn't require the Mechalodon to get close
-                                boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/12 chance to do this
-                                boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/12 chance to do this
-                                boolean perform_homing_missiles_attack = Set.of(6,7,8).contains(random_number); // 3/12 chance to do this
-                                boolean perform_dive_from_above_attack = Set.of(9,10,11).contains(random_number); // 3/12 chance to do this
+                                boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/13 chance to do this
+                                boolean perform_leap_forward_attack = Set.of(3,4).contains(random_number); // 2/13 chance to do this
+                                boolean perform_homing_missiles_attack = Set.of(5,6,7,8,9).contains(random_number); // 5/13 chance to do this
+                                boolean perform_dive_from_above_attack = Set.of(10,11,12,13).contains(random_number); // 4/13 chance to do this
 
                                 if (perform_charge_attack) {
                                     this.setAttackAction(Action.Attack.CHARGE);
