@@ -61,6 +61,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             BossEvent.BossBarColor.RED,
             BossEvent.BossBarOverlay.NOTCHED_12
     );
+    private int boss_phase = 1; // only needed on the server side. No need to save to persistent storage since it's tied to the boss health which is already saved
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
@@ -387,7 +388,13 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         super.aiStep();
 
         // update boss health bar
-        this.server_boss_event.setProgress(this.getHealth() / this.getMaxHealth());
+        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+        this.server_boss_event.setProgress(boss_health_remaining);
+
+        // update boss phase
+        if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
+            this.boss_phase = 2;
+        }
 
         // handle movement
         LivingEntity target = this.getTarget();
