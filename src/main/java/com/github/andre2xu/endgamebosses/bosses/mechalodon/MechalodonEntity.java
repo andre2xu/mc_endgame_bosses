@@ -1361,7 +1361,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void resetAttackDuration() {
-            this.attack_duration = 20 * 20; // 20 seconds
+            this.attack_duration = 20 * 8; // 8 seconds
         }
 
         private boolean noObstaclesInTheWay() {
