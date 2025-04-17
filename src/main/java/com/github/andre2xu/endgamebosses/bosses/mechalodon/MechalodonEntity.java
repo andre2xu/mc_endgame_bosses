@@ -1345,7 +1345,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void resetWaitDuration() {
-            this.wait_duration = 20 * 2; // 2 seconds
+            this.wait_duration = 30; // 1.5 seconds
         }
 
         private void decrementAttackCooldown() {
@@ -1355,7 +1355,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void resetAttackCooldown() {
-            this.attack_cooldown = 20 * 3; // 3 seconds
+            this.attack_cooldown = 20 * 2; // 2 seconds
         }
 
         private void decrementAttackDuration() {
