@@ -1421,6 +1421,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
+                // OBJECTIVE: Check if the target is NOT hiding behind something and shoot them with a homing missile. If they are hiding, wait a few seconds for them to come out. If they're still hiding, cancel the attack and charge towards them (charging is triggered by the 'stop' method)
+
                 if (this.noObstaclesInTheWay()) {
                     // reset wait duration
                     this.resetWaitDuration();
