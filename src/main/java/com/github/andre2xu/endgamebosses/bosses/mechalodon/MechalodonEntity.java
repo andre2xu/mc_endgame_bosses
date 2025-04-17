@@ -522,7 +522,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                                 next_point.x - this.getX(),
                                                 (target_pos.y - 2) - this.getY(), // move underground
                                                 next_point.z - this.getZ()
-                                        ).normalize().scale(0.18) // circling speed
+                                        ).normalize().scale(0.1) // circling speed
                                 ));
 
                                 // run swim animation
@@ -531,7 +531,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             else {
                                 // decide whether to attack or get the next point on the circle
 
-                                boolean should_attack = new Random().nextInt(1,7) == 1; // 1 in 6 chances to attack
+                                boolean should_attack = new Random().nextInt(1,4) == 1; // 1 in 3 chances to attack
 
                                 if (should_attack) {
                                     // choose an attack
