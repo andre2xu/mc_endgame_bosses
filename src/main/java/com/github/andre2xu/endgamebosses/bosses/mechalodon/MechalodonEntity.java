@@ -24,7 +24,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -1326,7 +1325,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private int wait_duration; // how long to wait for target to come out of hiding
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_cooldown = 0; // no cooldown for first attack
         private int attack_duration;
         private boolean attack_is_finished = false;
@@ -1523,17 +1521,13 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             }
 
             @Override
-            protected void onHitBlock(@NotNull BlockHitResult pResult) {
-                super.onHitBlock(pResult);
+            protected void onHit(@NotNull HitResult pResult) {
+                super.onHit(pResult);
 
-                this.discard();
-            }
-
-            @Override
-            protected void onHitEntity(@NotNull EntityHitResult pResult) {
-                super.onHitEntity(pResult);
-
-                this.discard();
+                if (this.level() instanceof ServerLevel) {
+                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 4, false, Level.ExplosionInteraction.MOB);
+                    this.discard();
+                }
             }
         }
     }
