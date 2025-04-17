@@ -1330,6 +1330,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private int wait_duration; // how long to wait for target to come out of hiding
         private final float attack_damage = 1f; // CHANGE LATER
         private int attack_cooldown = 0; // no cooldown for first attack
+        private int attack_duration;
         private boolean attack_is_finished = false;
 
         public MissilesAttackGoal(MechalodonEntity mechalodon) {
@@ -1355,6 +1356,16 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttackCooldown() {
             this.attack_cooldown = 20 * 3; // 3 seconds
+        }
+
+        private void decrementAttackDuration() {
+            if (this.attack_duration > 0) {
+                this.attack_duration--;
+            }
+        }
+
+        private void resetAttackDuration() {
+            this.attack_duration = 20 * 20; // 20 seconds
         }
 
         private boolean noObstaclesInTheWay() {
@@ -1397,6 +1408,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             // show cannon
             this.mechalodon.triggerAnim("attack_trigger_anim_controller", "show_cannon");
 
+            // initialize attack duration
+            this.resetAttackDuration();
+
             super.start();
         }
 
@@ -1422,6 +1436,13 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         public void tick() {
             if (this.canAttack()) {
                 // OBJECTIVE: Check if the target is NOT hiding behind something and shoot them with a missile. If they are hiding, wait a few seconds for them to come out. If they're still hiding, cancel the attack and charge towards them (charging is triggered by the 'stop' method)
+
+                if (this.attack_duration == 0) {
+                    // stop attack
+                    this.attack_is_finished = true;
+
+                    return;
+                }
 
                 if (this.noObstaclesInTheWay()) {
                     // reset wait duration
@@ -1475,6 +1496,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                 // decrease attack cooldown
                 this.decrementAttackCooldown();
+
+                // decrease attack duration
+                this.decrementAttackDuration();
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
