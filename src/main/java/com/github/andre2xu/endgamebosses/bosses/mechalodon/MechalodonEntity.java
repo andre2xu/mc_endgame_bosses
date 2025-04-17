@@ -1446,15 +1446,15 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     if (this.attack_cooldown == 0) {
                         Level level = this.mechalodon.level();
 
-                        HomingMissile homing_missile = new HomingMissile(
-                                current_pos.x,
-                                current_pos.y + 1,
-                                current_pos.z,
-                                target_pos.subtract(current_pos), // towards target
-                                level
-                        );
-
                         if (!level.isClientSide) {
+                            HomingMissile homing_missile = new HomingMissile(
+                                    current_pos.x,
+                                    current_pos.y + 1,
+                                    current_pos.z,
+                                    target_pos.subtract(current_pos), // towards target
+                                    level
+                            );
+
                             level.addFreshEntity(homing_missile);
                         }
 
