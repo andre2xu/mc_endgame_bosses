@@ -49,6 +49,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from the underground surprise attack
     - Increase damage dealt to target from the dive from above attack
     - Add sounds for Mechalodon
+    - Implement attack for players using an elytra
+
+    OPTIONAL:
+    - Add a dodge mechanism for mace
+    - Add boss music for Mechalodon
     */
 
 
