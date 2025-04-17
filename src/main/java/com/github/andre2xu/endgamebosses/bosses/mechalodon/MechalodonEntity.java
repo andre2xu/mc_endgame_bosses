@@ -391,6 +391,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new BiteAttackGoal(this));
         this.goalSelector.addGoal(1, new SurpriseFromBelowAttackGoal(this));
         this.goalSelector.addGoal(1, new DiveFromAboveAttackGoal(this));
+        this.goalSelector.addGoal(1, new HomingMissilesAttackGoal(this));
     }
 
     @Override
@@ -608,7 +609,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                     this.setAttackAction(Action.Attack.LEAP_FORWARD);
                                 }
                                 else if (perform_homing_missiles_attack) {
-                                    System.out.println("FIRING HOMING MISSILES");
+                                    this.setAttackAction(Action.Attack.HOMING_MISSILES);
                                 }
                                 else if (perform_dive_from_above_attack) {
                                     this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
@@ -1313,6 +1314,60 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.MELEE && this.mechalodon.getAttackAction() == Action.Attack.DIVE_FROM_ABOVE;
+        }
+    }
+
+    private static class HomingMissilesAttackGoal extends Goal {
+        private final MechalodonEntity mechalodon;
+        private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
+        private boolean attack_is_finished = false;
+
+        public HomingMissilesAttackGoal(MechalodonEntity mechalodon) {
+            this.mechalodon = mechalodon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+            this.target = null;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mechalodon.getTarget' which can sometimes return null
+            this.target = this.mechalodon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                System.out.println("FIRING HOMING MISSILES");
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.RANGE && this.mechalodon.getAttackAction() == Action.Attack.HOMING_MISSILES;
         }
     }
 }
