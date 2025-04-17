@@ -1196,6 +1196,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static class DiveFromAboveAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
+        private Vec3 target_pos = null;
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
@@ -1210,6 +1211,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.attack_is_finished = false;
+            this.target = null;
+            this.target_pos = null;
         }
 
         @Override
@@ -1232,7 +1235,31 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("DIVING FROM ABOVE");
+                // OBJECTIVE: Move above the target and save their position. Wait for 1 second and dive down really quickly towards the saved position. Deal damage to target if a collision occurred
+
+                if (this.target_pos == null) {
+                    Vec3 current_pos = this.mechalodon.position();
+                    Vec3 target_pos = this.target.position();
+
+                    // move towards target
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            target_pos.x - current_pos.x,
+                            (target_pos.y + 15) - current_pos.y, // 15 blocks above target
+                            target_pos.z - current_pos.z
+                    ).normalize().scale(0.8)); // movement speed
+
+                    // update positions
+                    current_pos = this.mechalodon.position();
+                    target_pos = this.target.position();
+
+                    // check if above target and save their position
+                    if (Math.round(current_pos.x) == Math.round(target_pos.x) && Math.round(current_pos.z) == Math.round(target_pos.z) && Math.round(current_pos.y) >= Math.round(target_pos.y + 15)) {
+                        this.target_pos = target_pos;
+                    }
+                }
+                else {
+                    System.out.println("READY TO DIVE");
+                }
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
