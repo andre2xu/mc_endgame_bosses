@@ -1481,60 +1481,63 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     return;
                 }
 
-                if (this.noObstaclesInTheWay()) {
-                    // reset wait duration
-                    this.resetWaitDuration();
+                // look at target
+                this.mechalodon.getLookControl().setLookAt(this.target);
 
-                    // move close enough to target
-                    Vec3 current_pos = this.mechalodon.position();
-                    Vec3 target_pos = this.target.position();
+                // move close enough to target
+                Vec3 current_pos = this.mechalodon.position();
+                Vec3 target_pos = this.target.position();
 
-                    double height_to_fire_at = target_pos.y + 10;
+                double height_to_fire_at = target_pos.y + 10;
+                boolean at_firing_position = !(this.mechalodon.distanceTo(this.target) > 20 || current_pos.y < height_to_fire_at);
 
-                    if (this.mechalodon.distanceTo(this.target) > 20 || current_pos.y < height_to_fire_at) {
-                        this.mechalodon.setDeltaMovement(new Vec3(
-                                target_pos.x - current_pos.x,
-                                height_to_fire_at - current_pos.y,
-                                target_pos.z - current_pos.z
-                        ).normalize().scale(0.6)); // flight speed
-                    }
+                if (at_firing_position) {
+                    if (this.noObstaclesInTheWay()) {
+                        // reset wait duration
+                        this.resetWaitDuration();
 
-                    // look at target
-                    this.mechalodon.getLookControl().setLookAt(this.target);
+                        // shoot missile
+                        if (this.attack_cooldown == 0) {
+                            Level level = this.mechalodon.level();
 
-                    // shoot missile
-                    if (this.attack_cooldown == 0) {
-                        Level level = this.mechalodon.level();
+                            if (!level.isClientSide) {
+                                MechalodonMissileEntity missile = ProjectilesRegistry.MECHALODON_MISSILE.get().create(level);
 
-                        if (!level.isClientSide) {
-                            MechalodonMissileEntity missile = ProjectilesRegistry.MECHALODON_MISSILE.get().create(level);
+                                if (missile != null) {
+                                    missile.setPos(current_pos);
+                                    missile.setTarget(this.target);
 
-                            if (missile != null) {
-                                missile.setPos(current_pos);
-                                missile.setTarget(this.target);
-
-                                level.addFreshEntity(missile);
+                                    level.addFreshEntity(missile);
+                                }
                             }
-                        }
 
-                        // restart cooldown
-                        this.resetAttackCooldown();
+                            // restart cooldown
+                            this.resetAttackCooldown();
+                        }
                     }
+                    else {
+                        this.decrementWaitDuration();
+
+                        if (this.wait_duration == 0) {
+                            // cancel attack
+                            this.attack_is_finished = true;
+                        }
+                    }
+
+                    // decrease attack duration
+                    this.decrementAttackDuration();
                 }
                 else {
-                    this.decrementWaitDuration();
-
-                    if (this.wait_duration == 0) {
-                        // cancel attack
-                        this.attack_is_finished = true;
-                    }
+                    // fly up to firing position
+                    this.mechalodon.setDeltaMovement(new Vec3(
+                            target_pos.x - current_pos.x,
+                            height_to_fire_at - current_pos.y,
+                            target_pos.z - current_pos.z
+                    ).normalize().scale(0.6)); // flight speed
                 }
 
                 // decrease attack cooldown
                 this.decrementAttackCooldown();
-
-                // decrease attack duration
-                this.decrementAttackDuration();
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
