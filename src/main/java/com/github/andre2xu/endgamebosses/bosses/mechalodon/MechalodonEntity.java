@@ -824,6 +824,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
 
+            this.mechalodon.setMoveAction(Action.Move.FOLLOW_TARGET); // cancel circling if it's being done
+
             super.stop();
         }
 
@@ -910,6 +912,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
+
+            this.mechalodon.setMoveAction(Action.Move.FOLLOW_TARGET); // cancel circling if it's being done
 
             super.stop();
         }
