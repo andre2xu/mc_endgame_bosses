@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon.missile;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -71,6 +73,11 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
         if (this.auto_detonation_countdown > 0) {
             this.auto_detonation_countdown--;
         }
+    }
+
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
+        // disable fall damage
     }
 
     @Override
