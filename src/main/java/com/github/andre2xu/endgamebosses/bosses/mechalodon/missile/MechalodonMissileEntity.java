@@ -14,14 +14,14 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class MechalodonMissileEntity extends Entity implements GeoEntity {
+public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     private int auto_detonation_countdown = 20 * 5; // 5 seconds
     private LivingEntity target = null;
 
 
 
-    public MechalodonMissileEntity(EntityType<?> pEntityType, Level pLevel) {
+    public MechalodonMissileEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
