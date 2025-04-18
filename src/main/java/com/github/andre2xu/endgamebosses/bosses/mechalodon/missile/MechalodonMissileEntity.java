@@ -8,6 +8,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -73,11 +74,16 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void aiStep() {
+        super.aiStep();
 
         if (this.auto_detonation_countdown > 0) {
-            System.out.println("Homing in on target");
+            LivingEntity target = this.getTarget(); // target is set in the Mechalodon's missiles attack goal, just after the missile is spawned
+
+            if (target != null && target.isAlive() && !(target instanceof Player player && (player.isCreative() || player.isSpectator()))) {
+                // look at target
+                this.getLookControl().setLookAt(target);
+            }
         }
         else {
             System.out.println("KABOOM");

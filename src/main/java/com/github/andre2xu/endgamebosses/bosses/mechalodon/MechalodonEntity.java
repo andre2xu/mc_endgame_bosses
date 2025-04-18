@@ -1481,6 +1481,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                             if (missile != null) {
                                 missile.setPos(current_pos);
+                                missile.setTarget(this.target);
 
                                 level.addFreshEntity(missile);
                             }
