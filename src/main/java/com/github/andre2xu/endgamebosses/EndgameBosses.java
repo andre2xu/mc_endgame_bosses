@@ -4,6 +4,8 @@ import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileRenderer;
 import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
@@ -141,7 +143,11 @@ public class EndgameBosses {
 
         @SubscribeEvent
         public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+            // bosses
             event.registerEntityRenderer(BossRegistry.MECHALODON.get(), MechalodonRenderer::new);
+
+            // projectiles
+            event.registerEntityRenderer(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileRenderer::new);
         }
     }
 
@@ -149,7 +155,11 @@ public class EndgameBosses {
     public static class GeneralModEvents {
         @SubscribeEvent
         public static void createEntityAttributes(EntityAttributeCreationEvent event) {
+            // bosses
             event.put(BossRegistry.MECHALODON.get(), MechalodonEntity.createAttributes());
+
+            // projectiles
+            event.put(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileEntity.createAttributes());
         }
     }
 }
