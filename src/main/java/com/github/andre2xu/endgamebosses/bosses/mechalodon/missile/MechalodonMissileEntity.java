@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
-    private int auto_detonation_countdown = 20 * 30; // 5 seconds
+    private int auto_detonation_countdown = 20 * 3; // 3 seconds
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonMissileEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon missile's body in the model class
@@ -104,7 +104,7 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
                 this.getLookControl().setLookAt(target);
 
                 // move to target
-                this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(0.5));
+                this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(0.4)); // flight speed
 
                 // check for collision with target and detonate
                 boolean has_collided_with_target = this.getBoundingBox().intersects(target.getBoundingBox());
