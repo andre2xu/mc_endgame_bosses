@@ -49,6 +49,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from biting
     - Increase damage dealt to target from the underground surprise attack
     - Increase damage dealt to target from the dive from above attack
+    - Increase damage dealt to flying target from bites
     - Add sounds for Mechalodon
     - Implement attack for players using an elytra
     - Add particles for movement & attacks
@@ -424,11 +425,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
+            boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
+
             if (!target.isFallFlying()) {
                 Vec3 current_pos = this.position();
                 Vec3 target_pos = target.position();
-
-                boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
                 if (!is_attacking) {
                     int allowed_distance_from_target = 20;
@@ -661,6 +662,32 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             }
                         }
                     }
+                }
+            }
+            else {
+                if (!is_attacking) {
+                    // OBJECTIVE: Chase target if they're flying with an elytra and bite them if they're within range
+
+                    // look at target
+                    this.getLookControl().setLookAt(target);
+
+                    // calculate the vector that allows the Mechalodon to be 5 blocks behind target
+                    Vec3 vector_to_target = target.position().subtract(this.position());
+                    vector_to_target = vector_to_target.subtract(vector_to_target.normalize().scale(7));
+
+                    // chase target
+                    this.setDeltaMovement(vector_to_target.normalize().scale(1.8)); // chase speed
+
+                    // bite if close
+                    if (this.getBoundingBox().intersects(target.getBoundingBox())) {
+                        target.hurt(this.damageSources().mobAttack(this), 1f); // CHANGE LATER
+
+                        this.triggerAnim("attack_trigger_anim_controller", "bite");
+                    }
+                }
+                else {
+                    // do nothing until a new target is spotted
+                    this.setMoveAction(Action.Move.IDLE);
                 }
             }
         }
