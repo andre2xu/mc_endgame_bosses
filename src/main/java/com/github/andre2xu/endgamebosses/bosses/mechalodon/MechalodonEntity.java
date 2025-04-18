@@ -536,19 +536,46 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                                 if (should_attack) {
                                     // choose an attack
-                                    int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
+                                    if (this.boss_phase == 2) {
+                                        int random_number = new Random().nextInt(1, 9); // pick a number from 1-8
 
-                                    switch (random_number) {
-                                        case 1:
-                                            this.setAttackAction(Action.Attack.CHARGE);
-                                            break;
-                                        case 2:
-                                            this.setAttackAction(Action.Attack.LEAP_FORWARD);
-                                            break;
-                                        case 3:
-                                            this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
-                                            break;
-                                        default:
+                                        switch (random_number) {
+                                            case 1:
+                                                this.setAttackAction(Action.Attack.CHARGE);
+                                                break;
+                                            case 2:
+                                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                                break;
+                                            case 3:
+                                                this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
+                                                break;
+                                            case 4:
+                                            case 5:
+                                                this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
+                                                break;
+                                            case 6:
+                                            case 7:
+                                            case 8:
+                                                this.setAttackAction(Action.Attack.MISSILES);
+                                                break;
+                                            default:
+                                        }
+                                    }
+                                    else {
+                                        int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
+
+                                        switch (random_number) {
+                                            case 1:
+                                                this.setAttackAction(Action.Attack.CHARGE);
+                                                break;
+                                            case 2:
+                                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                                break;
+                                            case 3:
+                                                this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
+                                                break;
+                                            default:
+                                        }
                                     }
 
                                     // update the angle needed for the next point so that the next point will roughly be where the Mechalodon is after the chosen attack (i.e. behind the player)
@@ -1253,6 +1280,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
             this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
 
+            this.mechalodon.setMoveAction(Action.Move.FOLLOW_TARGET); // cancel circling if it's being done
+
             super.stop();
         }
 
@@ -1433,6 +1462,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             else {
                 this.mechalodon.setAttackAction(Action.Attack.NONE); // allow the Mechalodon's aiStep movement to run again
             }
+
+            // cancel circling if it's being done
+            this.mechalodon.setMoveAction(Action.Move.FOLLOW_TARGET);
 
             super.stop();
         }
