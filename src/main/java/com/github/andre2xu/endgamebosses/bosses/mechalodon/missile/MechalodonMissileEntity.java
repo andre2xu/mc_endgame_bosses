@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -13,6 +14,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class MechalodonMissileEntity extends Entity implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    private int auto_detonation_countdown = 20 * 5; // 5 seconds
+    private LivingEntity target = null;
 
 
 
@@ -49,5 +52,36 @@ public class MechalodonMissileEntity extends Entity implements GeoEntity {
     @Override
     protected void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
 
+    }
+
+
+
+    // AI
+    private void decrementAutoDetonationCountdown() {
+        if (this.auto_detonation_countdown > 0) {
+            this.auto_detonation_countdown--;
+        }
+    }
+
+    private void setTarget(LivingEntity target) {
+        // call this before spawning a missile
+
+        this.target = target;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.auto_detonation_countdown > 0 && this.target != null) {
+            System.out.println("Homing in on target");
+        }
+        else {
+            // delete missile from game
+            this.discard();
+            return;
+        }
+
+        this.decrementAutoDetonationCountdown();
     }
 }
