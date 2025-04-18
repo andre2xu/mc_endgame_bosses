@@ -477,6 +477,10 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         // initialize the starting point on the circle
                         this.current_point_in_circle = this.position();
 
+                        // reset circling data
+                        this.num_of_circle_points_to_visit = 0;
+                        this.current_circle_point_to_visit = null;
+
                         // verify that the circle is completely on solid ground. If not, cancel the circling and continue following the target
                         if (this.level() instanceof ServerLevel level) {
                             for (int angle : this.all_angles_needed_to_find_circle_points) {
