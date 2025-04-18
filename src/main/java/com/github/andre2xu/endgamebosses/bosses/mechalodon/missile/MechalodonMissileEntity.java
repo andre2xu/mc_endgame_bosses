@@ -117,6 +117,10 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
                     this.detonate();
                 }
             }
+            else {
+                // delete missile if target doesn't exist, is dead, or is a player in creative/spectator mode
+                this.discard();
+            }
         }
         else {
             this.detonate();
