@@ -83,6 +83,9 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
             if (target != null && target.isAlive() && !(target instanceof Player player && (player.isCreative() || player.isSpectator()))) {
                 // look at target
                 this.getLookControl().setLookAt(target);
+
+                // move to target
+                this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(0.5));
             }
         }
         else {
