@@ -609,8 +609,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             int random_number = new Random().nextInt(1, 14); // pick a number from 1-13
 
                             if (distance_to_target >= 10) {
-                                random_number = 5; // temp
-
                                 // choose a melee attack that doesn't require the Mechalodon to get close
                                 boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/13 chance to do this
                                 boolean perform_leap_forward_attack = Set.of(3,4).contains(random_number); // 2/13 chance to do this
