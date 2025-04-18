@@ -606,10 +606,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             // reset number of circle points to visit
                             this.num_of_circle_points_to_visit = 0;
 
+                            // reset point to visit
+                            this.current_circle_point_to_visit = null;
+
                             // change movement flag to follow target
                             this.setMoveAction(Action.Move.FOLLOW_TARGET);
-
-
                         }
                     }
                     else {
