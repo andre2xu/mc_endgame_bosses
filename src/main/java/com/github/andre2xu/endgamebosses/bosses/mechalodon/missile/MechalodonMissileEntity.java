@@ -30,9 +30,7 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
 
     // GECKOLIB SETUP
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-
-    }
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
