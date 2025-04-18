@@ -513,7 +513,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             }
 
                             if (this.num_of_circle_points_to_visit > 0) {
-                                // OBJECTIVE: Request a circle point to visit and move to that point. After it has been reached, decrease the total amount of circle points to visit and request another one. Repeat until the amount of circle points to visit is zero, then signal an attack to occur
+                                // OBJECTIVE: Request a circle point to visit and move to that point. After it has been reached, decrease the total amount of circle points to visit and request another one. Repeat until the amount of circle points to visit is zero, this will signal an attack to occur
 
                                 if (this.current_circle_point_to_visit == null) {
                                     // update point to visit
