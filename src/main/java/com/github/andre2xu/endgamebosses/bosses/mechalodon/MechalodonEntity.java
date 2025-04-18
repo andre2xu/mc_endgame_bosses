@@ -65,6 +65,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private int angle_needed_to_find_next_circle_point;
     private final ArrayList<Integer> all_angles_needed_to_find_circle_points = new ArrayList<>();
     private Iterator<Integer> circle_point_angles_array_iterator;
+    private int num_of_circle_points_to_visit = 0;
+    private Vec3 current_circle_point_to_visit = null;
     private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
@@ -505,108 +507,109 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         Vec3 anchor_point = new Vec3(ap.x, ap.y, ap.z);
 
                         if (Math.sqrt(target.distanceToSqr(anchor_point)) < allowed_distance_from_target) {
-                            // find the next point on the circle
-                            Vec3 next_point = this.getNextPointOnCircle(
-                                    this.current_point_in_circle.distanceTo(anchor_point),
-                                    this.angle_needed_to_find_next_circle_point
-                            );
-
-                            if (Math.sqrt(this.distanceToSqr(next_point)) > 10) {
-                                // this block handles the movement of the Mechalodon to the next point on the circle
-
-                                // look at point
-                                this.getLookControl().setLookAt(next_point);
-
-                                // move to point
-                                this.setDeltaMovement(this.getDeltaMovement().add(
-                                        new Vec3(
-                                                next_point.x - this.getX(),
-                                                (target_pos.y - 2) - this.getY(), // move underground
-                                                next_point.z - this.getZ()
-                                        ).normalize().scale(0.1) // circling speed
-                                ));
-
-                                // run swim animation
-                                this.triggerAnim("movement_trigger_anim_controller", "swim_slow");
+                            if (this.num_of_circle_points_to_visit == 0) {
+                                // pick a random amount of circle points to visit before attacking (must be at least 2)
+                                this.num_of_circle_points_to_visit = new Random().nextInt(2, this.all_angles_needed_to_find_circle_points.size() + 1);
                             }
-                            else {
-                                // decide whether to attack or get the next point on the circle
 
-                                boolean should_attack = new Random().nextInt(1,4) == 1; // 1 in 3 chances to attack
+                            if (this.num_of_circle_points_to_visit > 0) {
+                                // OBJECTIVE: Request a circle point to visit and move to that point. After it has been reached, decrease the total amount of circle points to visit and request another one. Repeat until the amount of circle points to visit is zero, then signal an attack to occur
 
-                                if (should_attack) {
-                                    // choose an attack
-                                    if (this.boss_phase == 2) {
-                                        int random_number = new Random().nextInt(1, 9); // pick a number from 1-8
-
-                                        switch (random_number) {
-                                            case 1:
-                                                this.setAttackAction(Action.Attack.CHARGE);
-                                                break;
-                                            case 2:
-                                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
-                                                break;
-                                            case 3:
-                                                this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
-                                                break;
-                                            case 4:
-                                            case 5:
-                                                this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
-                                                break;
-                                            case 6:
-                                            case 7:
-                                            case 8:
-                                                this.setAttackAction(Action.Attack.MISSILES);
-                                                break;
-                                            default:
-                                        }
-                                    }
-                                    else {
-                                        int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
-
-                                        switch (random_number) {
-                                            case 1:
-                                                this.setAttackAction(Action.Attack.CHARGE);
-                                                break;
-                                            case 2:
-                                                this.setAttackAction(Action.Attack.LEAP_FORWARD);
-                                                break;
-                                            case 3:
-                                                this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
-                                                break;
-                                            default:
-                                        }
-                                    }
-
-                                    // update the angle needed for the next point so that the next point will roughly be where the Mechalodon is after the chosen attack (i.e. behind the player)
-                                    int current_angle = this.angle_needed_to_find_next_circle_point;
-                                    int new_angle = (current_angle + 180) + 45; // NOTE: 45 is the change in degrees per point (see constructor)
-
-                                    this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator(); // refresh the iterator so that it points to the beginning of the array
-
-                                    int iterator_angle = this.circle_point_angles_array_iterator.next();
-
-                                    while (this.circle_point_angles_array_iterator.hasNext() && iterator_angle != new_angle) {
-                                        iterator_angle = this.circle_point_angles_array_iterator.next();
-                                    }
-
-                                    this.angle_needed_to_find_next_circle_point = iterator_angle;
+                                if (this.current_circle_point_to_visit == null) {
+                                    // update point to visit
+                                    this.current_circle_point_to_visit = this.getNextPointOnCircle(
+                                            this.current_point_in_circle.distanceTo(anchor_point),
+                                            this.angle_needed_to_find_next_circle_point
+                                    );
                                 }
                                 else {
-                                    // get the angle used for calculating the next point on the circle
+                                    // look at point
+                                    this.getLookControl().setLookAt(this.current_circle_point_to_visit);
 
-                                    if (!this.circle_point_angles_array_iterator.hasNext()) {
-                                        // get a new iterator to restart the circling
-                                        this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                                    // move to point
+                                    this.setDeltaMovement(new Vec3(
+                                            this.current_circle_point_to_visit.x - current_pos.x,
+                                            (this.current_circle_point_to_visit.y - 2) - current_pos.y,
+                                            this.current_circle_point_to_visit.z - current_pos.z
+                                    ).normalize().scale(0.5)); // circling speed
+
+                                    // check if point has been reached
+                                    double distance_to_point = Math.floor(Math.sqrt(this.distanceToSqr(this.current_circle_point_to_visit)));
+
+                                    if (distance_to_point <= 3) {
+                                        // update current point
+                                        this.current_point_in_circle = this.current_circle_point_to_visit;
+
+                                        // tell the next tick that a new point to visit is needed
+                                        this.current_circle_point_to_visit = null;
+
+                                        // reduce the amount of points to visit
+                                        this.num_of_circle_points_to_visit--;
+
+                                        // get the angle used for calculating the next point on the circle
+                                        if (!this.circle_point_angles_array_iterator.hasNext()) {
+                                            this.circle_point_angles_array_iterator = this.all_angles_needed_to_find_circle_points.iterator();
+                                        }
+
+                                        this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next();
                                     }
+                                }
+                            }
 
-                                    this.angle_needed_to_find_next_circle_point = this.circle_point_angles_array_iterator.next(); // get current angle needed and switch to the next
+                            if (this.num_of_circle_points_to_visit == 0) {
+                                // choose an attack
+
+                                if (this.boss_phase == 2) {
+                                    int random_number = new Random().nextInt(1, 9); // pick a number from 1-8
+
+                                    switch (random_number) {
+                                        case 1:
+                                            this.setAttackAction(Action.Attack.CHARGE);
+                                            break;
+                                        case 2:
+                                            this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                            break;
+                                        case 3:
+                                            this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
+                                            break;
+                                        case 4:
+                                        case 5:
+                                            this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
+                                            break;
+                                        case 6:
+                                        case 7:
+                                        case 8:
+                                            this.setAttackAction(Action.Attack.MISSILES);
+                                            break;
+                                        default:
+                                    }
+                                }
+                                else {
+                                    int random_number = new Random().nextInt(1, 4); // pick a number from 1-3
+
+                                    switch (random_number) {
+                                        case 1:
+                                            this.setAttackAction(Action.Attack.CHARGE);
+                                            break;
+                                        case 2:
+                                            this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                            break;
+                                        case 3:
+                                            this.setAttackAction(Action.Attack.SURPRISE_FROM_BELOW);
+                                            break;
+                                        default:
+                                    }
                                 }
                             }
                         }
                         else {
+                            // reset number of circle points to visit
+                            this.num_of_circle_points_to_visit = 0;
+
                             // change movement flag to follow target
                             this.setMoveAction(Action.Move.FOLLOW_TARGET);
+
+
                         }
                     }
                     else {
