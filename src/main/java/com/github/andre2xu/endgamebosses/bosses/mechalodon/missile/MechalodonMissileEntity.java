@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon.missile;
 
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -11,6 +12,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -80,7 +83,15 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
         Level level = this.level();
 
         if (level instanceof ServerLevel) {
-            level.explode(this, this.getX(), this.getY(), this.getZ(), 4, Level.ExplosionInteraction.MOB);
+            level.explode(
+                    this,
+                    Explosion.getDefaultDamageSource(level, this),
+                    new CustomExplosionDamageCalculator(), // this calculator has code to prevent accidental self harm
+                    this.getX(), this.getY(), this.getZ(),
+                    4, // radius
+                    false, // no fire
+                    Level.ExplosionInteraction.MOB
+            );
         }
 
         // delete missile from game
@@ -116,10 +127,6 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
                     // collided with blocks
                     this.detonate();
                 }
-            }
-            else {
-                // delete missile if target doesn't exist, is dead, or is a player in creative/spectator mode
-                this.discard();
             }
         }
         else {
@@ -164,6 +171,20 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
 
                 this.mob.getEntityData().set(BODY_PITCH, (float) -Math.toRadians(new_pitch) + pitch_adjustment); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
             }
+        }
+    }
+
+
+
+    // MISCELLANEOUS
+    private static class CustomExplosionDamageCalculator extends ExplosionDamageCalculator {
+        @Override
+        public boolean shouldDamageEntity(@NotNull Explosion pExplosion, @NotNull Entity pEntity) {
+            if (pEntity instanceof MechalodonEntity) {
+                return false;
+            }
+
+            return super.shouldDamageEntity(pExplosion, pEntity);
         }
     }
 }
