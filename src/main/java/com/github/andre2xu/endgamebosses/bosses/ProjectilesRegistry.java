@@ -1,0 +1,24 @@
+package com.github.andre2xu.endgamebosses.bosses;
+
+import com.github.andre2xu.endgamebosses.EndgameBosses;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+public class ProjectilesRegistry {
+    public static DeferredRegister<EntityType<?>> PROJECTILE_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, EndgameBosses.MODID);
+
+    // TYPES
+    public static RegistryObject<EntityType<MechalodonMissileEntity>> MECHALODON_MISSILE = PROJECTILE_TYPES.register("mechalodon_missile", () -> EntityType.Builder.of(MechalodonMissileEntity::new, MobCategory.MISC).sized(1f, 0.5f).build("mechalodon_missile"));
+
+
+
+    // this is called in the 'EndgameBosses' class constructor
+    public static void register(IEventBus eventBus) {
+        PROJECTILE_TYPES.register(eventBus);
+    }
+}

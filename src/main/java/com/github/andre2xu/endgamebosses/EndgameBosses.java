@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses;
 
 import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
+import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
 import com.github.andre2xu.endgamebosses.data.BossStateData;
@@ -48,6 +49,9 @@ public class EndgameBosses {
 
         // register boss types
         BossRegistry.register(modEventBus);
+
+        // register custom projectile types
+        ProjectilesRegistry.register(modEventBus);
 
         // register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
