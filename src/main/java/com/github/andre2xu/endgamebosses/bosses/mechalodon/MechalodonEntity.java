@@ -1,5 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
+import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,7 +21,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -608,6 +609,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             int random_number = new Random().nextInt(1, 14); // pick a number from 1-13
 
                             if (distance_to_target >= 10) {
+                                random_number = 5; // temp
+
                                 // choose a melee attack that doesn't require the Mechalodon to get close
                                 boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/13 chance to do this
                                 boolean perform_leap_forward_attack = Set.of(3,4).contains(random_number); // 2/13 chance to do this
@@ -1474,15 +1477,13 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         Level level = this.mechalodon.level();
 
                         if (!level.isClientSide) {
-                            Missile missile = new Missile(
-                                    current_pos.x,
-                                    current_pos.y + 1,
-                                    current_pos.z,
-                                    target_pos.subtract(current_pos), // towards target
-                                    level
-                            );
+                            MechalodonMissileEntity missile = ProjectilesRegistry.MECHALODON_MISSILE.get().create(level);
 
-                            level.addFreshEntity(missile);
+                            if (missile != null) {
+                                missile.setPos(current_pos);
+
+                                level.addFreshEntity(missile);
+                            }
                         }
 
                         // restart cooldown
@@ -1513,29 +1514,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mechalodon.getAttackType() == Action.AttackType.RANGE && this.mechalodon.getAttackAction() == Action.Attack.MISSILES;
-        }
-
-
-
-        private static class Missile extends AbstractHurtingProjectile {
-            public Missile(double pX, double pY, double pZ, Vec3 pMovement, Level pLevel) {
-                super(EntityType.DRAGON_FIREBALL, pX, pY, pZ, pMovement, pLevel);
-            }
-
-            @Override
-            protected boolean shouldBurn() {
-                return false;
-            }
-
-            @Override
-            protected void onHit(@NotNull HitResult pResult) {
-                super.onHit(pResult);
-
-                if (this.level() instanceof ServerLevel) {
-                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 4, false, Level.ExplosionInteraction.MOB);
-                    this.discard();
-                }
-            }
         }
     }
 }
