@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -75,6 +76,17 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
         }
     }
 
+    private void detonate() {
+        Level level = this.level();
+
+        if (level instanceof ServerLevel) {
+            level.explode(this, this.getX(), this.getY(), this.getZ(), 4, Level.ExplosionInteraction.MOB);
+        }
+
+        // delete missile from game
+        this.discard();
+    }
+
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
         // disable fall damage
@@ -93,13 +105,22 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
 
                 // move to target
                 this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(0.5));
+
+                // check for collision with target and detonate
+                boolean has_collided_with_target = this.getBoundingBox().intersects(target.getBoundingBox());
+
+                if (has_collided_with_target) {
+                    this.detonate();
+                }
+                else if (this.horizontalCollision || this.verticalCollision) {
+                    // collided with blocks
+                    this.detonate();
+                }
             }
         }
         else {
-            System.out.println("KABOOM");
+            this.detonate();
 
-            // delete missile from game
-            this.discard();
             return;
         }
 
