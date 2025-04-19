@@ -37,21 +37,7 @@ public class ModelBonePositionsPacket {
                 Entity entity = server_level.getEntity((int) this.entity_id);
 
                 if (entity instanceof MechalodonEntity) {
-                    switch (this.bone_name) {
-                        case "cannon":
-                            System.out.println("CANNON: " + this.bone_pos);
-                            break;
-                        case "side_thruster1":
-                            System.out.println("SIDE THRUSTER 1: " + this.bone_pos);
-                            break;
-                        case "side_thruster2":
-                            System.out.println("SIDE THRUSTER 2: " + this.bone_pos);
-                            break;
-                        case "back_thruster":
-                            System.out.println("BACK THRUSTER: " + this.bone_pos);
-                            break;
-                        default:
-                    }
+                    ((MechalodonEntity) entity).updateBonePosition(this.bone_name, this.bone_pos);
                 }
             }
         });
