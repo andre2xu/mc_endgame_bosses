@@ -485,6 +485,24 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     back_thruster_pos.x, back_thruster_pos.y, back_thruster_pos.z,
                     current_vector.x, 0, current_vector.z
             );
+
+            // phase 2 smoke (to show badly damaged state)
+            if (this.boss_phase == 2) {
+                boolean should_spawn_smoke = new Random().nextInt(1,4) == 1; // 1 in 3 chances to spawn smoke
+
+                if (should_spawn_smoke) {
+                    Vec3 current_pos = this.position();
+
+                    double random_x = new Random().nextDouble(-0.11, 0.11);
+                    double random_z = new Random().nextDouble(-0.11, 0.11);
+
+                    client_level.addAlwaysVisibleParticle(
+                            ParticleTypes.LARGE_SMOKE,
+                            current_pos.x, current_pos.y + 2, current_pos.z,
+                            random_x, 0.05, random_z
+                    );
+                }
+            }
         }
 
         // handle movement
