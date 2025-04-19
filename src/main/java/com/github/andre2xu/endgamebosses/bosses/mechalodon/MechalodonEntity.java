@@ -222,6 +222,8 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     }
 
     public void updateBonePosition(String boneName, Vec3 bonePos) {
+        // this method is only used by the 'ModelBonePositionsPacket' class. It runs on the server side but it syncs bone positions to the client side
+
         Vector3f bone_pos = new Vector3f((float) bonePos.x, (float) bonePos.y, (float) bonePos.z);
 
         switch (boneName) {
