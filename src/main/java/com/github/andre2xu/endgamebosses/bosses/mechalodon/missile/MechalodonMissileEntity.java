@@ -1,7 +1,9 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon.missile;
 
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -108,6 +110,20 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
         super.aiStep();
 
         if (this.auto_detonation_countdown > 0) {
+            // handle thruster particle
+            if (this.level() instanceof ClientLevel client_level) {
+                Vec3 current_pos = this.position();
+                Vec3 thruster_position = current_pos.subtract(this.getLookAngle().normalize().scale(0.48)); // spawns behind missile
+                Vec3 current_vector = this.getDeltaMovement().normalize().scale(-1).scale(0.2); // particles move in the opposite direction of the missile at a speed of 0.2 blocks
+
+                client_level.addParticle(
+                        ParticleTypes.FLAME,
+                        thruster_position.x, current_pos.y + 0.4, thruster_position.z,
+                        current_vector.x, 0, current_vector.z
+                );
+            }
+
+            // handle movement
             LivingEntity target = this.getTarget(); // target is set in the Mechalodon's missiles attack goal, just after the missile is spawned
 
             if (target != null && target.isAlive() && !(target instanceof Player player && (player.isCreative() || player.isSpectator()))) {
