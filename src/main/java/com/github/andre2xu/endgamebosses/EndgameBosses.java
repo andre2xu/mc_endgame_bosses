@@ -7,6 +7,7 @@ import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileRenderer;
 import com.github.andre2xu.endgamebosses.data.BossStateData;
+import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -153,6 +154,13 @@ public class EndgameBosses {
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class GeneralModEvents {
+        @SubscribeEvent
+        public static void commonSetup(FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                MainChannel.registerPacketsToProcess();
+            });
+        }
+
         @SubscribeEvent
         public static void createEntityAttributes(EntityAttributeCreationEvent event) {
             // bosses
