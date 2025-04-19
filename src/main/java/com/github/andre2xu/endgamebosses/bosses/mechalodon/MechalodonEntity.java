@@ -580,7 +580,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         if (Math.sqrt(target.distanceToSqr(anchor_point)) < allowed_distance_from_target) {
                             if (this.num_of_circle_points_to_visit == 0) {
                                 // pick a random amount of circle points to visit before attacking (must be at least 2)
-                                this.num_of_circle_points_to_visit = new Random().nextInt(2, this.all_angles_needed_to_find_circle_points.size() + 1);
+                                this.num_of_circle_points_to_visit = new Random().nextInt(2, 6);
                             }
 
                             if (this.num_of_circle_points_to_visit > 0) {
@@ -607,7 +607,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                                     // check if point has been reached
                                     double distance_to_point = Math.floor(Math.sqrt(this.distanceToSqr(this.current_circle_point_to_visit)));
 
-                                    if (distance_to_point <= 3) {
+                                    if (distance_to_point <= 4) {
                                         // update current point
                                         this.current_point_in_circle = this.current_circle_point_to_visit;
 
