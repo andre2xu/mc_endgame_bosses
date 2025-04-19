@@ -480,7 +480,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
             // back thruster
             Vector3f back_thruster_pos = this.entityData.get(BACK_THRUSTER_POSITION);
-            Vec3 current_vector = this.getDeltaMovement().normalize().scale(-1).scale(0.5);
+            Vec3 current_vector = this.getDeltaMovement().normalize().scale(-1).scale(0.5); // particles move in the opposite direction of the Mechalodon at a speed of 0.5 blocks
 
             client_level.addParticle(
                     ParticleTypes.FLAME,
