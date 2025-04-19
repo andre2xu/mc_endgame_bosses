@@ -4,6 +4,7 @@ import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -361,6 +362,33 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         double new_z = anchor_point.z + radius * Math.sin(degree_change);
 
         return new Vec3(new_x, new_y, new_z);
+    }
+
+    private void generateBlockBreakingParticlesAroundPoint(Vec3 centerPos, int radius) {
+        if (this.level() instanceof ServerLevel server_level) {
+            BlockPos center = new BlockPos((int) centerPos.x, (int) centerPos.y, (int) centerPos.z);
+
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -2; dy <= 2; dy++) {
+                    for (int dz = -radius; dz <= radius; dz++) {
+                        BlockPos current_block_pos = center.offset(dx, dy, dz);
+                        BlockState current_block_state = server_level.getBlockState(current_block_pos);
+
+                        boolean block_above_is_air = server_level.getBlockState(current_block_pos.above()).isAir();
+
+                        if (!current_block_state.isAir() && block_above_is_air) {
+                            server_level.sendParticles(
+                                    new BlockParticleOption(ParticleTypes.BLOCK, current_block_state),
+                                    current_block_pos.getX(), current_block_pos.getY(), current_block_pos.getZ(),
+                                    20, // particle count
+                                    0, 0.5, 0,
+                                    0.5 // speed
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -1467,6 +1495,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         if (Math.sqrt(this.mechalodon.distanceToSqr(this.target_pos)) <= 2) {
                             // straighten model again
                             this.mechalodon.triggerAnim("rotation_trigger_anim_controller", "face_down_reverse");
+
+                            // generate particles for slamming effect
+                            this.mechalodon.generateBlockBreakingParticlesAroundPoint(this.target_pos, 5);
 
                             // stop the attack
                             this.attack_is_finished = true;
