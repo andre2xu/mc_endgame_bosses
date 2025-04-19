@@ -1,7 +1,11 @@
 package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
 import com.github.andre2xu.endgamebosses.EndgameBosses;
+import com.github.andre2xu.endgamebosses.networking.MainChannel;
+import com.github.andre2xu.endgamebosses.networking.shared.packets.ModelBonePositionsPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3d;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -50,6 +54,28 @@ public class MechalodonModel extends GeoModel<MechalodonEntity> {
         if (rotate_body) {
             Optional<GeoBone> body_bone = getBone("body");
             body_bone.ifPresent(body -> body.setRotX(animatable.getBodyPitch()));
+        }
+
+        // get the world positions of the Mechalodon's particle-producing bones and send them to the server side
+        String[] model_bone_names = {
+                "cannon",
+                "side_thruster1",
+                "side_thruster2",
+                "back_thruster"
+        };
+
+        for (String bone_name : model_bone_names) {
+            Optional<GeoBone> bone = getBone(bone_name);
+
+            bone.ifPresent(model_bone -> {
+                Vector3d world_pos = model_bone.getWorldPosition();
+
+                MainChannel.sendToServer(new ModelBonePositionsPacket(
+                        instanceId,
+                        model_bone.getName(),
+                        new Vec3(world_pos.x, world_pos.y, world_pos.z))
+                );
+            });
         }
     }
 }
