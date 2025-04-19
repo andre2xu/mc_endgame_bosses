@@ -1052,9 +1052,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 }
 
                 // check for collision with target while leaping
-                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
-                if (has_collided_with_target) {
+                if (has_collided_with_target && this.mechalodon.distanceTo(this.target) <= 3) {
                     // damage target
                     this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
 
