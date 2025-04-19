@@ -68,12 +68,21 @@ public class MechalodonModel extends GeoModel<MechalodonEntity> {
             Optional<GeoBone> bone = getBone(bone_name);
 
             bone.ifPresent(model_bone -> {
-                Vector3d world_pos = model_bone.getWorldPosition();
+                // NOTE: the world positions aren't precise even with the corrections but they should be close to the bone. When spawning particles, the position will have to be further adjusted
+                
+                Vector3d world_pos = model_bone.getWorldPosition(); // for some reason this is only accurate for the top-most bone, not for child bones
+                Vector3d local_pos = model_bone.getLocalPosition(); // get position of bone within its parent bone
+                Vector3d corrected_pos = world_pos.add(local_pos); // correct world position
+
+                if (Objects.equals(model_bone.getName(), "back_thruster")) {
+                    Vector3d parent_local_pos = model_bone.getParent().getLocalPosition(); // extra correction
+                    corrected_pos = corrected_pos.add(parent_local_pos.x, 0, parent_local_pos.z);
+                }
 
                 MainChannel.sendToServer(new ModelBonePositionsPacket(
                         instanceId,
                         model_bone.getName(),
-                        new Vec3(world_pos.x, world_pos.y, world_pos.z))
+                        new Vec3(corrected_pos.x, corrected_pos.y, corrected_pos.z))
                 );
             });
         }
