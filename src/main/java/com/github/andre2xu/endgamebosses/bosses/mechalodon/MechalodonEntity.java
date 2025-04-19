@@ -1114,6 +1114,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     if (!has_collided_with_target) {
                         this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
                     }
+
+                    // generate particles for landing effect
+                    this.mechalodon.generateBlockBreakingParticlesAroundPoint(this.landing_position, 6);
                 }
             }
             else {
