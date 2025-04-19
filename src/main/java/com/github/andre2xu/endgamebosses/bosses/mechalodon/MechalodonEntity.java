@@ -2,7 +2,9 @@ package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
 import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -453,6 +455,28 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         // update boss phase
         if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
             this.boss_phase = 2;
+        }
+
+        // handle particles
+        if (this.level() instanceof ClientLevel client_level) {
+            // side thrusters
+            Vector3f side_thruster1_pos = this.entityData.get(SIDE_THRUSTER1_POSITION);
+            Vector3f side_thruster2_pos = this.entityData.get(SIDE_THRUSTER2_POSITION);
+
+            double particle_speed = 0.03;
+            double height_offset = 0.2;
+
+            client_level.addParticle(
+                    ParticleTypes.FLAME,
+                    side_thruster1_pos.x, side_thruster1_pos.y - height_offset, side_thruster1_pos.z,
+                    0, -particle_speed, 0
+            );
+
+            client_level.addParticle(
+                    ParticleTypes.FLAME,
+                    side_thruster2_pos.x, side_thruster2_pos.y - height_offset, side_thruster2_pos.z,
+                    0, -particle_speed, 0
+            );
         }
 
         // handle movement
