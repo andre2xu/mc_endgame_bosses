@@ -83,6 +83,13 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
+    // model bone positions
+    private static final EntityDataAccessor<Vector3f> CANNON_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> SIDE_THRUSTER1_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> SIDE_THRUSTER2_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> BACK_THRUSTER_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
+
+
     // ACTIONS
     public enum Action {;
         // these determine which attack goal is run OR how the Mechalodon will move (see aiStep)
@@ -204,10 +211,34 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(MOVE_ACTION, 0); // idle
         pBuilder.define(ATTACK_ACTION, 0); // none
         pBuilder.define(ANCHOR_POINT, new Vector3f(0,0,0));
+        pBuilder.define(CANNON_POSITION, new Vector3f(0,0,0));
+        pBuilder.define(SIDE_THRUSTER1_POSITION, new Vector3f(0,0,0));
+        pBuilder.define(SIDE_THRUSTER2_POSITION, new Vector3f(0,0,0));
+        pBuilder.define(BACK_THRUSTER_POSITION, new Vector3f(0,0,0));
     }
 
     public float getBodyPitch() {
         return this.entityData.get(BODY_PITCH);
+    }
+
+    public void updateBonePosition(String boneName, Vec3 bonePos) {
+        Vector3f bone_pos = new Vector3f((float) bonePos.x, (float) bonePos.y, (float) bonePos.z);
+
+        switch (boneName) {
+            case "cannon":
+                this.entityData.set(CANNON_POSITION, bone_pos);
+                break;
+            case "side_thruster1":
+                this.entityData.set(SIDE_THRUSTER1_POSITION, bone_pos);
+                break;
+            case "side_thruster2":
+                this.entityData.set(SIDE_THRUSTER2_POSITION, bone_pos);
+                break;
+            case "back_thruster":
+                this.entityData.set(BACK_THRUSTER_POSITION, bone_pos);
+                break;
+            default:
+        }
     }
 
 
