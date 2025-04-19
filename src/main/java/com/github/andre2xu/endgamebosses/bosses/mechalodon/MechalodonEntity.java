@@ -477,6 +477,16 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     side_thruster2_pos.x, side_thruster2_pos.y - height_offset, side_thruster2_pos.z,
                     0, -particle_speed, 0
             );
+
+            // back thruster
+            Vector3f back_thruster_pos = this.entityData.get(BACK_THRUSTER_POSITION);
+            Vec3 current_vector = this.getDeltaMovement().normalize().scale(-1).scale(0.5);
+
+            client_level.addParticle(
+                    ParticleTypes.FLAME,
+                    back_thruster_pos.x, back_thruster_pos.y, back_thruster_pos.z,
+                    current_vector.x, 0, current_vector.z
+            );
         }
 
         // handle movement

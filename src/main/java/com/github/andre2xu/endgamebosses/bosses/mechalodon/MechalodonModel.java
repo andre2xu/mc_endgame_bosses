@@ -81,7 +81,7 @@ public class MechalodonModel extends GeoModel<MechalodonEntity> {
                 else if (bone_name.equals("back_thruster")) {
                     Vector3d parent_local_pos = model_bone.getParent().getLocalPosition(); // extra correction
 
-                    corrected_pos = corrected_pos.add(parent_local_pos.x * 1.6, 0.3, parent_local_pos.z * 1.6);
+                    corrected_pos = corrected_pos.add(parent_local_pos.x * 1.55, 0.3, parent_local_pos.z * 1.55);
                 }
 
                 MainChannel.sendToServer(new ModelBonePositionsPacket(
