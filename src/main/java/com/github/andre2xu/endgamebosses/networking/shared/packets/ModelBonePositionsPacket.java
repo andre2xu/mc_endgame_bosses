@@ -1,6 +1,10 @@
 package com.github.andre2xu.endgamebosses.networking.shared.packets;
 
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
@@ -27,7 +31,29 @@ public class ModelBonePositionsPacket {
 
     public void handle(CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
-            System.out.println("HANDLING BONE POSITIONS");
+            ServerPlayer server_player = context.getSender();
+
+            if (server_player != null && server_player.level() instanceof ServerLevel server_level && !server_level.isClientSide) {
+                Entity entity = server_level.getEntity((int) this.entity_id);
+
+                if (entity instanceof MechalodonEntity) {
+                    switch (this.bone_name) {
+                        case "cannon":
+                            System.out.println("CANNON: " + this.bone_pos);
+                            break;
+                        case "side_thruster1":
+                            System.out.println("SIDE THRUSTER 1: " + this.bone_pos);
+                            break;
+                        case "side_thruster2":
+                            System.out.println("SIDE THRUSTER 2: " + this.bone_pos);
+                            break;
+                        case "back_thruster":
+                            System.out.println("BACK THRUSTER: " + this.bone_pos);
+                            break;
+                        default:
+                    }
+                }
+            }
         });
 
         context.setPacketHandled(true);
