@@ -85,7 +85,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
     // model bone positions
-    private static final EntityDataAccessor<Vector3f> CANNON_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> SIDE_THRUSTER1_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> SIDE_THRUSTER2_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> BACK_THRUSTER_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
@@ -212,7 +211,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(MOVE_ACTION, 0); // idle
         pBuilder.define(ATTACK_ACTION, 0); // none
         pBuilder.define(ANCHOR_POINT, new Vector3f(0,0,0));
-        pBuilder.define(CANNON_POSITION, new Vector3f(0,0,0));
         pBuilder.define(SIDE_THRUSTER1_POSITION, new Vector3f(0,0,0));
         pBuilder.define(SIDE_THRUSTER2_POSITION, new Vector3f(0,0,0));
         pBuilder.define(BACK_THRUSTER_POSITION, new Vector3f(0,0,0));
@@ -228,9 +226,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         Vector3f bone_pos = new Vector3f((float) bonePos.x, (float) bonePos.y, (float) bonePos.z);
 
         switch (boneName) {
-            case "cannon":
-                this.entityData.set(CANNON_POSITION, bone_pos);
-                break;
             case "side_thruster1":
                 this.entityData.set(SIDE_THRUSTER1_POSITION, bone_pos);
                 break;

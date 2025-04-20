@@ -58,7 +58,6 @@ public class MechalodonModel extends GeoModel<MechalodonEntity> {
 
         // get the world positions of the Mechalodon's particle-producing bones and send them to the server side
         String[] model_bone_names = {
-                "cannon",
                 "side_thruster1",
                 "side_thruster2",
                 "back_thruster"
