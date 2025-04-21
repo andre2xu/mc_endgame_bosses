@@ -398,6 +398,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public boolean isAffectedByPotions() {
+        return false;
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
         // taken from Minecraft's 'FlyingMob' class
     }
