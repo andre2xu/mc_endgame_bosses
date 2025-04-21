@@ -13,8 +13,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -804,6 +807,19 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 }
             }
         }
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected @Nullable SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) {
+        return SoundEvents.IRON_GOLEM_HURT;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return SoundEvents.IRON_GOLEM_DEATH;
     }
 
 
