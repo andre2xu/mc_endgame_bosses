@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -399,6 +400,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public boolean isAffectedByPotions() {
+        return false;
+    }
+
+    @Override
+    public boolean canDrownInFluidType(FluidType type) {
         return false;
     }
 
