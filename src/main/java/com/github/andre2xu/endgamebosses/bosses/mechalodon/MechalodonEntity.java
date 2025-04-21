@@ -1512,6 +1512,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             // generate particles for slamming effect
                             this.mechalodon.generateBlockBreakingParticlesAroundPoint(this.target_pos, 5);
 
+                            // play sound
+                            this.mechalodon.playSound(SoundEvents.GENERIC_EXPLODE.get(), 5f, 1f);
+
                             // stop the attack
                             this.attack_is_finished = true;
                         }
