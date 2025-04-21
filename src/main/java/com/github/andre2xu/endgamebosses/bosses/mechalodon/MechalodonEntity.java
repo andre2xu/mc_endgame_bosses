@@ -56,7 +56,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from the underground surprise attack
     - Increase damage dealt to target from the dive from above attack
     - Increase damage dealt to flying target from bites
-    - Add sounds for Mechalodon
 
     OPTIONAL:
     - Add boss music for Mechalodon
