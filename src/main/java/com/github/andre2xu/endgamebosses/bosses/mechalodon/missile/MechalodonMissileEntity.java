@@ -8,6 +8,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -142,10 +144,27 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
                 // move to target
                 this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(0.4)); // flight speed
 
+                // play sound
+                float distance_to_target = this.distanceTo(target);
+
+                SoundEvent missile_sound = SoundEvents.NOTE_BLOCK_BIT.get();
+                float missile_sound_volume = 3f;
+                float missile_sound_pitch = 100f;
+
+                if (distance_to_target <= 3 && this.auto_detonation_countdown % 2 == 0) {
+                    this.playSound(missile_sound, missile_sound_volume, missile_sound_pitch);
+                }
+                else if (distance_to_target <= 7 && this.auto_detonation_countdown % 5 == 0) {
+                    this.playSound(missile_sound, missile_sound_volume, missile_sound_pitch);
+                }
+                else if (this.auto_detonation_countdown % 10 == 0) {
+                    this.playSound(missile_sound, missile_sound_volume, missile_sound_pitch);
+                }
+
                 // check for collision with target and detonate
                 boolean has_collided_with_target = this.getBoundingBox().intersects(target.getBoundingBox());
 
-                if (has_collided_with_target) {
+                if (has_collided_with_target && distance_to_target <= 0) {
                     this.detonate();
                 }
                 else if (this.horizontalCollision || this.verticalCollision) {
