@@ -1352,6 +1352,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             target_pos.z - current_pos.z
                     ).normalize().scale(0.8)); // movement speed
 
+                    // play burrowing sound once
+                    if (this.attack_countdown % (20 * 4) == 0) {
+                        this.mechalodon.playSound(SoundEvents.SNIFFER_DIGGING, 2f, 1f);
+                    }
+
                     this.decrementAttackCountdown();
                 }
                 else {
@@ -1378,6 +1383,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                         if (has_collided_with_target) {
                             this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                            // play collision sound
+                            this.mechalodon.playMeleeAttackSound(5f, 1f);
                         }
 
                         // check if the last position of the target has been reached
