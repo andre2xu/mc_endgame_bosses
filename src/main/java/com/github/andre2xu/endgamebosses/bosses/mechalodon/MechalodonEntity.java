@@ -985,6 +985,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         // damage target
                         this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
 
+                        // play sound
+                        this.mechalodon.playMeleeAttackSound(5f, 1f);
+
                         // stop attack
                         this.attack_is_finished = true;
                     }
