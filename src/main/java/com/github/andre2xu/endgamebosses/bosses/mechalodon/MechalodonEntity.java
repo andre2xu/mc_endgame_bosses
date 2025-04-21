@@ -1526,6 +1526,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                         if (has_collided_with_target && this.mechalodon.distanceTo(this.target) <= 3) {
                             this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                            // play collision sound
+                            this.mechalodon.playMeleeAttackSound(5f, 1f);
                         }
 
                         // check if the saved target position has been reached
@@ -1536,7 +1539,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                             // generate particles for slamming effect
                             this.mechalodon.generateBlockBreakingParticlesAroundPoint(this.target_pos, 5);
 
-                            // play sound
+                            // play sound for landing
                             this.mechalodon.playSound(SoundEvents.GENERIC_EXPLODE.get(), 5f, 1f);
 
                             // stop the attack
