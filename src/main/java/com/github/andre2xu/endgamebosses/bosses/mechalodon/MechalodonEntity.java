@@ -737,14 +737,18 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                             if (distance_to_target >= 10) {
                                 // choose a melee attack that doesn't require the Mechalodon to get close
-                                boolean perform_charge_attack = Set.of(1,2,3).contains(random_number); // 3/6 chance to do this
-                                boolean perform_leap_forward_attack = Set.of(4,5).contains(random_number); // 2/6 chance to do this
-
-                                if (perform_charge_attack) {
-                                    this.setAttackAction(Action.Attack.CHARGE);
-                                }
-                                else if (perform_leap_forward_attack) {
-                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                switch (random_number) {
+                                    case 1:
+                                    case 2:
+                                    case 3:
+                                        this.setAttackAction(Action.Attack.CHARGE);  // 3/6 chance to do this
+                                        break;
+                                    case 4:
+                                    case 5:
+                                        this.setAttackAction(Action.Attack.LEAP_FORWARD); // 2/6 chance to do this
+                                        break;
+                                    default:
+                                        // 1/6 to not attack
                                 }
                             }
                             else {
@@ -757,22 +761,29 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                             if (distance_to_target >= 10) {
                                 // choose a melee attack that doesn't require the Mechalodon to get close
-                                boolean perform_charge_attack = Set.of(1,2).contains(random_number); // 2/13 chance to do this
-                                boolean perform_leap_forward_attack = Set.of(3,4).contains(random_number); // 2/13 chance to do this
-                                boolean perform_homing_missiles_attack = Set.of(5,6,7,8,9).contains(random_number); // 5/13 chance to do this
-                                boolean perform_dive_from_above_attack = Set.of(10,11,12,13).contains(random_number); // 4/13 chance to do this
-
-                                if (perform_charge_attack) {
-                                    this.setAttackAction(Action.Attack.CHARGE);
-                                }
-                                else if (perform_leap_forward_attack) {
-                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
-                                }
-                                else if (perform_homing_missiles_attack) {
-                                    this.setAttackAction(Action.Attack.MISSILES);
-                                }
-                                else if (perform_dive_from_above_attack) {
-                                    this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE);
+                                switch (random_number) {
+                                    case 1:
+                                    case 2:
+                                        this.setAttackAction(Action.Attack.CHARGE);  // 2/13 chance to do this
+                                        break;
+                                    case 3:
+                                    case 4:
+                                        this.setAttackAction(Action.Attack.LEAP_FORWARD); // 2/13 chance to do this
+                                        break;
+                                    case 5:
+                                    case 6:
+                                    case 7:
+                                    case 8:
+                                    case 9:
+                                        this.setAttackAction(Action.Attack.MISSILES); // 5/13 chance to do this
+                                        break;
+                                    case 10:
+                                    case 11:
+                                    case 12:
+                                    case 13:
+                                        this.setAttackAction(Action.Attack.DIVE_FROM_ABOVE); // 4/13 chance to do this
+                                        break;
+                                    default:
                                 }
                             }
                             else {
