@@ -388,6 +388,10 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
+    private void playMeleeAttackSound(float volume, float pitch) {
+        this.playSound(SoundEvents.IRON_GOLEM_HURT, volume, pitch);
+    }
+
     @Override
     public boolean fireImmune() {
         return true;
