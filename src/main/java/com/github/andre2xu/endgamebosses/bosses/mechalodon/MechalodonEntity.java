@@ -814,7 +814,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     // SOUNDS
     @Override
     protected @Nullable SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) {
-        return SoundEvents.IRON_GOLEM_HURT;
+        return SoundEvents.ANVIL_PLACE;
     }
 
     @Override
