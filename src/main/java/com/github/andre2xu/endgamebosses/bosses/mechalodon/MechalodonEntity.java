@@ -822,6 +822,16 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         return SoundEvents.IRON_GOLEM_DEATH;
     }
 
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() {
+        return SoundEvents.BEACON_AMBIENT;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 0;
+    }
+
 
 
     // CONTROLS
