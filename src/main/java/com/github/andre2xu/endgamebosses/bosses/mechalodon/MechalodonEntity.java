@@ -1689,7 +1689,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                                     level.addFreshEntity(missile);
 
-                                    this.mechalodon.playSound(SoundEvents.FIRECHARGE_USE, 50f, 1f);
+                                    this.mechalodon.playSound(SoundEvents.FIRECHARGE_USE, 5f, 1f);
                                 }
                             }
 
