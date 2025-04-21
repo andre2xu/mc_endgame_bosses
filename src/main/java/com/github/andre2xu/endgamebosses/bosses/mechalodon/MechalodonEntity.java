@@ -1119,6 +1119,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     // damage target
                     this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
 
+                    // play sound for colliding
+                    this.mechalodon.playMeleeAttackSound(5f, 1f);
+
                     // close mouth
                     this.mechalodon.triggerAnim("attack_trigger_anim_controller", "mouth_close");
                 }
@@ -1134,6 +1137,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                     // generate particles for landing effect
                     this.mechalodon.generateBlockBreakingParticlesAroundPoint(this.landing_position, 6);
+
+                    // play sound for landing
+                    this.mechalodon.playSound(SoundEvents.HORSE_LAND, 5f, 1f);
                 }
             }
             else {
