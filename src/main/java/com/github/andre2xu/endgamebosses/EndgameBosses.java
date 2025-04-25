@@ -41,7 +41,8 @@ public class EndgameBosses {
     public static final String MODID = "endgamebosses";
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String[] BOSSES = {
-            "mechalodon"
+            "mechalodon",
+            "tragon"
     };
 
 
