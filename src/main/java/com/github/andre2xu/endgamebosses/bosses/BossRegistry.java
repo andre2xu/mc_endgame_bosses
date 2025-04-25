@@ -2,6 +2,7 @@ package com.github.andre2xu.endgamebosses.bosses;
 
 import com.github.andre2xu.endgamebosses.EndgameBosses;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
+import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -14,6 +15,8 @@ public class BossRegistry {
 
     // TYPES
     public static RegistryObject<EntityType<MechalodonEntity>> MECHALODON = BOSS_TYPES.register("mechalodon", () -> EntityType.Builder.of(MechalodonEntity::new, MobCategory.MONSTER).sized(10f, 4.5f).build("mechalodon"));
+
+    public static RegistryObject<EntityType<TragonEntity>> TRAGON = BOSS_TYPES.register("tragon", () -> EntityType.Builder.of(TragonEntity::new, MobCategory.MONSTER).build("tragon"));
 
 
 

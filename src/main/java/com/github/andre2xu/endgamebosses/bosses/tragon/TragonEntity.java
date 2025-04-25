@@ -14,7 +14,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
 
-    protected TragonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
+    public TragonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
