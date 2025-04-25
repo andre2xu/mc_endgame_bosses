@@ -26,6 +26,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0) // immune to knockback
                 .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 1.0) // immune to explosion knockback
+                .add(Attributes.SAFE_FALL_DISTANCE, 100)
                 .build();
     }
 
