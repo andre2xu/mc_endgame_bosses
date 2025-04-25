@@ -2,6 +2,8 @@ package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -16,6 +18,14 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     public TragonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    public static AttributeSupplier createAttributes() {
+        return PathfinderMob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0) // immune to knockback
+                .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 1.0) // immune to explosion knockback
+                .build();
     }
 
 
