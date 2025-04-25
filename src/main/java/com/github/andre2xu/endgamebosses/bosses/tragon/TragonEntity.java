@@ -53,4 +53,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public boolean canDrownInFluidType(FluidType type) {
         return false;
     }
+
+    @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+        // don't push players (i.e. allow them to get close)
+        if (!(entity instanceof Player)) {
+            super.doPush(entity);
+        }
+    }
 }
