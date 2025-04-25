@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.networking.shared.packets;
 
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
+import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +39,9 @@ public class ModelBonePositionsPacket {
 
                 if (entity instanceof MechalodonEntity) {
                     ((MechalodonEntity) entity).updateBonePosition(this.bone_name, this.bone_pos);
+                }
+                else if (entity instanceof TragonEntity) {
+                    ((TragonEntity) entity).updateHitboxPosition(this.bone_name, this.bone_pos);
                 }
             }
         });
