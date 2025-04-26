@@ -1,10 +1,12 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -45,6 +47,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         };
 
         this.setId(ENTITY_COUNTER.getAndAdd(this.hitboxes.length + 1) + 1);
+
+        // add custom controls
+        this.lookControl = new TragonLookControl(this); // change the default look control
     }
 
     public static AttributeSupplier createAttributes() {
@@ -164,8 +169,35 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         if (target != null) {
             if (!target.isFallFlying()) {
-                System.out.println(target);
+                this.getLookControl().setLookAt(target);
             }
+        }
+    }
+
+
+
+    // CONTROLS
+    private static class TragonLookControl extends LookControl {
+        public TragonLookControl(Mob pMob) {
+            super(pMob);
+        }
+
+        @Override
+        public void setLookAt(@NotNull Entity pEntity) {
+            super.setLookAt(pEntity); // update value of 'this.mob.getXRot'
+
+            Vec3 target_pos = pEntity.position();
+
+            // set body yaw to face target
+            double yaw_dx = target_pos.x - this.mob.getX();
+            double yaw_dz = target_pos.z - this.mob.getZ();
+
+            float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
+            float new_yaw = (float) Math.toDegrees(-yaw_angle_towards_target);
+
+            this.mob.setYRot(new_yaw);
+            this.mob.setYBodyRot(new_yaw);
+            this.mob.setYHeadRot(new_yaw);
         }
     }
 
