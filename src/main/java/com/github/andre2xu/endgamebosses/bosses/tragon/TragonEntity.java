@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Objects;
@@ -25,6 +25,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    protected static final RawAnimation WALK_ANIM = RawAnimation.begin().then("animation.tragon.walk", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation SWIM_ANIM = RawAnimation.begin().then("animation.tragon.swim", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation HIDE_ANIM = RawAnimation.begin().then("animation.tragon.hide", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation EXPOSE_ANIM = RawAnimation.begin().then("animation.tragon.expose", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -53,7 +57,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     // GECKOLIB SETUP
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // add triggerable animations
+        controllers.add(new AnimationController<>(this, "movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("walk", WALK_ANIM)
+                .triggerableAnim("swim", SWIM_ANIM)
+                .triggerableAnim("hide_in_shell", HIDE_ANIM) // this is here to stop the walk & swim animations
+                .triggerableAnim("come_out_of_shell", EXPOSE_ANIM) // this is here to stop the walk & swim animations
+        );
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
