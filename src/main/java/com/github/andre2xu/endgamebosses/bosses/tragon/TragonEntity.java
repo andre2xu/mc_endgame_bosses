@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -115,6 +116,12 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    @SuppressWarnings("SimplifiableConditionalExpression")
+    @Override
+    public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        return this.isInvulnerable() || this.isInvulnerableTo(pSource) ? false : super.hurt(pSource, pAmount);
+    }
+
     @Override
     public boolean fireImmune() {
         return true;
