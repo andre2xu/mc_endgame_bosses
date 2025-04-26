@@ -12,21 +12,21 @@ import org.jetbrains.annotations.NotNull;
 public class HitboxEntity extends PartEntity<PathfinderMob> {
     private final PathfinderMob parent;
     private final EntityDimensions size;
-    private final String bone_name;
+    private final String hitbox_name;
 
-    public HitboxEntity(PathfinderMob parent, String boneName, float width, float height) {
+    public HitboxEntity(PathfinderMob parent, String hitboxName, float width, float height) {
         super(parent);
 
         this.parent = parent;
 
-        this.bone_name = boneName; // name of model bone the hitbox is tied to
+        this.hitbox_name = hitboxName;
 
         this.size = EntityDimensions.scalable(width, height);
         this.refreshDimensions(); // call 'getDimensions'
     }
 
-    public String getBoneName() {
-        return this.bone_name;
+    public String getHitboxName() {
+        return this.hitbox_name;
     }
 
     @Override
