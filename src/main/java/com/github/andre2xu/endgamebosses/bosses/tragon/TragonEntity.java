@@ -2,11 +2,12 @@ package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -20,6 +21,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     private final PartEntity<?>[] hitboxes;
@@ -142,6 +144,38 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // don't push players (i.e. allow them to get close)
         if (!(entity instanceof Player)) {
             super.doPush(entity);
+        }
+    }
+
+    @Override
+    protected void registerGoals() {
+        // target the player that hurt the Tragon
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
+
+        // find and select a target
+        this.targetSelector.addGoal(3, new TragonEntity.SelectTargetGoal(this));
+    }
+
+
+
+    // CUSTOM GOALS
+    private static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
+        public SelectTargetGoal(Mob pMob) {
+            // this is a custom constructor made to reduce the amount of parameters. It doesn't override any constructor from the parent
+
+            this(pMob, Player.class, 10, true, false, null);
+        }
+
+        public SelectTargetGoal(Mob pMob, Class<Player> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, @Nullable Predicate<LivingEntity> pTargetPredicate) {
+            // this is the main constructor where the target conditions are set (see NearestAttackableTargetGoal). It was overridden to increase how far the Tragon can spot targets
+
+            super(pMob, pTargetType, pRandomInterval, pMustSee, pMustReach, pTargetPredicate);
+
+            final double MAX_TARGET_DISTANCE = 50d; // blocks
+            this.targetConditions = TargetingConditions
+                    .forCombat()
+                    .range(MAX_TARGET_DISTANCE)
+                    .selector(pTargetPredicate);
         }
     }
 }
