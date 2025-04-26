@@ -156,6 +156,19 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         this.targetSelector.addGoal(3, new TragonEntity.SelectTargetGoal(this));
     }
 
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        LivingEntity target = this.getTarget();
+
+        if (target != null) {
+            if (!target.isFallFlying()) {
+                System.out.println(target);
+            }
+        }
+    }
+
 
 
     // CUSTOM GOALS
