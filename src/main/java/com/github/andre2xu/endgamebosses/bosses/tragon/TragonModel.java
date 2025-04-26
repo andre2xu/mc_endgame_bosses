@@ -9,6 +9,8 @@ import org.joml.Vector3d;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
+import java.util.ArrayList;
+
 public class TragonModel extends GeoModel<TragonEntity> {
     @Override
     public ResourceLocation getModelResource(TragonEntity animatable) {
@@ -29,6 +31,10 @@ public class TragonModel extends GeoModel<TragonEntity> {
     public void setCustomAnimations(TragonEntity animatable, long instanceId, AnimationState<TragonEntity> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
+        // set pitch rotation of heads
+        setPitchOfHeads(animatable.getHeadPitch());
+
+        // set position of neck hitboxes
         updateNeckHitbox(animatable, instanceId, "fire_head_neck", "fh_skull");
         updateNeckHitbox(animatable, instanceId, "lightning_head_neck", "lh_skull");
         updateNeckHitbox(animatable, instanceId, "ice_head_neck", "ih_skull");
@@ -51,5 +57,39 @@ public class TragonModel extends GeoModel<TragonEntity> {
             // update hitbox position on client side
             animatable.updateHitboxPosition(hitboxEntityName, bone_pos);
         });
+    }
+
+    private void setPitchOfHeads(float new_pitch) {
+        ArrayList<String> bones_to_rotate = new ArrayList<>();
+
+        if (new_pitch < 0) {
+            bones_to_rotate.add("fh_neck_lower");
+            bones_to_rotate.add("fh_skull");
+            bones_to_rotate.add("lh_skull");
+            bones_to_rotate.add("ih_neck_middle");
+            bones_to_rotate.add("ih_skull");
+
+            if (new_pitch < -0.41f) {
+                new_pitch = -0.41f;
+            }
+        }
+        else if (new_pitch > 0) {
+            bones_to_rotate.add("fh_neck_lower");
+            bones_to_rotate.add("lh_skull");
+            bones_to_rotate.add("ih_neck_lower");
+
+            if (new_pitch > 0.55f) {
+                new_pitch = 0.55f;
+            }
+        }
+
+        // rotate bones to make the Tragon's heads face a target or block
+        if (!bones_to_rotate.isEmpty()) {
+            for (String bone_name : bones_to_rotate) {
+                final float PITCH = new_pitch;
+
+                getBone(bone_name).ifPresent(bone -> bone.setRotX(PITCH));
+            }
+        }
     }
 }
