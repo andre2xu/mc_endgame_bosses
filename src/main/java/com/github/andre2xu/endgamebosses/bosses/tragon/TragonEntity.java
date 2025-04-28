@@ -191,6 +191,16 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         if (target != null) {
             if (!target.isFallFlying()) {
                 this.getLookControl().setLookAt(target);
+
+                if (this.distanceTo(target) > 10) {
+                    this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(1));
+
+                    if (this.horizontalCollision) {
+                        this.jumpFromGround();
+                    }
+
+                    this.triggerAnim("movement_trigger_anim_controller", "walk");
+                }
             }
         }
     }
