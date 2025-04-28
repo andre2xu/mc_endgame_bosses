@@ -192,13 +192,31 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             if (!target.isFallFlying()) {
                 this.getLookControl().setLookAt(target);
 
+                boolean in_liquid = this.isInWater() || this.isInLava();
+                double allowed_depth_in_liquids = 3;
+
                 if (this.distanceTo(target) > 10) {
-                    this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(1));
+                    Vec3 vector_to_target = target.position().subtract(this.position());
 
-                    if (this.horizontalCollision) {
-                        this.jumpFromGround();
+                    if (in_liquid) {
+                        this.setDeltaMovement(vector_to_target.subtract(0, allowed_depth_in_liquids, 0).normalize().scale(0.7));
+                        this.setNoGravity(true); // don't sink in liquids
                     }
+                    else {
+                        this.setDeltaMovement(vector_to_target.normalize().scale(1));
+                        this.setNoGravity(false);
 
+                        if (this.horizontalCollision) {
+                            this.jumpFromGround();
+                        }
+                    }
+                }
+
+                // play movement animation
+                if (in_liquid) {
+                    this.triggerAnim("movement_trigger_anim_controller", "swim");
+                }
+                else {
                     this.triggerAnim("movement_trigger_anim_controller", "walk");
                 }
             }
