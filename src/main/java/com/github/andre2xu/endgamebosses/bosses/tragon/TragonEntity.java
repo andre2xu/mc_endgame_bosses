@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -144,6 +145,28 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    public boolean isInDeepLiquid() {
+        if (this.isInWater() || this.isInLava()) {
+            Level level = this.level();
+            BlockPos block_pos = BlockPos.containing(this.position());
+
+            int threshold = 6; // no. blocks for the liquid to be considered deep
+            int depth = 0;
+
+            for (int i=0; i < threshold; i++) {
+                if (!level.getBlockState(block_pos).getFluidState().isEmpty()) {
+                    depth++;
+                }
+
+                block_pos = block_pos.below();
+            }
+
+            return depth == threshold;
+        }
+
+        return false;
+    }
+
     @SuppressWarnings("SimplifiableConditionalExpression")
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
