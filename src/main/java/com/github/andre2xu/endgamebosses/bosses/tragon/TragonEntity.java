@@ -2,10 +2,14 @@ package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -35,7 +39,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
-    @SuppressWarnings("FieldMayBeFinal") // temp
+    private final ServerBossEvent server_boss_event = new ServerBossEvent(
+            Component.literal("Tragon"),
+            BossEvent.BossBarColor.RED,
+            BossEvent.BossBarOverlay.NOTCHED_12
+    );
     private int boss_phase = 1;
 
     // DATA ACCESSORS
@@ -173,6 +181,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // BOSS FIGHT
+    @Override
+    public void startSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.startSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.addPlayer(pServerPlayer);
+    }
+
+    @Override
+    public void stopSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.stopSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.removePlayer(pServerPlayer);
+    }
+
+
+
     // AI
     private void setAttackAction(Action.Attack attackAction) {
         int action_id = 0; // none
@@ -285,6 +310,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
+
+        // update boss health bar
+        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+        this.server_boss_event.setProgress(boss_health_remaining);
+
+        // update boss phase
+        if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
+            this.boss_phase = 2;
+        }
 
         // handle general behaviour in water
         boolean in_deep_liquid = this.isInDeepLiquid();
