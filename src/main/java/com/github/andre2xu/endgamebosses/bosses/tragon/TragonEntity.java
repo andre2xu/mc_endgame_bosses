@@ -300,7 +300,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            if (!target.isFallFlying()) {
+            boolean is_melee_attacking = this.getAttackAction() != Action.Attack.NONE && this.getAttackType() == Action.AttackType.MELEE;
+
+            if (!target.isFallFlying() && !is_melee_attacking) {
                 this.getLookControl().setLookAt(target);
 
                 int distance_from_player = this.boss_phase == 2 ? 20 : 35; // stick close in phase 2 and stay far in phase 1
