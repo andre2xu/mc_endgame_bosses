@@ -275,6 +275,18 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         return this.isInvulnerable() || this.isInvulnerableTo(pSource) ? false : super.hurt(pSource, pAmount);
     }
 
+    public boolean hurt(String hitboxName, @NotNull DamageSource pSource, float pAmount) {
+        float health_before_damage = this.getHealth();
+
+        boolean is_hurt = this.hurt(pSource, pAmount);
+
+        float health_after_damage = this.getHealth();
+
+        float damage = health_before_damage - health_after_damage;
+
+        return is_hurt;
+    }
+
     @Override
     public boolean fireImmune() {
         return true;

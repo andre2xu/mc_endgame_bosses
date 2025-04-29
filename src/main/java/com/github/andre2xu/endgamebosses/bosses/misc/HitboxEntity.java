@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.misc;
 
+import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
@@ -57,6 +58,10 @@ public class HitboxEntity extends PartEntity<PathfinderMob> {
 
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        if (this.parent instanceof TragonEntity tragon) {
+            return tragon.hurt(this.getHitboxName(), pSource, pAmount);
+        }
+
         return this.parent.hurt(pSource, pAmount);
     }
 }
