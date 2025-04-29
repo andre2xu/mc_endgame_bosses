@@ -159,8 +159,14 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         for (String id : neck_ids) {
             float head_health = pCompound.getFloat(id);
+            boolean has_taken_damage = pCompound.getBoolean(id + "_is_damaged");
 
-            this.heads.get(id).setHealth(head_health);
+            if (has_taken_damage) {
+                TragonHead head = this.heads.get(id);
+
+                head.setHealth(head_health);
+                head.setHasTakenDamage(true);
+            }
         }
     }
 
@@ -169,9 +175,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // save health of heads
         for (Map.Entry<String, TragonHead> head_data : this.heads.entrySet()) {
             String neck_id = head_data.getKey();
-            float remaining_health = head_data.getValue().getHealth();
+            TragonHead head = head_data.getValue();
 
+            float remaining_health = head.getHealth();
             pCompound.putFloat(neck_id, remaining_health);
+            pCompound.putBoolean(neck_id + "_is_damaged", head.hasTakenDamage());
         }
 
         super.addAdditionalSaveData(pCompound);
