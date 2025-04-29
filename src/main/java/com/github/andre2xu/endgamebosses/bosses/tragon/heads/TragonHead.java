@@ -8,6 +8,10 @@ public class TragonHead {
         this.health = maxHealth;
     }
 
+    public void setHealth(float newHealth) {
+        this.health = newHealth;
+    }
+
     public float getHealth() {
         return this.health;
     }
