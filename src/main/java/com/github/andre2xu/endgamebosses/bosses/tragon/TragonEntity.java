@@ -209,38 +209,43 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // handle general behaviour in water
+        boolean in_deep_liquid = this.isInDeepLiquid();
+        double allowed_depth_in_liquids = 3;
+
+        if (in_deep_liquid) {
+            this.setNoGravity(true); // don't sink in liquids
+
+            this.triggerAnim("movement_trigger_anim_controller", "swim");
+        }
+
+        // handle movement towards a target
         LivingEntity target = this.getTarget();
 
         if (target != null) {
             if (!target.isFallFlying()) {
                 this.getLookControl().setLookAt(target);
 
-                boolean in_deep_liquid = this.isInDeepLiquid();
-                double allowed_depth_in_liquids = 3;
-
                 if (this.distanceTo(target) > 10) {
                     Vec3 vector_to_target = target.position().subtract(this.position());
 
                     if (in_deep_liquid) {
+                        // OBJECTIVE: Swim towards target when in deep liquids. Keep the lower body below the liquid
+
                         this.setDeltaMovement(vector_to_target.subtract(0, allowed_depth_in_liquids, 0).normalize().scale(0.7));
-                        this.setNoGravity(true); // don't sink in liquids
                     }
                     else {
+                        // OBJECTIVE: Walk towards target when on land
+
                         this.setDeltaMovement(vector_to_target.normalize().scale(1));
                         this.setNoGravity(false);
 
                         if (this.horizontalCollision) {
                             this.jumpFromGround();
                         }
-                    }
-                }
 
-                // play movement animation
-                if (in_deep_liquid) {
-                    this.triggerAnim("movement_trigger_anim_controller", "swim");
-                }
-                else {
-                    this.triggerAnim("movement_trigger_anim_controller", "walk");
+                        this.triggerAnim("movement_trigger_anim_controller", "walk");
+                    }
                 }
             }
         }
