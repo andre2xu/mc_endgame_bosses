@@ -30,7 +30,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
+    // GENERAL
     private final PartEntity<?>[] hitboxes;
+
+    // BOSS FIGHT
+    private int boss_phase = 1;
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
