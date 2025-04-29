@@ -3,6 +3,7 @@ package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 public class TragonHead {
     private float health;
     private boolean is_alive = true;
+    private boolean has_taken_damage = false; // this flag ensures that the Tragon's 'readAdditionalSaveData' method only updates the health of a head if it has already taken damage
 
     public TragonHead(float maxHealth) {
         this.health = maxHealth;
@@ -29,6 +30,16 @@ public class TragonHead {
 
                 this.health = 0; // prevent health from having a negative value
             }
+
+            this.has_taken_damage = true;
         }
+    }
+
+    public boolean hasTakenDamage() {
+        return this.has_taken_damage;
+    }
+
+    public void setHasTakenDamage(boolean flag) {
+        this.has_taken_damage = flag;
     }
 }
