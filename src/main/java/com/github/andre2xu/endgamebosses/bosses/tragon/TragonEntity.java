@@ -34,6 +34,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private final PartEntity<?>[] hitboxes;
 
     // BOSS FIGHT
+    @SuppressWarnings("FieldMayBeFinal") // temp
     private int boss_phase = 1;
 
     // DATA ACCESSORS
@@ -230,7 +231,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             if (!target.isFallFlying()) {
                 this.getLookControl().setLookAt(target);
 
-                if (this.distanceTo(target) > 20) {
+                int distance_from_player = this.boss_phase == 2 ? 20 : 35; // stick close in phase 2 and stay far in phase 1
+
+                if (this.distanceTo(target) > distance_from_player) {
                     Vec3 vector_to_target = target.position().subtract(this.position());
 
                     if (in_deep_liquid) {
@@ -308,7 +311,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
             super(pMob, pTargetType, pRandomInterval, pMustSee, pMustReach, pTargetPredicate);
 
-            final double MAX_TARGET_DISTANCE = 50d; // blocks
+            final double MAX_TARGET_DISTANCE = 60d; // blocks
             this.targetConditions = TargetingConditions
                     .forCombat()
                     .ignoreLineOfSight() // allow Tragon to continue following a target even if they're obstructed by the environment, e.g. under trees
