@@ -191,6 +191,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 this.attack_type = Action.AttackType.RANGE;
                 break;
             default:
+                this.attack_type = Action.AttackType.MELEE;
         }
 
         this.entityData.set(ATTACK_ACTION, action_id);
