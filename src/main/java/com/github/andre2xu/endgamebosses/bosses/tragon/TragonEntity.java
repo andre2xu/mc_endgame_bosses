@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
     private final PartEntity<?>[] hitboxes;
+    private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
     @SuppressWarnings("FieldMayBeFinal") // temp
@@ -41,6 +42,24 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
     private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+
+    // ACTIONS
+    public enum Action {;
+        // these determine which attack goal is run
+
+        public enum AttackType {
+            MELEE,
+            RANGE
+        }
+
+        public enum Attack {
+            NONE,
+
+            // melee
+
+            // range
+        }
+    }
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
