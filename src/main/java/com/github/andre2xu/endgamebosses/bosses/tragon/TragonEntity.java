@@ -1,6 +1,10 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.FireHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.IceHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.LightningHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.TragonHead;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,12 +34,14 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
     private final PartEntity<?>[] hitboxes;
+    private HashMap<String, TragonHead> heads;
     private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
@@ -83,13 +89,25 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public TragonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
+        String fire_head_neck_id = "fire_head_neck";
+        String lightning_head_neck_id = "lightning_head_neck";
+        String ice_head_neck_id = "ice_head_neck";
+
+        // create hitboxes around the necks of the heads
         this.hitboxes = new PartEntity[] {
-                new HitboxEntity(this, "fire_head_neck", 2, 2),
-                new HitboxEntity(this, "lightning_head_neck", 2, 2),
-                new HitboxEntity(this, "ice_head_neck", 2, 2)
+                new HitboxEntity(this, fire_head_neck_id, 2, 2),
+                new HitboxEntity(this, lightning_head_neck_id, 2, 2),
+                new HitboxEntity(this, ice_head_neck_id, 2, 2)
         };
 
         this.setId(ENTITY_COUNTER.getAndAdd(this.hitboxes.length + 1) + 1);
+
+        // create head data (these are not the actual heads)
+        float head_health = this.getHealth() / 3;
+
+        this.heads.put(fire_head_neck_id, new FireHead(head_health));
+        this.heads.put(lightning_head_neck_id, new LightningHead(head_health));
+        this.heads.put(ice_head_neck_id, new IceHead(head_health));
 
         // add custom controls
         this.lookControl = new TragonLookControl(this); // change the default look control
