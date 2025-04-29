@@ -1,6 +1,5 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
-import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,7 +40,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
-    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
 
     // ACTIONS
     public enum Action {;
