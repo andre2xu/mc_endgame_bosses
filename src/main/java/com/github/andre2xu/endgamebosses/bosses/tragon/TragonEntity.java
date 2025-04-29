@@ -58,6 +58,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             // melee
 
             // range
+            ONE_HEAD_ATTACK, // only used when 1 head remains
+            TWO_HEAD_ATTACK,
+            THREE_HEAD_ATTACK // in phase 2 only
         }
     }
 
@@ -176,6 +179,18 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         int action_id = 0; // none
 
         switch (attackAction) {
+            case Action.Attack.ONE_HEAD_ATTACK:
+                action_id = 1;
+                this.attack_type = Action.AttackType.RANGE;
+                break;
+            case Action.Attack.TWO_HEAD_ATTACK:
+                action_id = 2;
+                this.attack_type = Action.AttackType.RANGE;
+                break;
+            case Action.Attack.THREE_HEAD_ATTACK:
+                action_id = 3;
+                this.attack_type = Action.AttackType.RANGE;
+                break;
             default:
         }
 
@@ -188,6 +203,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         int action_id = this.entityData.get(ATTACK_ACTION);
 
         switch (action_id) {
+            case 1:
+                attack_action = Action.Attack.ONE_HEAD_ATTACK;
+                break;
+            case 2:
+                attack_action = Action.Attack.TWO_HEAD_ATTACK;
+                break;
+            case 3:
+                attack_action = Action.Attack.THREE_HEAD_ATTACK;
+                break;
             default:
         }
 
