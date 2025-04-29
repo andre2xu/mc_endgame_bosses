@@ -226,7 +226,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             if (!target.isFallFlying()) {
                 this.getLookControl().setLookAt(target);
 
-                if (this.distanceTo(target) > 10) {
+                if (this.distanceTo(target) > 20) {
                     Vec3 vector_to_target = target.position().subtract(this.position());
 
                     if (in_deep_liquid) {
