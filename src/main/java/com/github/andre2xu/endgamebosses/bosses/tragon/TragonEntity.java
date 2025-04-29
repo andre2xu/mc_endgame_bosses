@@ -172,6 +172,32 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    private void setAttackAction(Action.Attack attackAction) {
+        int action_id = 0; // none
+
+        switch (attackAction) {
+            default:
+        }
+
+        this.entityData.set(ATTACK_ACTION, action_id);
+    }
+
+    private Action.Attack getAttackAction() {
+        Action.Attack attack_action = Action.Attack.NONE;
+
+        int action_id = this.entityData.get(ATTACK_ACTION);
+
+        switch (action_id) {
+            default:
+        }
+
+        return attack_action;
+    }
+
+    public Action.AttackType getAttackType() {
+        return this.attack_type;
+    }
+
     public boolean isInDeepLiquid() {
         if (this.isInWater() || this.isInLava()) {
             Level level = this.level();
