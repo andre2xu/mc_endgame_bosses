@@ -6,6 +6,7 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.heads.IceHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.LightningHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.TragonHead;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -35,6 +36,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -144,6 +146,37 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
     // DATA
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+
+        // update health of heads
+        String[] neck_ids = {
+                "fire_head_neck",
+                "lightning_head_neck",
+                "ice_head_neck"
+        }; // these should match the ones in the constructor
+
+        for (String id : neck_ids) {
+            float head_health = pCompound.getFloat(id);
+
+            this.heads.get(id).setHealth(head_health);
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        // save health of heads
+        for (Map.Entry<String, TragonHead> head_data : this.heads.entrySet()) {
+            String neck_id = head_data.getKey();
+            float remaining_health = head_data.getValue().getHealth();
+
+            pCompound.putFloat(neck_id, remaining_health);
+        }
+
+        super.addAdditionalSaveData(pCompound);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
