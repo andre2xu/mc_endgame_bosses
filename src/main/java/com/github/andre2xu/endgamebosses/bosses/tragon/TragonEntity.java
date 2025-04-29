@@ -41,7 +41,7 @@ import java.util.function.Predicate;
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
     private final PartEntity<?>[] hitboxes;
-    private HashMap<String, TragonHead> heads;
+    private final HashMap<String, TragonHead> heads = new HashMap<>();
     private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
@@ -301,6 +301,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         float health_after_damage = this.getHealth();
 
         float damage = health_before_damage - health_after_damage;
+
+        // apply damage to the head whose hitbox was hurt
+        TragonHead head = this.heads.get(hitboxName);
+        head.hurt(damage);
 
         return is_hurt;
     }
