@@ -233,6 +233,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         // OBJECTIVE: Swim towards target when in deep liquids. Keep the lower body below the liquid
 
                         this.setDeltaMovement(vector_to_target.subtract(0, allowed_depth_in_liquids, 0).normalize().scale(0.7));
+
+                        if (this.horizontalCollision) {
+                            this.getJumpControl().jump(); // swim up
+                        }
                     }
                     else {
                         // OBJECTIVE: Walk towards target when on land
