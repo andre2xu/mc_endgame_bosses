@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fluids.FluidType;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -42,7 +43,7 @@ import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
-    private final PartEntity<?>[] hitboxes;
+    private PartEntity<?>[] hitboxes;
     private final HashMap<String, TragonHead> heads = new HashMap<>();
     private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
@@ -272,6 +273,39 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
+    private void removeNeckHitboxOfDeadHeads() {
+        String fire_head_neck_id = "fire_head_neck";
+        String lightning_head_neck_id = "lightning_head_neck";
+        String ice_head_neck_id = "ice_head_neck";
+
+        for (PartEntity<?> hitbox : this.hitboxes) {
+            String hitbox_name = ((HitboxEntity) hitbox).getHitboxName();
+            boolean remove_current_hitbox = false;
+
+            // determine which hitbox needs to be removed
+            if (Objects.equals(hitbox_name, fire_head_neck_id) && !this.getHeadAliveFlag(FireHead.class)) {
+                remove_current_hitbox = true;
+            }
+            else if (Objects.equals(hitbox_name, lightning_head_neck_id) && !this.getHeadAliveFlag(LightningHead.class)) {
+                remove_current_hitbox = true;
+            }
+            else if (Objects.equals(hitbox_name, ice_head_neck_id) && !this.getHeadAliveFlag(IceHead.class)) {
+                remove_current_hitbox = true;
+            }
+
+            // handle removal
+            if (remove_current_hitbox) {
+                // delete from parts list
+                this.hitboxes = ArrayUtils.removeElement(this.hitboxes, hitbox);
+
+                System.out.println(this.level());
+
+                // delete from game
+                hitbox.discard();
+            }
+        }
+    }
+
 
 
     // BOSS FIGHT
@@ -449,6 +483,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
+
+        this.removeNeckHitboxOfDeadHeads();
 
         // update boss health bar
         float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
