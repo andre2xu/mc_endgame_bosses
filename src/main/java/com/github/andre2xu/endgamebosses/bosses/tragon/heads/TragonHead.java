@@ -14,6 +14,8 @@ public class TragonHead {
 
         if (this.health <= 0) {
             this.is_alive = false;
+
+            this.health = 0; // prevent health from having a negative value
         }
     }
 
@@ -27,13 +29,7 @@ public class TragonHead {
 
     public void hurt(float damageAmount) {
         if (this.health > 0) {
-            this.health = this.health - damageAmount;
-
-            if (this.health <= 0) {
-                this.is_alive = false;
-
-                this.health = 0; // prevent health from having a negative value
-            }
+            this.setHealth(this.health - damageAmount);
 
             this.has_taken_damage = true;
         }
