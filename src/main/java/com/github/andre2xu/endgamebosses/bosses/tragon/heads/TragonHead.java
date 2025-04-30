@@ -16,6 +16,8 @@ public class TragonHead {
         this.health = newHealth;
 
         if (this.health <= 0) {
+            this.parent.setHeadAliveFlag(this, false); // mark head as dead so that it gets rendered as headless in the model class
+
             this.health = 0; // prevent health from having a negative value
         }
     }

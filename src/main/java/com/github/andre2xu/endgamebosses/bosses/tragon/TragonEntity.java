@@ -201,6 +201,18 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(ATTACK_ACTION, 0); // none
     }
 
+    public void setHeadAliveFlag(TragonHead head, boolean isAlive) {
+        if (head instanceof FireHead) {
+            this.entityData.set(FIRE_HEAD_IS_ALIVE, isAlive);
+        }
+        else if (head instanceof LightningHead) {
+            this.entityData.set(LIGHTNING_HEAD_IS_ALIVE, isAlive);
+        }
+        else if (head instanceof IceHead) {
+            this.entityData.set(ICE_HEAD_IS_ALIVE, isAlive);
+        }
+    }
+
     public float getHeadPitch() {
         return this.entityData.get(HEAD_PITCH);
     }
