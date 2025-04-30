@@ -104,16 +104,9 @@ public class TragonModel extends GeoModel<TragonEntity> {
         boolean lightning_head_is_alive = animatable.getHeadAliveFlag(LightningHead.class);
         boolean ice_head_is_alive = animatable.getHeadAliveFlag(IceHead.class);
 
-        if (!fire_head_is_alive) {
-            getBone("fh_neck_middle").ifPresent(bone -> bone.setHidden(true));
-        }
-
-        if (!lightning_head_is_alive) {
-            getBone("lh_neck_middle").ifPresent(bone -> bone.setHidden(true));
-        }
-
-        if (!ice_head_is_alive) {
-            getBone("ih_neck_middle").ifPresent(bone -> bone.setHidden(true));
-        }
+        // hide bone if dead, don't hide bone if alive
+        getBone("fh_neck_middle").ifPresent(bone -> bone.setHidden(!fire_head_is_alive));
+        getBone("lh_neck_middle").ifPresent(bone -> bone.setHidden(!lightning_head_is_alive));
+        getBone("ih_neck_middle").ifPresent(bone -> bone.setHidden(!ice_head_is_alive));
     }
 }
