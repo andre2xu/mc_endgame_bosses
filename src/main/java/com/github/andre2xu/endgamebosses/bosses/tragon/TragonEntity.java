@@ -331,19 +331,39 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     @SuppressWarnings("SimplifiableConditionalExpression")
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
-        return this.isInvulnerable() || this.isInvulnerableTo(pSource) ? false : super.hurt(pSource, pAmount);
-    }
+        // OBJECTIVE: Damage the main body and slightly decrease the health of the remaining heads as well (i.e. make them weaker)
 
-    public boolean hurt(String hitboxName, @NotNull DamageSource pSource, float pAmount) {
         float health_before_damage = this.getHealth();
 
-        boolean is_hurt = this.hurt(pSource, pAmount);
+        boolean is_hurt = this.isInvulnerable() || this.isInvulnerableTo(pSource) ? false : super.hurt(pSource, pAmount);
 
         float health_after_damage = this.getHealth();
 
         float damage = health_before_damage - health_after_damage;
 
-        // apply damage to the head whose hitbox was hurt
+        // apply a small portion of the damage to remaining heads
+        damage = damage / 3;
+
+        for (TragonHead head : this.heads.values()) {
+            head.hurt(damage);
+        }
+
+        return is_hurt;
+    }
+
+    @SuppressWarnings("SimplifiableConditionalExpression")
+    public boolean hurt(String hitboxName, @NotNull DamageSource pSource, float pAmount) {
+        // OBJECTIVE: Damage the main body and the head whose neck was attacked
+
+        float health_before_damage = this.getHealth();
+
+        boolean is_hurt = this.isInvulnerable() || this.isInvulnerableTo(pSource) ? false : super.hurt(pSource, pAmount);
+
+        float health_after_damage = this.getHealth();
+
+        float damage = health_before_damage - health_after_damage;
+
+        // apply the same damage to the head whose hitbox was hurt
         TragonHead head = this.heads.get(hitboxName);
         head.hurt(damage);
 
