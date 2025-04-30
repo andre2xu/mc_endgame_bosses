@@ -20,6 +20,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -36,6 +37,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -471,6 +473,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         // find and select a target
         this.targetSelector.addGoal(3, new TragonEntity.SelectTargetGoal(this));
+        
+        /*
+        HOW ATTACKING WORKS:
+        - There are two types: MELEE and RANGE (see Action.AttackType enums)
+        - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with the target selector goals. The priority of 1 means they will be executed instead of a target selector goal
+        - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
+        - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
+        */
+        this.goalSelector.addGoal(1, new TwoHeadAttackGoal(this));
     }
 
     @Override
@@ -593,6 +604,21 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     .ignoreLineOfSight() // allow Tragon to continue following a target even if they're obstructed by the environment, e.g. under trees
                     .range(MAX_TARGET_DISTANCE)
                     .selector(pTargetPredicate);
+        }
+    }
+
+    private static class TwoHeadAttackGoal extends Goal {
+        private final TragonEntity tragon;
+        private boolean attack_is_finished = false;
+
+        public TwoHeadAttackGoal(TragonEntity tragon) {
+            this.tragon = tragon;
+            this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
         }
     }
 }
