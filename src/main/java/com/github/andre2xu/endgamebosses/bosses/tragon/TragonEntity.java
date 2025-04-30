@@ -298,8 +298,6 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 // delete from parts list
                 this.hitboxes = ArrayUtils.removeElement(this.hitboxes, hitbox);
 
-                System.out.println(this.level());
-
                 // delete from game
                 hitbox.discard();
             }
