@@ -1,6 +1,9 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon;
 
 import com.github.andre2xu.endgamebosses.EndgameBosses;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.FireHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.IceHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.heads.LightningHead;
 import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.github.andre2xu.endgamebosses.networking.shared.packets.ModelBonePositionsPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +41,9 @@ public class TragonModel extends GeoModel<TragonEntity> {
         updateNeckHitbox(animatable, instanceId, "fire_head_neck", "fh_skull");
         updateNeckHitbox(animatable, instanceId, "lightning_head_neck", "lh_skull");
         updateNeckHitbox(animatable, instanceId, "ice_head_neck", "ih_skull");
+
+        // render the dead heads as headless
+        renderDeadHeadsAsHeadless(animatable);
     }
 
     private void updateNeckHitbox(TragonEntity animatable, long instanceId, String hitboxEntityName, String skullName) {
@@ -90,6 +96,24 @@ public class TragonModel extends GeoModel<TragonEntity> {
 
                 getBone(bone_name).ifPresent(bone -> bone.setRotX(PITCH));
             }
+        }
+    }
+
+    private void renderDeadHeadsAsHeadless(TragonEntity animatable) {
+        boolean fire_head_is_alive = animatable.getHeadAliveFlag(FireHead.class);
+        boolean lightning_head_is_alive = animatable.getHeadAliveFlag(LightningHead.class);
+        boolean ice_head_is_alive = animatable.getHeadAliveFlag(IceHead.class);
+
+        if (!fire_head_is_alive) {
+            getBone("fh_neck_middle").ifPresent(bone -> bone.setHidden(true));
+        }
+
+        if (!lightning_head_is_alive) {
+            getBone("lh_neck_middle").ifPresent(bone -> bone.setHidden(true));
+        }
+
+        if (!ice_head_is_alive) {
+            getBone("ih_neck_middle").ifPresent(bone -> bone.setHidden(true));
         }
     }
 }
