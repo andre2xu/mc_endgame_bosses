@@ -562,11 +562,35 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     if (this.getAttackAction() == Action.Attack.NONE) {
                         if (distance_from_target <= 8) {
                             // OBJECTIVE: Target got close. Stop following them and do a melee attack
-                            System.out.println("DOING MELEE ATTACK");
+                            this.setAttackAction(Action.Attack.NONE); // temp
                         }
                         else {
                             // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
-                            System.out.println("DOING RANGE ATTACK");
+                            int num_of_heads_alive = this.getAliveHeads().size();
+
+                            if (num_of_heads_alive == 3) {
+                                boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+
+                                if (do_3_head_attack) {
+                                    this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
+                                }
+                                else {
+                                    this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
+                                }
+                            }
+                            else if (num_of_heads_alive == 2) {
+                                boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+
+                                if (do_2_head_attack) {
+                                    this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
+                                }
+                                else {
+                                    this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
+                                }
+                            }
+                            else if (num_of_heads_alive == 1) {
+                                this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
+                            }
                         }
                     }
                 }
