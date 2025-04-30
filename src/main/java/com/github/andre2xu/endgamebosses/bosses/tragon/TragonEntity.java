@@ -428,6 +428,16 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public void die(@NotNull DamageSource pDamageSource) {
+        super.die(pDamageSource);
+
+        // discard hitboxes
+        for (PartEntity<?> hitbox : this.hitboxes) {
+            hitbox.discard();
+        }
+    }
+
+    @Override
     protected void registerGoals() {
         // target the player that hurt the Tragon
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
