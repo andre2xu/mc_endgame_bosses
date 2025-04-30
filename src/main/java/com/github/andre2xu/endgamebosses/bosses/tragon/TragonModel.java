@@ -35,15 +35,15 @@ public class TragonModel extends GeoModel<TragonEntity> {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
         // set pitch rotation of heads
-        setPitchOfHeads(animatable.getHeadPitch());
+        this.setPitchOfHeads(animatable.getHeadPitch());
 
         // set position of neck hitboxes
-        updateNeckHitbox(animatable, instanceId, "fire_head_neck", "fh_skull");
-        updateNeckHitbox(animatable, instanceId, "lightning_head_neck", "lh_skull");
-        updateNeckHitbox(animatable, instanceId, "ice_head_neck", "ih_skull");
+        this.updateNeckHitbox(animatable, instanceId, "fire_head_neck", "fh_skull");
+        this.updateNeckHitbox(animatable, instanceId, "lightning_head_neck", "lh_skull");
+        this.updateNeckHitbox(animatable, instanceId, "ice_head_neck", "ih_skull");
 
         // render the dead heads as headless
-        renderDeadHeadsAsHeadless(animatable);
+        this.renderDeadHeadsAsHeadless(animatable);
     }
 
     private void updateNeckHitbox(TragonEntity animatable, long instanceId, String hitboxEntityName, String skullName) {
