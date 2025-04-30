@@ -37,10 +37,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
@@ -228,6 +225,18 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         // assume a head is alive by default
         return true;
+    }
+
+    public ArrayList<TragonHead> getAliveHeads() {
+        ArrayList<TragonHead> heads_alive = new ArrayList<>();
+
+        for (TragonHead head : this.heads.values()) {
+            if (this.getHeadAliveFlag(head.getClass())) {
+                heads_alive.add(head);
+            }
+        }
+
+        return heads_alive;
     }
 
     public float getHeadPitch() {
