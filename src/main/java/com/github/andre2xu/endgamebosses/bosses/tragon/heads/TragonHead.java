@@ -1,11 +1,15 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
+import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+
 public class TragonHead {
+    private final TragonEntity parent;
     private float health;
     private boolean is_alive = true;
     private boolean has_taken_damage = false; // this flag ensures that the Tragon's 'readAdditionalSaveData' method only updates the health of a head if it has already taken damage
 
-    public TragonHead(float maxHealth) {
+    public TragonHead(TragonEntity parent, float maxHealth) {
+        this.parent = parent;
         this.health = maxHealth;
     }
 
