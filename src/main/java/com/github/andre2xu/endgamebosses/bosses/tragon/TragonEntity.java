@@ -55,6 +55,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private int boss_phase = 1;
 
     // DATA ACCESSORS
+    private static final EntityDataAccessor<Boolean> FIRE_HEAD_IS_ALIVE = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> LIGHTNING_HEAD_IS_ALIVE = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ICE_HEAD_IS_ALIVE = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
     private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
 
@@ -190,6 +193,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         super.defineSynchedData(pBuilder);
 
         // give data accessors starting values
+        pBuilder.define(FIRE_HEAD_IS_ALIVE, true);
+        pBuilder.define(LIGHTNING_HEAD_IS_ALIVE, true);
+        pBuilder.define(ICE_HEAD_IS_ALIVE, true);
+
         pBuilder.define(HEAD_PITCH, 0.0f);
         pBuilder.define(ATTACK_ACTION, 0); // none
     }
