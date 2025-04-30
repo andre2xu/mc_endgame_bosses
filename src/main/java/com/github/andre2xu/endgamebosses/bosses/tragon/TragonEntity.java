@@ -509,40 +509,56 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.triggerAnim("movement_trigger_anim_controller", "swim");
         }
 
-        // handle movement towards a target
+        // handle movement & attack decisions
         LivingEntity target = this.getTarget();
 
         if (target != null) {
             boolean is_melee_attacking = this.getAttackAction() != Action.Attack.NONE && this.getAttackType() == Action.AttackType.MELEE;
 
-            if (!target.isFallFlying() && !is_melee_attacking) {
-                this.getLookControl().setLookAt(target);
+            if (!target.isFallFlying()) {
+                if (!is_melee_attacking) {
+                    // follow target but keep a distance
+                    this.getLookControl().setLookAt(target);
 
-                int distance_from_player = this.boss_phase == 2 ? 20 : 35; // stick close in phase 2 and stay far in phase 1
+                    float distance_from_target = this.distanceTo(target);
+                    int distance_to_keep_from_target = this.boss_phase == 2 ? 20 : 35; // stick close in phase 2 and stay far in phase 1
 
-                if (this.distanceTo(target) > distance_from_player) {
-                    Vec3 vector_to_target = target.position().subtract(this.position());
+                    if (distance_from_target > distance_to_keep_from_target) {
+                        Vec3 vector_to_target = target.position().subtract(this.position());
 
-                    if (in_deep_liquid) {
-                        // OBJECTIVE: Swim towards target when in deep liquids. Keep the lower body below the liquid
+                        if (in_deep_liquid) {
+                            // OBJECTIVE: Swim towards target when in deep liquids. Keep the lower body below the liquid
 
-                        this.setDeltaMovement(vector_to_target.subtract(0, allowed_depth_in_liquids, 0).normalize().scale(0.7));
+                            this.setDeltaMovement(vector_to_target.subtract(0, allowed_depth_in_liquids, 0).normalize().scale(0.7));
 
-                        if (this.horizontalCollision) {
-                            this.getJumpControl().jump(); // swim up
+                            if (this.horizontalCollision) {
+                                this.getJumpControl().jump(); // swim up
+                            }
+                        }
+                        else {
+                            // OBJECTIVE: Walk towards target when on land
+
+                            this.setDeltaMovement(vector_to_target.normalize().scale(1));
+                            this.setNoGravity(false);
+
+                            if (this.horizontalCollision) {
+                                this.jumpFromGround();
+                            }
+
+                            this.triggerAnim("movement_trigger_anim_controller", "walk");
                         }
                     }
-                    else {
-                        // OBJECTIVE: Walk towards target when on land
 
-                        this.setDeltaMovement(vector_to_target.normalize().scale(1));
-                        this.setNoGravity(false);
-
-                        if (this.horizontalCollision) {
-                            this.jumpFromGround();
+                    // decide whether to do a melee or range attack
+                    if (this.getAttackAction() == Action.Attack.NONE) {
+                        if (distance_from_target <= 8) {
+                            // OBJECTIVE: Target got close. Stop following them and do a melee attack
+                            System.out.println("DOING MELEE ATTACK");
                         }
-
-                        this.triggerAnim("movement_trigger_anim_controller", "walk");
+                        else {
+                            // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
+                            System.out.println("DOING RANGE ATTACK");
+                        }
                     }
                 }
             }
