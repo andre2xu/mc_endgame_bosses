@@ -11,6 +11,10 @@ public class TragonHead {
 
     public void setHealth(float newHealth) {
         this.health = newHealth;
+
+        if (this.health <= 0) {
+            this.is_alive = false;
+        }
     }
 
     public float getHealth() {
