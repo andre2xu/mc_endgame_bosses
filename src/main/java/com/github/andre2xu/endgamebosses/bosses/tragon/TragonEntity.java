@@ -44,6 +44,9 @@ import java.util.function.Predicate;
 public class TragonEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
     private PartEntity<?>[] hitboxes;
+    private final String fire_head_neck_id = "fire_head_neck";
+    private final String lightning_head_neck_id = "lightning_head_neck";
+    private final String ice_head_neck_id = "ice_head_neck";
     private final HashMap<String, TragonHead> heads = new HashMap<>();
     private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
@@ -95,15 +98,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public TragonEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
-        String fire_head_neck_id = "fire_head_neck";
-        String lightning_head_neck_id = "lightning_head_neck";
-        String ice_head_neck_id = "ice_head_neck";
-
         // create hitboxes around the necks of the heads
         this.hitboxes = new PartEntity[] {
-                new HitboxEntity(this, fire_head_neck_id, 2, 2),
-                new HitboxEntity(this, lightning_head_neck_id, 2, 2),
-                new HitboxEntity(this, ice_head_neck_id, 2, 2)
+                new HitboxEntity(this, this.fire_head_neck_id, 2, 2),
+                new HitboxEntity(this, this.lightning_head_neck_id, 2, 2),
+                new HitboxEntity(this, this.ice_head_neck_id, 2, 2)
         };
 
         this.setId(ENTITY_COUNTER.getAndAdd(this.hitboxes.length + 1) + 1);
@@ -111,9 +110,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // create head data (these are not the actual heads)
         float head_health = this.getHealth() / 3;
 
-        this.heads.put(fire_head_neck_id, new FireHead(this, head_health));
-        this.heads.put(lightning_head_neck_id, new LightningHead(this, head_health));
-        this.heads.put(ice_head_neck_id, new IceHead(this, head_health));
+        this.heads.put(this.fire_head_neck_id, new FireHead(this, head_health));
+        this.heads.put(this.lightning_head_neck_id, new LightningHead(this, head_health));
+        this.heads.put(this.ice_head_neck_id, new IceHead(this, head_health));
 
         // add custom controls
         this.lookControl = new TragonLookControl(this); // change the default look control
@@ -274,22 +273,18 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     }
 
     private void removeNeckHitboxOfDeadHeads() {
-        String fire_head_neck_id = "fire_head_neck";
-        String lightning_head_neck_id = "lightning_head_neck";
-        String ice_head_neck_id = "ice_head_neck";
-
         for (PartEntity<?> hitbox : this.hitboxes) {
             String hitbox_name = ((HitboxEntity) hitbox).getHitboxName();
             boolean remove_current_hitbox = false;
 
             // determine which hitbox needs to be removed
-            if (Objects.equals(hitbox_name, fire_head_neck_id) && !this.getHeadAliveFlag(FireHead.class)) {
+            if (Objects.equals(hitbox_name, this.fire_head_neck_id) && !this.getHeadAliveFlag(FireHead.class)) {
                 remove_current_hitbox = true;
             }
-            else if (Objects.equals(hitbox_name, lightning_head_neck_id) && !this.getHeadAliveFlag(LightningHead.class)) {
+            else if (Objects.equals(hitbox_name, this.lightning_head_neck_id) && !this.getHeadAliveFlag(LightningHead.class)) {
                 remove_current_hitbox = true;
             }
-            else if (Objects.equals(hitbox_name, ice_head_neck_id) && !this.getHeadAliveFlag(IceHead.class)) {
+            else if (Objects.equals(hitbox_name, this.ice_head_neck_id) && !this.getHeadAliveFlag(IceHead.class)) {
                 remove_current_hitbox = true;
             }
 
