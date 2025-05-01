@@ -284,6 +284,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
+    public Vec3 getMouthPosition(Class<? extends TragonHead> head) {
+        if (head.isAssignableFrom(FireHead.class)) {
+            Vector3f mouth_pos = this.entityData.get(FIRE_HEAD_MOUTH_POSITION);
+            return new Vec3(mouth_pos.x, mouth_pos.y, mouth_pos.z);
+        }
+        else if (head.isAssignableFrom(LightningHead.class)) {
+            Vector3f mouth_pos = this.entityData.get(LIGHTNING_HEAD_MOUTH_POSITION);
+            return new Vec3(mouth_pos.x, mouth_pos.y, mouth_pos.z);
+        }
+        else if (head.isAssignableFrom(IceHead.class)) {
+            Vector3f mouth_pos = this.entityData.get(ICE_HEAD_MOUTH_POSITION);
+            return new Vec3(mouth_pos.x, mouth_pos.y, mouth_pos.z);
+        }
+
+        return null;
+    }
+
 
 
     // EXTRA HITBOXES
