@@ -674,17 +674,16 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     private static class TwoHeadAttackGoal extends Goal {
         private final TragonEntity tragon;
-        private final ArrayList<TragonHead> attacking_heads;
+        private ArrayList<TragonHead> attacking_heads = null;
         private boolean attack_is_finished = false;
 
         public TwoHeadAttackGoal(TragonEntity tragon) {
             this.tragon = tragon;
             this.setFlags(EnumSet.of(Flag.TARGET));
-
-            this.attacking_heads = this.tragon.getAliveHeads();
         }
 
         private void resetAttack() {
+            this.attacking_heads = null;
             this.attack_is_finished = false;
         }
 
@@ -706,7 +705,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
+            if (this.attacking_heads == null) {
+                this.attacking_heads = this.tragon.getAliveHeads();
+            }
+
+            return !this.attack_is_finished && this.attacking_heads != null && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
         }
     }
 }
