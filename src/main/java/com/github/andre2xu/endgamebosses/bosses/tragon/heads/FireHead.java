@@ -83,6 +83,21 @@ public class FireHead extends TragonHead {
                         this.decrementShootCooldown();
                     }
                     else {
+                        // OBJECTIVE: Spawn fireball at the fire head's mouth and shoot it at target
+
+                        if (this.tragon.level() instanceof ServerLevel server_level) {
+                            Vec3 mouth_pos = this.tragon.getMouthPosition(FireHead.class);
+                            Vec3 direction = this.target.position().subtract(mouth_pos); // from mouth to target
+
+                            server_level.addFreshEntity(new CustomFireball(
+                                    mouth_pos.subtract(0, 2, 0).add(direction.normalize().scale(0.5)), // adjust the spawn position so that it aligns better with the mouth
+                                    this.tragon,
+                                    direction,
+                                    server_level
+                            ));
+                        }
+
+                        // decrease the fireballs counter and start attack cooldown
                         this.num_of_fireballs_to_shoot--;
 
                         this.resetShootCooldown();
