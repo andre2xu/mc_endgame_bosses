@@ -646,6 +646,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 else if (num_of_heads_alive == 2) {
                                     boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
 
+                                    do_2_head_attack = true; // temp
+
                                     if (do_2_head_attack) {
                                         this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
                                     }
