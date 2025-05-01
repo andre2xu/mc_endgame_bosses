@@ -626,7 +626,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                             if (distance_from_target <= 8) {
                                 // OBJECTIVE: Target got close. Stop following them and do a melee attack
                                 this.setAttackAction(Action.Attack.NONE); // temp
-                            } else {
+                            }
+                            else {
                                 // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
                                 int num_of_heads_alive = this.getAliveHeads().size();
 
@@ -637,18 +638,22 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
                                     if (do_3_head_attack) {
                                         this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
-                                    } else {
+                                    }
+                                    else {
                                         this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
                                     }
-                                } else if (num_of_heads_alive == 2) {
+                                }
+                                else if (num_of_heads_alive == 2) {
                                     boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
 
                                     if (do_2_head_attack) {
                                         this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
-                                    } else {
+                                    }
+                                    else {
                                         this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
                                     }
-                                } else if (num_of_heads_alive == 1) {
+                                }
+                                else if (num_of_heads_alive == 1) {
                                     this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
                                 }
                             }
