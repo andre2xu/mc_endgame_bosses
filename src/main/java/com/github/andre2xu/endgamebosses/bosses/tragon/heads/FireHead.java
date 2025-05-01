@@ -108,8 +108,8 @@ public class FireHead extends TragonHead {
         private static class CustomFireball extends AbstractHurtingProjectile {
             private final LivingEntity owner;
 
-            public CustomFireball(LivingEntity pOwner, Vec3 pMovement, Level pLevel) {
-                super(EntityType.FIREBALL, pOwner.getX(), pOwner.getY(), pOwner.getZ(), pMovement, pLevel);
+            public CustomFireball(Vec3 origin, LivingEntity pOwner, Vec3 pMovement, Level pLevel) {
+                super(EntityType.FIREBALL, origin.x, origin.y, origin.z, pMovement, pLevel);
                 this.setOwner(pOwner);
                 this.setRot(pOwner.getYRot(), pOwner.getXRot());
 
