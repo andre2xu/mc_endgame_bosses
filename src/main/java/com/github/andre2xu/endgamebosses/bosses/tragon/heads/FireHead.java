@@ -50,7 +50,7 @@ public class FireHead extends TragonHead {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.tragon != null && this.tragon.getHeadAliveFlag(FireHead.class) && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         @Override
