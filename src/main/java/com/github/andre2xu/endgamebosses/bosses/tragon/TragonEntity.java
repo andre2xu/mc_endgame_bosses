@@ -571,7 +571,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     }
 
                     // decide whether to do a melee or range attack
-                    if (this.getAttackAction() == Action.Attack.NONE) {
+                    boolean should_attack = new Random().nextInt(1, 4) == 1; // 1 in 3 chances to attack
+
+                    if (this.getAttackAction() == Action.Attack.NONE && should_attack) {
                         if (distance_from_target <= 8) {
                             // OBJECTIVE: Target got close. Stop following them and do a melee attack
                             this.setAttackAction(Action.Attack.NONE); // temp
