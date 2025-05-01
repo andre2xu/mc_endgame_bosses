@@ -693,6 +693,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             int index = new Random().nextInt(0, this.attacking_heads.size());
             this.attacking_heads.remove(index);
 
+            // randomly choose which attack each head will do
+            for (TragonHead head : this.attacking_heads) {
+                head.chooseAttack();
+            }
+
             super.start();
         }
 
