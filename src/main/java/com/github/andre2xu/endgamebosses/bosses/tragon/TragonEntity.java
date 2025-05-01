@@ -41,6 +41,18 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
+    /*
+    See 'CHANGE LATER' comments
+
+    TODO:
+    - Increase MAX_HEALTH attribute
+
+    OPTIONAL:
+    - Add boss music for Tragon
+    */
+
+
+
     // GENERAL
     private PartEntity<?>[] hitboxes;
     private final String fire_head_neck_id = "fire_head_neck";
