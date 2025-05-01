@@ -265,6 +265,25 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         return this.entityData.get(HEAD_PITCH);
     }
 
+    public void updateBonePosition(String boneName, Vec3 bonePos) {
+        // this is called in the 'setCustomAnimations' method of the model class because that's where the bone positions can be accessed
+
+        Vector3f bone_pos = new Vector3f((float) bonePos.x, (float) bonePos.y, (float) bonePos.z);
+
+        switch (boneName) {
+            case "fh_skull_mouth_lower":
+                this.entityData.set(FIRE_HEAD_MOUTH_POSITION, bone_pos);
+                break;
+            case "lh_skull_mouth_lower":
+                this.entityData.set(LIGHTNING_HEAD_MOUTH_POSITION, bone_pos);
+                break;
+            case "ih_skull_mouth_lower":
+                this.entityData.set(ICE_HEAD_MOUTH_POSITION, bone_pos);
+                break;
+            default:
+        }
+    }
+
 
 
     // EXTRA HITBOXES
