@@ -682,6 +682,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.attacking_heads = this.tragon.getAliveHeads();
         }
 
+        private void resetAttack() {
+            this.attack_is_finished = false;
+        }
+
         @Override
         public void start() {
             // choose the Tragon heads that will attack by randomly selecting one to remove
@@ -689,6 +693,13 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.attacking_heads.remove(index);
 
             super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            super.stop();
         }
 
         @Override
