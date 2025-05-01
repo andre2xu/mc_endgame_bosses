@@ -10,6 +10,7 @@ public class TragonHead {
     private float health;
     private boolean has_taken_damage = false; // this flag ensures that the Tragon's 'readAdditionalSaveData' method only updates the health of a head if it has already taken damage
     private final ArrayList<TragonHeadAttack> all_attacks = new ArrayList<>();
+    private boolean attack_started = false;
     private boolean attack_is_finished = false;
     private TragonHeadAttack attack = null;
 
@@ -74,18 +75,43 @@ public class TragonHead {
     public void attackTick() {
         // this method should be called in the 'tick' method of a goal. It must be paired with 'isFinishedAttacking', otherwise it will never stop being called
 
-        if (this.attack != null && this.attack.canUse()) {
-            this.attack.tick();
+        if (this.attack == null) {
+            // mark attack as finished since there's either no attack at all
+            this.attack_is_finished = true;
+            return;
+        }
+
+        if (this.attack.canUse()) {
+            // OBJECTIVE: Start attack first (i.e. execute setup code) and then run the attack
+
+            if (!this.attack_started) {
+                this.attack.start();
+                this.attack_started = true;
+            }
+            else {
+                this.attack.tick();
+            }
         }
         else {
+            // OBJECTIVE: Stop attack, reset variables, and update flags
+
+            this.attack.stop();
             this.attack = null;
 
-            // mark attack as finished since there's either no attack at all or the attack chosen can't run
+            this.attack_started = false;
+
+            // mark attack as finished since the attack chosen can't run (anymore)
             this.attack_is_finished = true;
         }
     }
 
     protected interface TragonHeadAttack {
+        void resetAttack();
+
+        void start();
+
+        void stop();
+
         void tick();
 
         boolean canUse();
