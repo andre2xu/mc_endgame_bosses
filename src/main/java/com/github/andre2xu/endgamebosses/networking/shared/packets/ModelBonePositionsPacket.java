@@ -40,8 +40,10 @@ public class ModelBonePositionsPacket {
                 if (entity instanceof MechalodonEntity) {
                     ((MechalodonEntity) entity).updateBonePosition(this.bone_name, this.bone_pos);
                 }
-                else if (entity instanceof TragonEntity) {
-                    ((TragonEntity) entity).updateHitboxPosition(this.bone_name, this.bone_pos);
+                else if (entity instanceof TragonEntity tragon) {
+                    tragon.updateBonePosition(this.bone_name, this.bone_pos);
+
+                    tragon.updateHitboxPosition(this.bone_name, this.bone_pos);
                 }
             }
         });
