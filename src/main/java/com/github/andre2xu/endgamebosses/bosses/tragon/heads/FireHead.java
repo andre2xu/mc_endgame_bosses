@@ -1,8 +1,19 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
+import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -90,6 +101,51 @@ public class FireHead extends TragonHead {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished;
+        }
+
+
+
+        private static class CustomFireball extends AbstractHurtingProjectile {
+            private final LivingEntity owner;
+
+            public CustomFireball(LivingEntity pOwner, Vec3 pMovement, Level pLevel) {
+                super(EntityType.FIREBALL, pOwner.getX(), pOwner.getY(), pOwner.getZ(), pMovement, pLevel);
+                this.setOwner(pOwner);
+                this.setRot(pOwner.getYRot(), pOwner.getXRot());
+
+                this.owner = pOwner;
+            }
+
+            @Override
+            protected void onHit(@NotNull HitResult pResult) {
+                super.onHit(pResult);
+
+                if (this.level() instanceof ServerLevel server_level) {
+                    server_level.explode(
+                            this,
+                            this.damageSources().mobProjectile(this, this.owner),
+                            new CustomExplosionDamageCalculator(), // don't damage the Tragon
+                            this.position(), // cause explosion at landing spot
+                            5, // radius in blocks
+                            true, // spawn fire
+                            Level.ExplosionInteraction.MOB
+                    );
+
+                    // delete fireball in game
+                    this.discard();
+                }
+            }
+
+            private static class CustomExplosionDamageCalculator extends ExplosionDamageCalculator {
+                @Override
+                public boolean shouldDamageEntity(@NotNull Explosion pExplosion, @NotNull Entity pEntity) {
+                    if (pEntity instanceof TragonEntity || pEntity instanceof HitboxEntity) {
+                        return false;
+                    }
+
+                    return super.shouldDamageEntity(pExplosion, pEntity);
+                }
+            }
         }
     }
 }
