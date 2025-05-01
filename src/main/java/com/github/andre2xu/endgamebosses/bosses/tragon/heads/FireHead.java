@@ -21,6 +21,19 @@ public class FireHead extends TragonHead {
         }
 
         @Override
+        public void resetAttack() {
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {}
+
+        @Override
+        public void stop() {
+            this.resetAttack();
+        }
+
+        @Override
         public void tick() {
             System.out.println("Shooting fireballs");
 
