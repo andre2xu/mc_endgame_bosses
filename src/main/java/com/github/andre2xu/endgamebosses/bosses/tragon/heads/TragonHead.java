@@ -64,6 +64,8 @@ public class TragonHead {
 
             this.attack = this.all_attacks.get(index);
         }
+
+        this.attack_is_finished = false;
     }
 
     public boolean isFinishedAttacking() {
