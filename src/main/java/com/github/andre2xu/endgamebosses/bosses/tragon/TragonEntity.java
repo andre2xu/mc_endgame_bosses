@@ -734,13 +734,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void start() {
-            // choose the Tragon heads that will attack by randomly selecting one to remove
-            int index = new Random().nextInt(0, this.attacking_heads.size());
-            this.attacking_heads.remove(index);
+            if (this.attacking_heads == null) {
+                this.attacking_heads = this.tragon.getAliveHeads();
 
-            // randomly choose which attack each head will do
-            for (TragonHead head : this.attacking_heads) {
-                head.chooseAttack();
+                // choose the Tragon heads that will attack by randomly selecting one to remove
+                int index = new Random().nextInt(0, this.attacking_heads.size());
+                this.attacking_heads.remove(index);
+
+                // randomly choose which attack each head will do
+                for (TragonHead head : this.attacking_heads) {
+                    head.chooseAttack();
+                }
             }
 
             super.start();
@@ -780,11 +784,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            if (this.attacking_heads == null) {
-                this.attacking_heads = this.tragon.getAliveHeads();
-            }
-
-            return !this.attack_is_finished && this.attacking_heads != null && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
         }
     }
 }
