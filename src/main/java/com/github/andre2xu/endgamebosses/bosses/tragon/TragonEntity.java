@@ -242,9 +242,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public ArrayList<TragonHead> getAliveHeads() {
         ArrayList<TragonHead> heads_alive = new ArrayList<>();
 
-        for (TragonHead head : this.heads.values()) {
-            if (this.getHeadAliveFlag(head.getClass())) {
-                heads_alive.add(head);
+        if (this.heads != null) {
+            for (TragonHead head : this.heads.values()) {
+                if (this.getHeadAliveFlag(head.getClass())) {
+                    heads_alive.add(head);
+                }
             }
         }
 
