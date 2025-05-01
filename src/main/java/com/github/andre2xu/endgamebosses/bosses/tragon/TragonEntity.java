@@ -763,21 +763,27 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void tick() {
             // OBJECTIVE: Continuously run the attack ticks of each head until their attack is finished
 
-            TragonHead head1 = this.attacking_heads.getFirst();
-            TragonHead head2 = this.attacking_heads.get(1);
+            if (this.attacking_heads != null && this.attacking_heads.size() == 2) {
+                TragonHead head1 = this.attacking_heads.getFirst();
+                TragonHead head2 = this.attacking_heads.get(1);
 
-            boolean head1_is_finished_attacking = head1.isFinishedAttacking();
-            boolean head2_is_finished_attacking = head2.isFinishedAttacking();
+                boolean head1_is_finished_attacking = head1.isFinishedAttacking();
+                boolean head2_is_finished_attacking = head2.isFinishedAttacking();
 
-            if (!head1_is_finished_attacking) {
-                head1.attackTick();
+                if (!head1_is_finished_attacking) {
+                    head1.attackTick();
+                }
+
+                if (!head2_is_finished_attacking) {
+                    head2.attackTick();
+                }
+
+                if (head1_is_finished_attacking && head2_is_finished_attacking) {
+                    this.attack_is_finished = true;
+                }
             }
-
-            if (!head2_is_finished_attacking) {
-                head2.attackTick();
-            }
-
-            if (head1_is_finished_attacking && head2_is_finished_attacking) {
+            else {
+                // cancel attack
                 this.attack_is_finished = true;
             }
         }
