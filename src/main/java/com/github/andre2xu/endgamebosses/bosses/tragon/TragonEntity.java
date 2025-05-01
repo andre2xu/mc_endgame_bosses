@@ -672,11 +672,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     private static class TwoHeadAttackGoal extends Goal {
         private final TragonEntity tragon;
+        private final ArrayList<TragonHead> attacking_heads;
         private boolean attack_is_finished = false;
 
         public TwoHeadAttackGoal(TragonEntity tragon) {
             this.tragon = tragon;
             this.setFlags(EnumSet.of(Flag.TARGET));
+
+            this.attacking_heads = this.tragon.getAliveHeads();
+        }
+
+        @Override
+        public void start() {
+            // choose the Tragon heads that will attack by randomly selecting one to remove
+            int index = new Random().nextInt(0, this.attacking_heads.size());
+            this.attacking_heads.remove(index);
+
+            super.start();
         }
 
         @Override
