@@ -587,6 +587,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                             if (num_of_heads_alive == 3) {
                                 boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
 
+                                do_3_head_attack = false; // temp
+
                                 if (do_3_head_attack) {
                                     this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
                                 }
@@ -708,6 +710,29 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            // OBJECTIVE: Continuously run the attack ticks of each head until their attack is finished
+
+            TragonHead head1 = this.attacking_heads.getFirst();
+            TragonHead head2 = this.attacking_heads.get(1);
+
+            boolean head1_is_finished_attacking = head1.isFinishedAttacking();
+            boolean head2_is_finished_attacking = head2.isFinishedAttacking();
+
+            if (!head1_is_finished_attacking) {
+                head1.attackTick();
+            }
+
+            if (!head2_is_finished_attacking) {
+                head2.attackTick();
+            }
+
+            if (head1_is_finished_attacking && head2_is_finished_attacking) {
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
