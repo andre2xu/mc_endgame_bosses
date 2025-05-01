@@ -13,6 +13,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TragonModel extends GeoModel<TragonEntity> {
     @Override
@@ -44,6 +45,45 @@ public class TragonModel extends GeoModel<TragonEntity> {
 
         // render the dead heads as headless
         this.renderDeadHeadsAsHeadless(animatable);
+
+        // send bone positions to entity class
+        String[] bone_names = {
+                "fh_skull_mouth_lower",
+                "lh_skull_mouth_lower",
+                "ih_skull_mouth_lower"
+        };
+
+        this.updateBonePositions(animatable, instanceId, bone_names);
+    }
+
+    private void updateBonePositions(TragonEntity animatable, long instanceId, String[] boneNames) {
+        for (String bone_name : boneNames) {
+            getBone(bone_name).ifPresent(bone -> {
+                Vector3d bone_world_pos = bone.getWorldPosition().add(bone.getLocalPosition());
+
+                // make some corrections to the world positions since they aren't accurate. The corrections are only approximations
+                if (Objects.equals(bone_name, "fh_skull_mouth_lower") || Objects.equals(bone_name, "lh_skull_mouth_lower") || Objects.equals(bone_name, "ih_skull_mouth_lower")) {
+                    Vector3d skull_world_pos = bone.getParent().getLocalPosition();
+                    Vector3d neck_upper_world_pos = bone.getParent().getParent().getLocalPosition();
+                    Vector3d neck_middle_world_pos = bone.getParent().getParent().getParent().getLocalPosition();
+                    Vector3d neck_lower_world_pos = bone.getParent().getParent().getParent().getLocalPosition();
+
+                    bone_world_pos = bone_world_pos.add(skull_world_pos.add(neck_upper_world_pos.add(neck_middle_world_pos.add(neck_lower_world_pos))));
+                }
+
+                Vec3 bone_pos = new Vec3(bone_world_pos.x, bone_world_pos.y, bone_world_pos.z);
+
+                // update bone position on server side
+                MainChannel.sendToServer(new ModelBonePositionsPacket(
+                        instanceId,
+                        bone_name,
+                        bone_pos
+                ));
+
+                // update bone position on client side
+                animatable.updateBonePosition(bone_name, bone_pos);
+            });
+        }
     }
 
     private void updateNeckHitbox(TragonEntity animatable, long instanceId, String hitboxEntityName, String skullName) {
