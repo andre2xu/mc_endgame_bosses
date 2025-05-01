@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -126,8 +127,8 @@ public class FireHead extends TragonHead {
                             this.damageSources().mobProjectile(this, this.owner),
                             new CustomExplosionDamageCalculator(), // don't damage the Tragon
                             this.position(), // cause explosion at landing spot
-                            5, // radius in blocks
-                            true, // spawn fire
+                            3, // radius in blocks
+                            server_level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING), // spawn fire
                             Level.ExplosionInteraction.MOB
                     );
 
