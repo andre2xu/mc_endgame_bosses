@@ -107,6 +107,12 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     protected static final RawAnimation SWIM_ANIM = RawAnimation.begin().then("animation.tragon.swim", Animation.LoopType.PLAY_ONCE);
     protected static final RawAnimation HIDE_ANIM = RawAnimation.begin().then("animation.tragon.hide", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation EXPOSE_ANIM = RawAnimation.begin().then("animation.tragon.expose", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation FIRE_HEAD_MOUTH_OPEN_ANIM = RawAnimation.begin().then("animation.tragon.fire_head_mouth_open", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation LIGHTNING_HEAD_MOUTH_OPEN_ANIM = RawAnimation.begin().then("animation.tragon.lightning_head_mouth_open", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation ICE_HEAD_MOUTH_OPEN_ANIM = RawAnimation.begin().then("animation.tragon.ice_head_mouth_open", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation FIRE_HEAD_MOUTH_CLOSE_ANIM = RawAnimation.begin().then("animation.tragon.fire_head_mouth_close", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation LIGHTNING_HEAD_MOUTH_CLOSE_ANIM = RawAnimation.begin().then("animation.tragon.lightning_head_mouth_close", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation ICE_HEAD_MOUTH_CLOSE_ANIM = RawAnimation.begin().then("animation.tragon.ice_head_mouth_close", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -153,6 +159,21 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 .triggerableAnim("swim", SWIM_ANIM)
                 .triggerableAnim("hide_in_shell", HIDE_ANIM) // this is here to stop the walk & swim animations
                 .triggerableAnim("come_out_of_shell", EXPOSE_ANIM) // this is here to stop the walk & swim animations
+        );
+
+        controllers.add(new AnimationController<>(this, "fire_head_mouth_movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("fire_head_mouth_open", FIRE_HEAD_MOUTH_OPEN_ANIM)
+                .triggerableAnim("fire_head_mouth_close", FIRE_HEAD_MOUTH_CLOSE_ANIM)
+        );
+
+        controllers.add(new AnimationController<>(this, "lightning_head_mouth_movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("lightning_head_mouth_open", LIGHTNING_HEAD_MOUTH_OPEN_ANIM)
+                .triggerableAnim("lightning_head_mouth_close", LIGHTNING_HEAD_MOUTH_CLOSE_ANIM)
+        );
+
+        controllers.add(new AnimationController<>(this, "ice_head_mouth_movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("ice_head_mouth_open", ICE_HEAD_MOUTH_OPEN_ANIM)
+                .triggerableAnim("ice_head_mouth_close", ICE_HEAD_MOUTH_CLOSE_ANIM)
         );
     }
 
