@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -482,6 +483,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     @SuppressWarnings("SimplifiableConditionalExpression")
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        if (pSource.is(DamageTypeTags.IS_LIGHTNING) || pSource.is(DamageTypeTags.IS_FREEZING)) {
+            // immune to lightning & freezing
+            return false;
+        }
+
         // OBJECTIVE: Damage the main body and slightly decrease the health of the remaining heads as well (i.e. make them weaker)
 
         float health_before_damage = this.getHealth();
@@ -504,6 +510,11 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     @SuppressWarnings("SimplifiableConditionalExpression")
     public boolean hurt(String hitboxName, @NotNull DamageSource pSource, float pAmount) {
+        if (pSource.is(DamageTypeTags.IS_LIGHTNING) || pSource.is(DamageTypeTags.IS_FREEZING)) {
+            // immune to lightning & freezing
+            return false;
+        }
+
         // OBJECTIVE: Damage the main body and the head whose neck was attacked
 
         float health_before_damage = this.getHealth();
