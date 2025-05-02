@@ -49,7 +49,8 @@ public class FireHead extends TragonHead {
             this.shoot_cooldown = 20; // 1 second
         }
 
-        private boolean canAttack() {
+        @Override
+        public boolean canAttack() {
             return this.tragon != null && this.tragon.getHeadAliveFlag(FireHead.class) && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
