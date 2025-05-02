@@ -13,6 +13,7 @@ public class TragonHead {
     private boolean attack_started = false;
     private boolean attack_is_finished = true;
     private TragonHeadAttack attack = null;
+    private boolean mouth_is_open = false;
 
     public TragonHead(TragonEntity parent, float maxHealth) {
         this.parent = parent;
@@ -77,33 +78,61 @@ public class TragonHead {
     public void attackTick() {
         // this method should be called in the 'tick' method of a goal. It must be paired with 'isFinishedAttacking', otherwise it will never stop being called
 
-        if (this.attack == null) {
-            // mark attack as finished since there's either no attack at all
-            this.attack_is_finished = true;
-            return;
-        }
+        if (this.attack != null) {
+            if (this.attack.canUse()) {
+                // OBJECTIVE: Set up attack, open mouth, then run the real attack tick
 
-        if (this.attack.canUse()) {
-            // OBJECTIVE: Start attack first (i.e. execute setup code) and then run the attack
+                if (!this.attack_started) {
+                    this.attack.start(); // runs setup code
+                    this.attack_started = true;
 
-            if (!this.attack_started) {
-                this.attack.start();
-                this.attack_started = true;
+                    // open mouth
+                    if (!this.mouth_is_open && this.attack.canAttack()) {
+                        // noinspection IfCanBeSwitch
+                        if (this instanceof FireHead) {
+                            this.parent.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_open");
+                        }
+                        else if (this instanceof LightningHead) {
+                            this.parent.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_open");
+                        }
+                        else if (this instanceof IceHead) {
+                            this.parent.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_open");
+                        }
+
+                        this.mouth_is_open = true;
+                    }
+                }
+                else {
+                    this.attack.tick();
+                }
             }
             else {
-                this.attack.tick();
+                // OBJECTIVE: Stop attack, reset variables, update flags, and close mouth
+
+                this.attack.stop();
+                this.attack = null;
+
+                this.attack_started = false;
+
+                // mark attack as finished since the attack chosen can't run (anymore)
+                this.attack_is_finished = true;
+
+                // close mouth
+                if (this.mouth_is_open) {
+                    // noinspection IfCanBeSwitch
+                    if (this instanceof FireHead) {
+                        this.parent.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_close");
+                    }
+                    else if (this instanceof LightningHead) {
+                        this.parent.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_close");
+                    }
+                    else if (this instanceof IceHead) {
+                        this.parent.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_close");
+                    }
+
+                    this.mouth_is_open = false;
+                }
             }
-        }
-        else {
-            // OBJECTIVE: Stop attack, reset variables, and update flags
-
-            this.attack.stop();
-            this.attack = null;
-
-            this.attack_started = false;
-
-            // mark attack as finished since the attack chosen can't run (anymore)
-            this.attack_is_finished = true;
         }
     }
 
