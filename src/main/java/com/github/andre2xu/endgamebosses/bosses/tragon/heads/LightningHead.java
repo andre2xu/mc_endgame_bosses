@@ -1,8 +1,11 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class LightningHead extends TragonHead {
     public LightningHead(TragonEntity parent, float maxHealth) {
@@ -48,9 +51,21 @@ public class LightningHead extends TragonHead {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("Summoning lightning strikes");
+                // make mouth of lightning head glow
+                Vec3 mouth_pos = this.tragon.getMouthPosition(LightningHead.class);
+                Vec3 vector_to_target = this.target.position().subtract(mouth_pos).normalize().scale(1.5);
 
-                this.attack_is_finished = true;
+                mouth_pos = mouth_pos.add(vector_to_target.x, 0, vector_to_target.z); // spawn position is in front of mouth
+
+                if (this.tragon.level() instanceof ServerLevel server_level) {
+                    server_level.sendParticles(
+                            ParticleTypes.END_ROD,
+                            mouth_pos.x, mouth_pos.y - 3, mouth_pos.z,
+                            5, // particle count
+                            0, 0, 0,
+                            0.04 // speed
+                    );
+                }
             }
             else {
                 // cancel attack if lightning head is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
