@@ -11,7 +11,7 @@ public class TragonHead {
     private boolean has_taken_damage = false; // this flag ensures that the Tragon's 'readAdditionalSaveData' method only updates the health of a head if it has already taken damage
     private final ArrayList<TragonHeadAttack> all_attacks = new ArrayList<>();
     private boolean attack_started = false;
-    private boolean attack_is_finished = false;
+    private boolean attack_is_finished = true;
     private TragonHeadAttack attack = null;
 
     public TragonHead(TragonEntity parent, float maxHealth) {
@@ -56,16 +56,22 @@ public class TragonHead {
         this.all_attacks.add(attack);
     }
 
-    public void chooseAttack() {
+    public boolean chooseAttack() {
         // this method should be called in the 'start' method of a goal since it decides what attack the 'attackTick' method will run
+
+        boolean has_chosen_attack = false;
 
         if (!this.all_attacks.isEmpty()) {
             int index = new Random().nextInt(0, this.all_attacks.size());
 
             this.attack = this.all_attacks.get(index);
+
+            this.attack_is_finished = false;
+
+            has_chosen_attack = true;
         }
 
-        this.attack_is_finished = false;
+        return has_chosen_attack;
     }
 
     public boolean isFinishedAttacking() {
