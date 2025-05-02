@@ -36,7 +36,7 @@ public class LightningHead extends TragonHead {
         }
 
         private void resetAttackDelay() {
-            this.attack_delay = 20 * new Random().nextInt(2, 5); // 2 to 4 second delay
+            this.attack_delay = 20 * new Random().nextInt(1, 3); // 1 to 2 second delay
         }
 
         private void decrementAttackDelay() {
