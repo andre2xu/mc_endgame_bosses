@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -25,12 +26,23 @@ public class LightningHead extends TragonHead {
     private static class LightningStrikes implements TragonHeadAttack {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private BlockPos target_pos = null;
         private int num_of_lightning_strikes_to_summon = 0;
-        private boolean first_strike_summoned = false;
+        private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public LightningStrikes(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void resetAttackDelay() {
+            this.attack_delay = 20 * new Random().nextInt(2, 5); // 2 to 4 second delay
+        }
+
+        private void decrementAttackDelay() {
+            if (this.attack_delay > 0) {
+                this.attack_delay--;
+            }
         }
 
         @Override
@@ -41,8 +53,8 @@ public class LightningHead extends TragonHead {
         @Override
         public void resetAttack() {
             this.target = null;
+            this.target_pos = null;
             this.num_of_lightning_strikes_to_summon = 0;
-            this.first_strike_summoned = false;
             this.attack_is_finished = false;
         }
 
@@ -53,6 +65,9 @@ public class LightningHead extends TragonHead {
 
             // pick a random number of lightning strikes to summon
             this.num_of_lightning_strikes_to_summon = new Random().nextInt(4, 6); // 4 to 5
+
+            // set the delay for the first attack
+            this.resetAttackDelay();
         }
 
         @Override
@@ -63,13 +78,13 @@ public class LightningHead extends TragonHead {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                // make mouth of lightning head glow
                 Vec3 mouth_pos = this.tragon.getMouthPosition(LightningHead.class);
                 Vec3 vector_to_target = this.target.position().subtract(mouth_pos).normalize().scale(1.5);
 
                 mouth_pos = mouth_pos.add(vector_to_target.x, 0, vector_to_target.z); // spawn position is in front of mouth
 
                 if (this.tragon.level() instanceof ServerLevel server_level) {
+                    // make mouth of lightning head glow
                     server_level.sendParticles(
                             ParticleTypes.END_ROD,
                             mouth_pos.x, mouth_pos.y - 3, mouth_pos.z,
@@ -80,28 +95,38 @@ public class LightningHead extends TragonHead {
 
                     // summon lightning strikes
                     if (this.num_of_lightning_strikes_to_summon > 0) {
-                        if (!this.first_strike_summoned) {
-                            // summon directly at target's position
-                            LightningBolt first_strike = EntityType.LIGHTNING_BOLT.create(
-                                    server_level,
-                                    null,
-                                    this.target.blockPosition(),
-                                    MobSpawnType.EVENT,
-                                    false,
-                                    false
-                            );
+                        // OBJECTIVE: Count down before summoning a lightning strike at the target's position
 
-                            if (first_strike != null) {
-                                server_level.addFreshEntity(first_strike);
+                        if (this.attack_delay > 0) {
+                            this.decrementAttackDelay();
+
+                            if (this.attack_delay == 5) {
+                                // save target position when the delay has 0.25 seconds left. This is done so the lightning can be dodged but barely
+                                this.target_pos = this.target.blockPosition();
                             }
-
-                            this.first_strike_summoned = true;
                         }
                         else {
-                            System.out.println(this.num_of_lightning_strikes_to_summon);
-                        }
+                            if (this.target_pos != null) {
+                                LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(
+                                        server_level,
+                                        null,
+                                        this.target_pos,
+                                        MobSpawnType.EVENT,
+                                        false,
+                                        false
+                                );
 
-                        this.num_of_lightning_strikes_to_summon--;
+                                if (lightning != null) {
+                                    server_level.addFreshEntity(lightning);
+                                }
+
+                                // set a delay for the next strike
+                                this.resetAttackDelay();
+
+                                // decrease the amount of strikes left
+                                this.num_of_lightning_strikes_to_summon--;
+                            }
+                        }
                     }
                     else {
                         // stop attack
