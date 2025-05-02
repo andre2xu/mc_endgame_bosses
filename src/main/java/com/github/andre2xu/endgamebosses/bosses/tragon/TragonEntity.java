@@ -771,9 +771,21 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     this.attacking_heads.remove(index);
                 }
 
-                // randomly choose which attack each head will do
                 for (TragonHead head : this.attacking_heads) {
+                    // randomly choose which attack each head will do
                     head.chooseAttack();
+
+                    // open mouth
+                    // noinspection IfCanBeSwitch
+                    if (head instanceof FireHead) {
+                        this.tragon.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_open");
+                    }
+                    else if (head instanceof LightningHead) {
+                        this.tragon.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_open");
+                    }
+                    else if (head instanceof IceHead) {
+                        this.tragon.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_open");
+                    }
                 }
             }
 
@@ -782,6 +794,22 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void stop() {
+            if (this.attacking_heads != null) {
+                for (TragonHead head : this.attacking_heads) {
+                    // close mouth
+                    // noinspection IfCanBeSwitch
+                    if (head instanceof FireHead) {
+                        this.tragon.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_close");
+                    }
+                    else if (head instanceof LightningHead) {
+                        this.tragon.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_close");
+                    }
+                    else if (head instanceof IceHead) {
+                        this.tragon.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_close");
+                    }
+                }
+            }
+
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
