@@ -56,10 +56,8 @@ public class TragonHead {
         this.all_attacks.add(attack);
     }
 
-    public boolean chooseAttack() {
+    public void chooseAttack() {
         // this method should be called in the 'start' method of a goal since it decides what attack the 'attackTick' method will run
-
-        boolean has_chosen_attack = false;
 
         if (!this.all_attacks.isEmpty()) {
             int index = new Random().nextInt(0, this.all_attacks.size());
@@ -67,11 +65,7 @@ public class TragonHead {
             this.attack = this.all_attacks.get(index);
 
             this.attack_is_finished = false;
-
-            has_chosen_attack = true;
         }
-
-        return has_chosen_attack;
     }
 
     public boolean isFinishedAttacking() {
