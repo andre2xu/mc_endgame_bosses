@@ -7,6 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Random;
+
 public class LightningHead extends TragonHead {
     public LightningHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
@@ -20,6 +22,7 @@ public class LightningHead extends TragonHead {
     private static class LightningStrikes implements TragonHeadAttack {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private int num_of_lightning_strikes_to_summon = 0;
         private boolean attack_is_finished = false;
 
         public LightningStrikes(TragonEntity tragon) {
@@ -34,6 +37,7 @@ public class LightningHead extends TragonHead {
         @Override
         public void resetAttack() {
             this.target = null;
+            this.num_of_lightning_strikes_to_summon = 0;
             this.attack_is_finished = false;
         }
 
@@ -41,6 +45,9 @@ public class LightningHead extends TragonHead {
         public void start() {
             // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
             this.target = this.tragon.getTarget();
+
+            // pick a random number of lightning strikes to summon
+            this.num_of_lightning_strikes_to_summon = new Random().nextInt(4, 6); // 4 to 5
         }
 
         @Override
@@ -65,6 +72,15 @@ public class LightningHead extends TragonHead {
                             0, 0, 0,
                             0.04 // speed
                     );
+
+                    // summon lightning strikes
+                    if (this.num_of_lightning_strikes_to_summon > 0) {
+                        this.num_of_lightning_strikes_to_summon--;
+                    }
+                    else {
+                        // stop attack
+                        this.attack_is_finished = true;
+                    }
                 }
             }
             else {
