@@ -3,7 +3,10 @@ package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,6 +26,7 @@ public class LightningHead extends TragonHead {
         private final TragonEntity tragon;
         private LivingEntity target = null;
         private int num_of_lightning_strikes_to_summon = 0;
+        private boolean first_strike_summoned = false;
         private boolean attack_is_finished = false;
 
         public LightningStrikes(TragonEntity tragon) {
@@ -38,6 +42,7 @@ public class LightningHead extends TragonHead {
         public void resetAttack() {
             this.target = null;
             this.num_of_lightning_strikes_to_summon = 0;
+            this.first_strike_summoned = false;
             this.attack_is_finished = false;
         }
 
@@ -75,6 +80,27 @@ public class LightningHead extends TragonHead {
 
                     // summon lightning strikes
                     if (this.num_of_lightning_strikes_to_summon > 0) {
+                        if (!this.first_strike_summoned) {
+                            // summon directly at target's position
+                            LightningBolt first_strike = EntityType.LIGHTNING_BOLT.create(
+                                    server_level,
+                                    null,
+                                    this.target.blockPosition(),
+                                    MobSpawnType.EVENT,
+                                    false,
+                                    false
+                            );
+
+                            if (first_strike != null) {
+                                server_level.addFreshEntity(first_strike);
+                            }
+
+                            this.first_strike_summoned = true;
+                        }
+                        else {
+                            System.out.println(this.num_of_lightning_strikes_to_summon);
+                        }
+
                         this.num_of_lightning_strikes_to_summon--;
                     }
                     else {
