@@ -108,6 +108,8 @@ public class TragonHead {
     }
 
     protected interface TragonHeadAttack {
+        boolean canAttack();
+
         void resetAttack();
 
         void start();
