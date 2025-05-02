@@ -755,19 +755,6 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET));
         }
 
-        private void closeMouth(TragonHead head) {
-            // noinspection IfCanBeSwitch
-            if (head instanceof FireHead) {
-                this.tragon.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_close");
-            }
-            else if (head instanceof LightningHead) {
-                this.tragon.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_close");
-            }
-            else if (head instanceof IceHead) {
-                this.tragon.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_close");
-            }
-        }
-
         private void resetAttack() {
             this.attacking_heads = null;
             this.attack_is_finished = false;
@@ -786,21 +773,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
                 for (TragonHead head : this.attacking_heads) {
                     // randomly choose which attack each head will do
-                    boolean has_chosen_attack = head.chooseAttack();
-
-                    if (has_chosen_attack) {
-                        // open mouth
-                        // noinspection IfCanBeSwitch
-                        if (head instanceof FireHead) {
-                            this.tragon.triggerAnim("fire_head_mouth_movement_trigger_anim_controller", "fire_head_mouth_open");
-                        }
-                        else if (head instanceof LightningHead) {
-                            this.tragon.triggerAnim("lightning_head_mouth_movement_trigger_anim_controller", "lightning_head_mouth_open");
-                        }
-                        else if (head instanceof IceHead) {
-                            this.tragon.triggerAnim("ice_head_mouth_movement_trigger_anim_controller", "ice_head_mouth_open");
-                        }
-                    }
+                    head.chooseAttack();
                 }
             }
 
@@ -832,15 +805,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 if (!head1_is_finished_attacking) {
                     head1.attackTick();
                 }
-                else {
-                    closeMouth(head1);
-                }
 
                 if (!head2_is_finished_attacking) {
                     head2.attackTick();
-                }
-                else {
-                    closeMouth(head2);
                 }
 
                 if (head1_is_finished_attacking && head2_is_finished_attacking) {
