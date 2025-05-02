@@ -88,10 +88,15 @@ public class FireHead extends TragonHead {
 
                         if (this.tragon.level() instanceof ServerLevel server_level) {
                             Vec3 mouth_pos = this.tragon.getMouthPosition(FireHead.class);
-                            Vec3 direction = this.target.position().subtract(mouth_pos); // from mouth to target
+                            Vec3 target_pos = this.target.position();
+
+                            double fireball_spawn_y_offset = 3;
+
+                            Vec3 direction = target_pos.subtract(mouth_pos).add(0, fireball_spawn_y_offset, 0); // from mouth to target
+                            Vec3 fireball_spawn_point = mouth_pos.subtract(0, fireball_spawn_y_offset, 0).add(direction.normalize().scale(1)); // adjust the spawn position so that it aligns better with the mouth
 
                             server_level.addFreshEntity(new CustomFireball(
-                                    mouth_pos.subtract(0, 2, 0).add(direction.normalize().scale(0.5)), // adjust the spawn position so that it aligns better with the mouth
+                                    fireball_spawn_point,
                                     this.tragon,
                                     direction,
                                     server_level
