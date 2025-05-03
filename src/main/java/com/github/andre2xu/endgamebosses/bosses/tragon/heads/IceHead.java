@@ -22,7 +22,8 @@ public class IceHead extends TragonHead {
     private static class FrostBreath implements TragonHeadAttack {
         private final TragonEntity tragon;
         private LivingEntity target = null;
-        private ArrayList<Vec3> breath_path = null;
+        private ArrayList<Vec3> breath_path = new ArrayList<>();
+        private int breath_duration = 0;
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
@@ -31,6 +32,8 @@ public class IceHead extends TragonHead {
         }
 
         private void calculateBreathPath(Vec3 startPos, Vec3 endPos) {
+            this.breath_path = new ArrayList<>(); // reset path
+
             Vec3 current_point = startPos;
             Vec3 direction = endPos.subtract(startPos).normalize(); // 1 block step towards target
 
@@ -43,6 +46,16 @@ public class IceHead extends TragonHead {
 
                 this.breath_path.add(current_point);
             }
+        }
+
+        private void decrementBreathDuration() {
+            if (this.breath_duration > 0) {
+                this.breath_duration--;
+            }
+        }
+
+        private void resetBreathDuration() {
+            this.breath_duration = 20 * 3; // 3 seconds
         }
 
         private void decrementAttackDelay() {
@@ -63,6 +76,7 @@ public class IceHead extends TragonHead {
         @Override
         public void resetAttack() {
             this.target = null;
+            this.breath_path = new ArrayList<>(); // clear memory
             this.attack_is_finished = false;
         }
 
@@ -74,8 +88,8 @@ public class IceHead extends TragonHead {
             // add a delay before the attack
             this.resetAttackDelay();
 
-            // reset breath path
-            this.breath_path = new ArrayList<>();
+            // reset breath duration
+            this.resetBreathDuration();
         }
 
         @Override
@@ -104,28 +118,25 @@ public class IceHead extends TragonHead {
                     this.decrementAttackDelay();
                 }
                 else {
-                    if (this.breath_path != null) {
-                        if (this.breath_path.isEmpty()) {
-                            this.calculateBreathPath(mouth_pos, target_pos);
-                        }
-                        else {
-                            // breath frost
-                            for (Vec3 point : this.breath_path) {
-                                server_level.sendParticles(
-                                        ParticleTypes.SNOWFLAKE,
-                                        point.x, point.y + 1, point.z,
-                                        10, // particle count
-                                        0, 0, 0,
-                                        0.02 // speed
-                                );
-                            }
+                    // update breath path
+                    this.calculateBreathPath(mouth_pos, target_pos);
 
-                            // stop attack
-                            this.attack_is_finished = true;
+                    if (this.breath_duration > 0) {
+                        // breathe frost
+                        for (Vec3 point : this.breath_path) {
+                            server_level.sendParticles(
+                                    ParticleTypes.SNOWFLAKE,
+                                    point.x, point.y + 2, point.z,
+                                    10, // particle count
+                                    0, 0, 0,
+                                    0.02 // speed
+                            );
                         }
+
+                        this.decrementBreathDuration();
                     }
                     else {
-                        // cancel attack
+                        // stop attack
                         this.attack_is_finished = true;
                     }
                 }
