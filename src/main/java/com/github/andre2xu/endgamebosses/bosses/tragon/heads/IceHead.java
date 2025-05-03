@@ -1,12 +1,16 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -49,6 +53,39 @@ public class IceHead extends TragonHead {
                 current_point = current_point.add(direction); // get next point
 
                 this.breath_path.add(current_point);
+            }
+        }
+
+        private void freezeSurface(Vec3 startingPoint) {
+            if (this.tragon.level() instanceof ServerLevel server_level) {
+                int num_of_blocks_to_check = 3;
+
+                BlockPos block_pos = BlockPos.containing(startingPoint);
+
+                for (int i=0; i < num_of_blocks_to_check; i++) {
+                    BlockState state_of_current_block = server_level.getBlockState(block_pos);
+
+                    if (state_of_current_block.isAir()) {
+                        // skip to the block below
+                        block_pos = block_pos.below();
+                    }
+                    else {
+                        BlockPos block_above = block_pos.above();
+                        boolean block_above_is_air = server_level.getBlockState(block_above).isAir();
+                        boolean block_has_a_solid_top_face = state_of_current_block.isFaceSturdy(server_level, block_pos, Direction.UP);
+                        boolean is_surface_block = block_above_is_air && block_has_a_solid_top_face;
+
+                        if (is_surface_block) {
+                            // add a snow layer above the surface block
+                            server_level.setBlockAndUpdate(block_above, Blocks.SNOW.defaultBlockState());
+                            break;
+                        }
+                        else {
+                            // move to the block below
+                            block_pos = block_pos.below();
+                        }
+                    }
+                }
             }
         }
 
@@ -127,7 +164,12 @@ public class IceHead extends TragonHead {
 
                     if (this.breath_duration > 0) {
                         // breathe frost
-                        for (Vec3 point : this.breath_path) {
+                        int num_of_points = this.breath_path.size();
+                        int index_of_first_block_to_freeze = num_of_points - 5;
+
+                        for (int i=0; i < num_of_points; i++) {
+                            Vec3 point = this.breath_path.get(i);
+
                             server_level.sendParticles(
                                     ParticleTypes.SNOWFLAKE,
                                     point.x, point.y + 2, point.z,
@@ -135,6 +177,11 @@ public class IceHead extends TragonHead {
                                     0, 0, 0,
                                     0.02 // speed
                             );
+
+                            // freeze ground or water close to the last few particles of the frost breath
+                            if (i >= index_of_first_block_to_freeze) {
+                                this.freezeSurface(point);
+                            }
 
                             // check if target is close to a point
                             if (!this.breath_touches_target && Math.sqrt(this.target.distanceToSqr(point)) <= 1) {
