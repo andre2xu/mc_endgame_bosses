@@ -115,7 +115,7 @@ public class FireHead extends TragonHead {
                 }
             }
             else {
-                // cancel attack if fire head is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
+                // cancel attack if lightning head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
                 this.attack_is_finished = true;
             }
         }
