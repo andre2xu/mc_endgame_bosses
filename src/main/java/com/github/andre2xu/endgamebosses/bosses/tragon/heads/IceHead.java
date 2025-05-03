@@ -1,8 +1,11 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class IceHead extends TragonHead {
     public IceHead(TragonEntity parent, float maxHealth) {
@@ -61,7 +64,21 @@ public class IceHead extends TragonHead {
 
         @Override
         public void tick() {
-            if (this.canAttack()) {
+            if (this.canAttack() && this.tragon.level() instanceof ServerLevel server_level) {
+                // spawn frost particles in the ice head's mouth
+                Vec3 mouth_pos = this.tragon.getMouthPosition(IceHead.class);
+                Vec3 target_pos = this.target.position();
+
+                mouth_pos = mouth_pos.add(target_pos.subtract(mouth_pos.x, 0, mouth_pos.z).normalize().scale(4)); // correct the mouth position
+
+                server_level.sendParticles(
+                        ParticleTypes.SNOWFLAKE,
+                        mouth_pos.x, mouth_pos.y + 2, mouth_pos.z,
+                        10, // particle count
+                        0, 0, 0,
+                        0.02 // speed
+                );
+
                 if (this.attack_delay > 0) {
                     this.decrementAttackDelay();
                 }
