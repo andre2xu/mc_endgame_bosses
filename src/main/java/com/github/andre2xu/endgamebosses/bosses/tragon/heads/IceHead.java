@@ -7,6 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+
 public class IceHead extends TragonHead {
     public IceHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
@@ -20,11 +22,27 @@ public class IceHead extends TragonHead {
     private static class FrostBreath implements TragonHeadAttack {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private ArrayList<Vec3> breath_path = null;
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public FrostBreath(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void calculateBreathPath(Vec3 startPos, Vec3 endPos) {
+            Vec3 current_point = startPos;
+            Vec3 direction = endPos.subtract(startPos).normalize(); // 1 block step towards target
+
+            this.breath_path.add(current_point); // add starting point to path
+
+            int reach = 25; // blocks
+
+            for (int i=0; i < reach; i++) {
+                current_point = current_point.add(direction); // get next point
+
+                this.breath_path.add(current_point);
+            }
         }
 
         private void decrementAttackDelay() {
@@ -55,6 +73,9 @@ public class IceHead extends TragonHead {
 
             // add a delay before the attack
             this.resetAttackDelay();
+
+            // reset breath path
+            this.breath_path = new ArrayList<>();
         }
 
         @Override
@@ -83,9 +104,30 @@ public class IceHead extends TragonHead {
                     this.decrementAttackDelay();
                 }
                 else {
-                    System.out.println("USING FROST BREATH");
+                    if (this.breath_path != null) {
+                        if (this.breath_path.isEmpty()) {
+                            this.calculateBreathPath(mouth_pos, target_pos);
+                        }
+                        else {
+                            // breath frost
+                            for (Vec3 point : this.breath_path) {
+                                server_level.sendParticles(
+                                        ParticleTypes.SNOWFLAKE,
+                                        point.x, point.y + 1, point.z,
+                                        10, // particle count
+                                        0, 0, 0,
+                                        0.02 // speed
+                                );
+                            }
 
-                    this.attack_is_finished = true;
+                            // stop attack
+                            this.attack_is_finished = true;
+                        }
+                    }
+                    else {
+                        // cancel attack
+                        this.attack_is_finished = true;
+                    }
                 }
             }
             else {
