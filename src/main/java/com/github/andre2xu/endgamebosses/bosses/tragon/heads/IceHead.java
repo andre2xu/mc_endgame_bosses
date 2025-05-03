@@ -3,6 +3,8 @@ package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -140,9 +142,19 @@ public class IceHead extends TragonHead {
                             }
                         }
 
-                        // inflict damage to target
+                        // inflict damage & freezing to target
                         if (this.breath_touches_target) {
                             this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
+
+                            int feezing_effect_duration = 20 * 2; // 2 seconds
+
+                            // make the target slower
+                            MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, feezing_effect_duration);
+
+                            this.target.addEffect(slowness);
+
+                            // give them Minecraft's 'freeze' effect
+                            this.target.setTicksFrozen(feezing_effect_duration);
                         }
 
                         // reset flag
