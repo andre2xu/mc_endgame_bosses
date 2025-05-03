@@ -5,12 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -73,11 +75,18 @@ public class IceHead extends TragonHead {
                         BlockPos block_above = block_pos.above();
                         boolean block_above_is_air = server_level.getBlockState(block_above).isAir();
                         boolean block_has_a_solid_top_face = state_of_current_block.isFaceSturdy(server_level, block_pos, Direction.UP);
-                        boolean is_surface_block = block_above_is_air && block_has_a_solid_top_face;
 
-                        if (is_surface_block) {
-                            // add a snow layer above the surface block
+                        boolean is_surface_block = block_above_is_air && block_has_a_solid_top_face;
+                        boolean is_water_surface = block_above_is_air && state_of_current_block.getFluidState().is(Fluids.WATER);
+
+                        if (is_surface_block || state_of_current_block.is(BlockTags.LEAVES)) {
+                            // add a snow layer above the surface block or leaf block
                             server_level.setBlockAndUpdate(block_above, Blocks.SNOW.defaultBlockState());
+                            break;
+                        }
+                        else if (is_water_surface) {
+                            // convert water surface to ice
+                            server_level.setBlockAndUpdate(block_pos, Blocks.ICE.defaultBlockState());
                             break;
                         }
                         else {
