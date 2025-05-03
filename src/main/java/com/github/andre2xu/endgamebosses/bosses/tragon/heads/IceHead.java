@@ -145,11 +145,28 @@ public class IceHead extends TragonHead {
                 Vec3 mouth_pos = this.tragon.getMouthPosition(IceHead.class);
                 Vec3 target_pos = this.target.position();
 
-                mouth_pos = mouth_pos.add(target_pos.subtract(mouth_pos.x, 0, mouth_pos.z).normalize().scale(4)); // correct the mouth position
+                // correct the mouth's x and z position
+                mouth_pos = mouth_pos.add(target_pos.subtract(mouth_pos.x, 0, mouth_pos.z).normalize().multiply(5, 0, 5));
 
+                // correct the y position
+                double y_correction = 1;
+                float head_pitch = this.tragon.getHeadPitch();
+
+                if (head_pitch < 0.1) {
+                    if (head_pitch <= -0.21) {
+                        y_correction = 2;
+                    }
+                    else if (head_pitch <= -0.31) {
+                        y_correction = 3;
+                    }
+
+                    mouth_pos = mouth_pos.subtract(0, y_correction, 0);
+                }
+
+                // generate frost particles
                 server_level.sendParticles(
                         ParticleTypes.SNOWFLAKE,
-                        mouth_pos.x, mouth_pos.y + 2, mouth_pos.z,
+                        mouth_pos.x, mouth_pos.y, mouth_pos.z,
                         10, // particle count
                         0, 0, 0,
                         0.02 // speed
@@ -172,7 +189,7 @@ public class IceHead extends TragonHead {
 
                             server_level.sendParticles(
                                     ParticleTypes.SNOWFLAKE,
-                                    point.x, point.y + 2, point.z,
+                                    point.x, point.y, point.z,
                                     10, // particle count
                                     0, 0, 0,
                                     0.02 // speed
