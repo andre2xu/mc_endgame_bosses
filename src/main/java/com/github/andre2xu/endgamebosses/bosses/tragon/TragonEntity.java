@@ -783,7 +783,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 // }
 
                 // temp
-                this.attacking_heads.removeIf(head -> head instanceof FireHead);
+                this.attacking_heads.removeIf(head -> head instanceof LightningHead);
 
                 for (TragonHead head : this.attacking_heads) {
                     // randomly choose which attack each head will do
