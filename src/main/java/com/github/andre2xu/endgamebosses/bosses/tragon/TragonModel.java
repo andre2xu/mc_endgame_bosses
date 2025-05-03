@@ -68,7 +68,12 @@ public class TragonModel extends GeoModel<TragonEntity> {
                     Vector3d neck_middle_world_pos = bone.getParent().getParent().getParent().getLocalPosition();
                     Vector3d neck_lower_world_pos = bone.getParent().getParent().getParent().getLocalPosition();
 
-                    bone_world_pos = bone_world_pos.add(skull_world_pos.add(neck_upper_world_pos.add(neck_middle_world_pos.add(neck_lower_world_pos))));
+                    if (Objects.equals(bone_name, "ih_skull_mouth_lower")) {
+                        bone_world_pos = bone_world_pos.add(skull_world_pos.add(neck_upper_world_pos.add(neck_middle_world_pos))); // this correction is better for the ice head
+                    }
+                    else {
+                        bone_world_pos = bone_world_pos.add(skull_world_pos.add(neck_upper_world_pos.add(neck_middle_world_pos.add(neck_lower_world_pos))));
+                    }
                 }
 
                 Vec3 bone_pos = new Vec3(bone_world_pos.x, bone_world_pos.y, bone_world_pos.z);
