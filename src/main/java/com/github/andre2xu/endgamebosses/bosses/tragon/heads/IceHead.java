@@ -190,12 +190,7 @@ public class IceHead extends TragonHead {
 
                     if (this.breath_duration > 0) {
                         // breathe frost
-                        int num_of_points = this.breath_path.size();
-                        int index_of_first_block_to_freeze = num_of_points - 5;
-
-                        for (int i=0; i < num_of_points; i++) {
-                            Vec3 point = this.breath_path.get(i);
-
+                        for (Vec3 point : this.breath_path) {
                             server_level.sendParticles(
                                     ParticleTypes.SNOWFLAKE,
                                     point.x, point.y, point.z,
@@ -204,10 +199,8 @@ public class IceHead extends TragonHead {
                                     0.02 // speed
                             );
 
-                            // freeze ground or water close to the last few particles of the frost breath
-                            if (i >= index_of_first_block_to_freeze) {
-                                this.freezeSurface(point);
-                            }
+                            // freeze ground, leaves, or water close to frost breath
+                            this.freezeSurface(point);
 
                             // check if target is close to a point
                             if (!this.breath_touches_target && Math.sqrt(this.target.distanceToSqr(point)) <= 1) {
