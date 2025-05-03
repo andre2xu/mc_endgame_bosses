@@ -24,6 +24,8 @@ public class IceHead extends TragonHead {
         private LivingEntity target = null;
         private ArrayList<Vec3> breath_path = new ArrayList<>();
         private int breath_duration = 0;
+        private boolean breath_touches_target = false;
+        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
@@ -131,7 +133,20 @@ public class IceHead extends TragonHead {
                                     0, 0, 0,
                                     0.02 // speed
                             );
+
+                            // check if target is close to a point
+                            if (!this.breath_touches_target && Math.sqrt(this.target.distanceToSqr(point)) <= 1) {
+                                this.breath_touches_target = true;
+                            }
                         }
+
+                        // inflict damage to target
+                        if (this.breath_touches_target) {
+                            this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
+                        }
+
+                        // reset flag
+                        this.breath_touches_target = false;
 
                         this.decrementBreathDuration();
                     }
