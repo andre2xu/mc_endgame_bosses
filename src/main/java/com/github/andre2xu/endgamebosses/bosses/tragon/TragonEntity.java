@@ -606,6 +606,12 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // update boss phase
         if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
             this.boss_phase = 2;
+
+            ArrayList<TragonHead> alive_heads = this.getAliveHeads();
+
+            for (TragonHead head : alive_heads) {
+                head.activatePhase2();
+            }
         }
 
         // handle general behaviour in water
