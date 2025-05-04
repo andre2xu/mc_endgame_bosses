@@ -26,10 +26,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class FireHead extends TragonHead {
+    private final TragonEntity parent;
+
     public FireHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
 
+        this.parent = parent;
+
         this.addAttack(new Fireballs(parent));
+    }
+
+    @Override
+    public void activatePhase2() {
+        super.activatePhase2();
+
+        this.addAttack(new FireBreath(this.parent));
     }
 
 

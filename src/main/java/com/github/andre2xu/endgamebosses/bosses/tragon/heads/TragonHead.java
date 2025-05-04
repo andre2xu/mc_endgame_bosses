@@ -53,6 +53,8 @@ public class TragonHead {
 
 
     // ATTACKING
+    public void activatePhase2() {}
+
     protected void addAttack(TragonHeadAttack attack) {
         this.all_attacks.add(attack);
     }
