@@ -672,7 +672,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 this.setAttackAction(Action.Attack.NONE); // temp
                             }
                             else {
-                                this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK); // temp
+                                this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK); // temp
 
                                 // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
                                 // int num_of_heads_alive = this.getAliveHeads().size();
