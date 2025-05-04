@@ -653,7 +653,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
                     if (!is_attacking) {
-                        boolean should_attack = new Random().nextInt(1, 4) == 1; // 1 in 3 chances to attack
+                        boolean should_attack = new Random().nextInt(1, 3) == 1; // 1 in 2 chances to attack
 
                         if (should_attack) {
                             if (distance_from_target <= 8) {
