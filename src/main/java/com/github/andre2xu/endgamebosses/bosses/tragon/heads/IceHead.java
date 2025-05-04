@@ -120,7 +120,7 @@ public class IceHead extends TragonHead {
 
         @Override
         public boolean canAttack() {
-            return this.tragon != null && this.tragon.getHeadAliveFlag(IceHead.class) && this.target != null && this.target.isAlive() && !this.tragon.isCloseToTarget() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.tragon != null && this.tragon.getHeadAliveFlag(IceHead.class) && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         @Override
@@ -242,7 +242,7 @@ public class IceHead extends TragonHead {
 
         @Override
         public boolean canUse() {
-            return !this.attack_is_finished;
+            return !this.attack_is_finished && !this.tragon.isCloseToTarget();
         }
     }
 }
