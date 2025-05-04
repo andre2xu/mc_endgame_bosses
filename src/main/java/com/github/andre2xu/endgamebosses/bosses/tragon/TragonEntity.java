@@ -49,6 +49,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     TODO:
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from frost breath
+    - Increase damage dealt to target from fire breath
 
     OPTIONAL:
     - Add boss music for Tragon
