@@ -47,7 +47,7 @@ public class LightningHead extends TragonHead {
 
         @Override
         public boolean canAttack() {
-            return this.tragon != null && this.tragon.getHeadAliveFlag(LightningHead.class) && this.target != null && this.target.isAlive() && this.tragon.distanceTo(this.target) > 12 && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.tragon != null && this.tragon.getHeadAliveFlag(LightningHead.class) && this.target != null && this.target.isAlive() && !this.tragon.isCloseToTarget() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         @Override

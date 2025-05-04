@@ -481,6 +481,13 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         return false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isCloseToTarget() {
+        LivingEntity target = this.getTarget();
+
+        return target != null && this.distanceTo(target) <= 12;
+    }
+
     @SuppressWarnings("SimplifiableConditionalExpression")
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
