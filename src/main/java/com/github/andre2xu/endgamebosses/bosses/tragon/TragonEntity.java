@@ -581,6 +581,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
+        this.goalSelector.addGoal(1, new OneHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new TwoHeadAttackGoal(this));
     }
 
@@ -754,6 +755,68 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     .ignoreLineOfSight() // allow Tragon to continue following a target even if they're obstructed by the environment, e.g. under trees
                     .range(MAX_TARGET_DISTANCE)
                     .selector(pTargetPredicate);
+        }
+    }
+
+    private static class OneHeadAttackGoal extends Goal {
+        private final TragonEntity tragon;
+        private TragonHead attacking_head = null;
+        private boolean attack_is_finished = false;
+
+        public OneHeadAttackGoal(TragonEntity tragon) {
+            this.tragon = tragon;
+            this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        private void resetAttack() {
+            this.attacking_head = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            if (this.attacking_head == null) {
+                ArrayList<TragonHead> alive_heads = this.tragon.getAliveHeads();
+
+                // choose the Tragon head that will attack
+                this.attacking_head = alive_heads.get(new Random().nextInt(0, alive_heads.size()));
+
+                this.attacking_head.chooseAttack();
+            }
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            if (this.attack_is_finished) {
+                this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+                this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
+            }
+        }
+
+        @Override
+        public void tick() {
+            if (this.attacking_head != null) {
+                // OBJECTIVE: Continuously run the attack tick of the head until its attack is finished
+
+                if (!this.attacking_head.isFinishedAttacking()) {
+                    this.attacking_head.attackTick();
+                }
+                else {
+                    this.attack_is_finished = true;
+                }
+            }
+            else {
+                // cancel attack
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.ONE_HEAD_ATTACK;
         }
     }
 
