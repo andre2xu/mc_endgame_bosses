@@ -50,6 +50,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from frost breath
     - Increase damage dealt to target from fire breath
+    - Increase damage dealt to target from laser beam
+    - Make damages inflicted to targets underwater less than that of land
 
     OPTIONAL:
     - Add boss music for Tragon
