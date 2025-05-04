@@ -583,6 +583,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         */
         this.goalSelector.addGoal(1, new OneHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new TwoHeadAttackGoal(this));
+        this.goalSelector.addGoal(1, new ThreeHeadAttackGoal(this));
     }
 
     @Override
@@ -898,6 +899,87 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.TWO_HEAD_ATTACK;
+        }
+    }
+
+    private static class ThreeHeadAttackGoal extends Goal {
+        private final TragonEntity tragon;
+        private ArrayList<TragonHead> attacking_heads = null;
+        private boolean attack_is_finished = false;
+
+        public ThreeHeadAttackGoal(TragonEntity tragon) {
+            this.tragon = tragon;
+            this.setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        private void resetAttack() {
+            this.attacking_heads = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            if (this.attacking_heads == null) {
+                this.attacking_heads = this.tragon.getAliveHeads();
+
+                for (TragonHead head : this.attacking_heads) {
+                    // randomly choose which attack each head will do
+                    head.chooseAttack();
+                }
+            }
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            if (this.attack_is_finished) {
+                this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+                this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
+            }
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            // OBJECTIVE: Continuously run the attack ticks of each head until their attack is finished
+
+            if (this.attacking_heads != null && this.attacking_heads.size() == 3) {
+                TragonHead head1 = this.attacking_heads.getFirst();
+                TragonHead head2 = this.attacking_heads.get(1);
+                TragonHead head3 = this.attacking_heads.get(2);
+
+                boolean head1_is_finished_attacking = head1.isFinishedAttacking();
+                boolean head2_is_finished_attacking = head2.isFinishedAttacking();
+                boolean head3_is_finished_attacking = head3.isFinishedAttacking();
+
+                if (!head1_is_finished_attacking) {
+                    head1.attackTick();
+                }
+
+                if (!head2_is_finished_attacking) {
+                    head2.attackTick();
+                }
+
+                if (!head3_is_finished_attacking) {
+                    head3.attackTick();
+                }
+
+                if (head1_is_finished_attacking && head2_is_finished_attacking && head3_is_finished_attacking) {
+                    this.attack_is_finished = true;
+                }
+            }
+            else {
+                // cancel attack
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.THREE_HEAD_ATTACK;
         }
     }
 }
