@@ -4,6 +4,8 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +13,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class LightningHead extends TragonHead {
@@ -132,6 +135,152 @@ public class LightningHead extends TragonHead {
                         // stop attack
                         this.attack_is_finished = true;
                     }
+                }
+            }
+            else {
+                // cancel attack if lightning head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && !this.tragon.isCloseToTarget();
+        }
+    }
+
+    private static class LaserBeam implements TragonHeadAttack {
+        private final TragonEntity tragon;
+        private LivingEntity target = null;
+        private Vec3 target_pos = null;
+        private ArrayList<Vec3> beam_path = new ArrayList<>();
+        private boolean beam_touches_target = false;
+        private final float attack_damage = 1f; // CHANGE LATER
+        private int attack_delay = 0;
+        private boolean attack_is_finished = false;
+
+        public LaserBeam(TragonEntity tragon) {
+            this.tragon = tragon;
+        }
+
+        private void calculateBeamPath(Vec3 startPos, Vec3 endPos) {
+            this.beam_path = new ArrayList<>(); // reset path
+
+            Vec3 current_point = startPos;
+            Vec3 direction = endPos.subtract(startPos).normalize(); // 1 block step towards target
+
+            this.beam_path.add(current_point); // add starting point to path
+
+            int reach = 40; // blocks
+
+            for (int i=0; i < reach; i++) {
+                current_point = current_point.add(direction); // get next point
+
+                this.beam_path.add(current_point);
+            }
+        }
+
+        private void decrementAttackDelay() {
+            if (this.attack_delay > 0) {
+                this.attack_delay--;
+            }
+        }
+
+        private void resetAttackDelay() {
+            this.attack_delay = 20 * 3; // 3 seconds
+        }
+
+        @Override
+        public boolean canAttack() {
+            return this.tragon != null && this.tragon.getHeadAliveFlag(LightningHead.class) && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        @Override
+        public void resetAttack() {
+            this.target = null;
+            this.target_pos = null;
+            this.beam_path = new ArrayList<>(); // clear memory
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
+            this.target = this.tragon.getTarget();
+
+            // add a delay before the attack
+            this.resetAttackDelay();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack() && this.tragon.level() instanceof ServerLevel server_level) {
+                // make mouth of lightning head glow
+                Vec3 mouth_pos = this.tragon.getMouthPosition(LightningHead.class);
+                Vec3 vector_to_target = this.target.position().subtract(mouth_pos).normalize().scale(1.5);
+
+                mouth_pos = mouth_pos.add(vector_to_target.x, 0, vector_to_target.z);
+                mouth_pos = mouth_pos.subtract(0, 3, 0);
+
+                int particle_count = 5;
+                double particle_speed = 0.04;
+
+                server_level.sendParticles(
+                        ParticleTypes.END_ROD,
+                        mouth_pos.x, mouth_pos.y, mouth_pos.z,
+                        particle_count,
+                        0, 0, 0,
+                        particle_speed
+                );
+
+                if (this.attack_delay > 0) {
+                    this.decrementAttackDelay();
+
+                    if (this.attack_delay == 1) {
+                        // save target position when the delay has 0.05 seconds left. This is done so the beam can be dodged but barely
+                        this.target_pos = this.target.position();
+                    }
+                }
+                else {
+                    // update beam path
+                    this.calculateBeamPath(mouth_pos, this.target_pos);
+
+                    // shoot beam
+                    for (Vec3 point : this.beam_path) {
+                        server_level.sendParticles(
+                                ParticleTypes.END_ROD,
+                                point.x, point.y, point.z,
+                                particle_count * 2,
+                                0, 0, 0,
+                                0.01
+                        );
+
+                        // check if target is close to a point
+                        if (!this.beam_touches_target && Math.sqrt(this.target.distanceToSqr(point)) <= 1) {
+                            this.beam_touches_target = true;
+                        }
+                    }
+
+                    // inflict damage to target & blindness
+                    if (this.beam_touches_target) {
+                        this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
+
+                        int blindness_effect_duration = 20 * 4; // 4 seconds
+
+                        MobEffectInstance blindness = new MobEffectInstance(MobEffects.BLINDNESS, blindness_effect_duration);
+                        this.target.addEffect(blindness);
+                    }
+
+                    // reset flag
+                    this.beam_touches_target = false;
+
+                    // stop attack
+                    this.attack_is_finished = true;
                 }
             }
             else {
