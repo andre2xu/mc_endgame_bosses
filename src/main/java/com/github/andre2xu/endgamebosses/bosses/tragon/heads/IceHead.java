@@ -172,13 +172,16 @@ public class IceHead extends TragonHead {
                     mouth_pos = mouth_pos.subtract(0, y_correction, 0);
                 }
 
+                int particle_count = 10;
+                double particle_speed = 0.02;
+
                 // generate frost particles
                 server_level.sendParticles(
                         ParticleTypes.SNOWFLAKE,
                         mouth_pos.x, mouth_pos.y, mouth_pos.z,
-                        10, // particle count
+                        particle_count,
                         0, 0, 0,
-                        0.02 // speed
+                        particle_speed
                 );
 
                 if (this.attack_delay > 0) {
@@ -194,9 +197,9 @@ public class IceHead extends TragonHead {
                             server_level.sendParticles(
                                     ParticleTypes.SNOWFLAKE,
                                     point.x, point.y, point.z,
-                                    10, // particle count
+                                    particle_count,
                                     0, 0, 0,
-                                    0.02 // speed
+                                    particle_speed
                             );
 
                             // freeze ground, leaves, or water close to frost breath
