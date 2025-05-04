@@ -778,13 +778,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 this.attacking_heads = this.tragon.getAliveHeads();
 
                 // choose the Tragon heads that will attack by randomly selecting one to remove
-                // if (this.attacking_heads.size() > 2) {
-                //     int index = new Random().nextInt(0, this.attacking_heads.size());
-                //     this.attacking_heads.remove(index);
-                // }
-
-                // temp
-                this.attacking_heads.removeIf(head -> head instanceof LightningHead);
+                if (this.attacking_heads.size() > 2) {
+                    int index = new Random().nextInt(0, this.attacking_heads.size());
+                    this.attacking_heads.remove(index);
+                }
 
                 for (TragonHead head : this.attacking_heads) {
                     // randomly choose which attack each head will do
