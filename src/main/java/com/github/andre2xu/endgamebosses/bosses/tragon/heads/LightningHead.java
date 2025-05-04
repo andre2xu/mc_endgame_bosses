@@ -17,10 +17,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class LightningHead extends TragonHead {
+    private final TragonEntity parent;
+
     public LightningHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
 
+        this.parent = parent;
+
         this.addAttack(new LightningStrikes(parent));
+    }
+
+    @Override
+    public void activatePhase2() {
+        super.activatePhase2();
+
+        this.addAttack(new LaserBeam(this.parent));
     }
 
 
