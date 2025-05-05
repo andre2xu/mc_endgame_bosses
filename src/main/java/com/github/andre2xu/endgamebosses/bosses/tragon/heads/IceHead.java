@@ -21,7 +21,8 @@ public class IceHead extends TragonHead {
     public IceHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
 
-        this.addAttack(new FrostBreath(parent));
+        // this.addAttack(new FrostBreath(parent));
+        this.addAttack(new Icicles(parent));
     }
 
 
@@ -236,6 +237,54 @@ public class IceHead extends TragonHead {
                         this.attack_is_finished = true;
                     }
                 }
+            }
+            else {
+                // cancel attack if ice head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && !this.tragon.isCloseToTarget();
+        }
+    }
+
+    private static class Icicles implements TragonHeadAttack {
+        private final TragonEntity tragon;
+        private LivingEntity target = null;
+        private boolean attack_is_finished = false;
+
+        public Icicles(TragonEntity tragon) {
+            this.tragon = tragon;
+        }
+
+        @Override
+        public boolean canAttack() {
+            return this.tragon != null && this.tragon.getHeadAliveFlag(IceHead.class) && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        @Override
+        public void resetAttack() {
+            this.target = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
+            this.target = this.tragon.getTarget();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+
             }
             else {
                 // cancel attack if ice head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
