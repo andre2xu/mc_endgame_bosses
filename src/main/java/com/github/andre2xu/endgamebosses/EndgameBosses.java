@@ -8,6 +8,8 @@ import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMis
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileRenderer;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonRenderer;
+import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
+import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleRenderer;
 import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.mojang.logging.LogUtils;
@@ -153,6 +155,7 @@ public class EndgameBosses {
 
             // projectiles
             event.registerEntityRenderer(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileRenderer::new);
+            event.registerEntityRenderer(ProjectilesRegistry.TRAGON_ICICLE.get(), TragonIcicleRenderer::new);
         }
     }
 
@@ -173,6 +176,7 @@ public class EndgameBosses {
 
             // projectiles
             event.put(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileEntity.createAttributes());
+            event.put(ProjectilesRegistry.TRAGON_ICICLE.get(), TragonIcicleEntity.createAttributes());
         }
     }
 }
