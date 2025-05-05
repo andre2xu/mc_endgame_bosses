@@ -21,11 +21,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class IceHead extends TragonHead {
+    private final TragonEntity parent;
+
     public IceHead(TragonEntity parent, float maxHealth) {
         super(parent, maxHealth);
 
-        // this.addAttack(new FrostBreath(parent));
-        this.addAttack(new Icicles(parent));
+        this.parent = parent;
+
+        this.addAttack(new FrostBreath(parent));
+    }
+
+    @Override
+    public void activatePhase2() {
+        super.activatePhase2();
+
+        this.addAttack(new Icicles(this.parent));
     }
 
 
