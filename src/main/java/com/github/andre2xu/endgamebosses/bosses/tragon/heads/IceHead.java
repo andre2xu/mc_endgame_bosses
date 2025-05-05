@@ -151,7 +151,6 @@ public class IceHead extends TragonHead {
         @Override
         public void tick() {
             if (this.canAttack() && this.tragon.level() instanceof ServerLevel server_level) {
-                // spawn frost particles in the ice head's mouth
                 Vec3 mouth_pos = this.tragon.getMouthPosition(IceHead.class);
                 Vec3 target_pos = this.target.position();
 
@@ -176,7 +175,7 @@ public class IceHead extends TragonHead {
                 int particle_count = 10;
                 double particle_speed = 0.02;
 
-                // generate frost particles
+                // generate frost particles in mouth
                 server_level.sendParticles(
                         ParticleTypes.SNOWFLAKE,
                         mouth_pos.x, mouth_pos.y, mouth_pos.z,
