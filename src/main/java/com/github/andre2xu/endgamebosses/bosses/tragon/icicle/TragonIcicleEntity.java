@@ -1,17 +1,20 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.icicle;
 
+import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -19,8 +22,11 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.List;
+
 public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    private final float damage = 20f;
 
 
 
@@ -107,6 +113,25 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
             int radius = 5; // radius of blocks affected by land
 
             this.generateLandingParticles(landing_pos, radius);
+
+            // hurt nearby entities
+            Level level = this.level();
+            AABB damage_area = this.getBoundingBox().inflate(radius, 0, radius);
+            List<Entity> nearby_entities = level.getEntities(null, damage_area);
+
+            for (Entity entity : nearby_entities) {
+                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity)) {
+                    float final_damage = this.damage;
+                    double distance_from_landing_pos = Math.sqrt(entity.distanceToSqr(landing_pos));
+
+                    if (distance_from_landing_pos > 1) {
+                        // reduce damage the further away an entity is from the landing spot
+                        final_damage = final_damage / (float) distance_from_landing_pos;
+                    }
+
+                    entity.hurt(this.damageSources().fallingBlock(this), final_damage);
+                }
+            }
 
             // disappear from game
             this.discard();
