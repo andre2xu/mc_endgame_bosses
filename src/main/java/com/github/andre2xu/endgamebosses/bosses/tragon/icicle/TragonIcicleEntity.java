@@ -27,6 +27,8 @@ import java.util.List;
 public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     private final float damage = 20f;
+    private boolean has_landed = false;
+    private int despawn_delay = 5; // in ticks. This is needed so the icicle doesn't disappear before it hits the ground
 
 
 
@@ -103,7 +105,7 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
-        if (this.verticalCollision) {
+        if (this.verticalCollision && !this.has_landed) {
             float noise_volume = 1.5f;
             this.playSound(SoundEvents.GLASS_BREAK, noise_volume, 1f);
             this.playSound(SoundEvents.GENERIC_EXPLODE.get(), noise_volume, 1f);
@@ -133,8 +135,17 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
                 }
             }
 
-            // disappear from game
-            this.discard();
+            this.has_landed = true;
+        }
+
+        if (this.has_landed) {
+            if (this.despawn_delay > 0) {
+                this.despawn_delay--;
+            }
+            else {
+                // disappear from game
+                this.discard();
+            }
         }
     }
 }
