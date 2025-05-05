@@ -282,8 +282,39 @@ public class IceHead extends TragonHead {
 
         @Override
         public void tick() {
-            if (this.canAttack()) {
+            if (this.canAttack() && this.tragon.level() instanceof ServerLevel server_level) {
+                Vec3 mouth_pos = this.tragon.getMouthPosition(IceHead.class);
+                Vec3 target_pos = this.target.position();
 
+                // correct the mouth's x and z position
+                mouth_pos = mouth_pos.add(target_pos.subtract(mouth_pos.x, 0, mouth_pos.z).normalize().multiply(5, 0, 5));
+
+                // correct the y position
+                double y_correction = 1;
+                float head_pitch = this.tragon.getHeadPitch();
+
+                if (head_pitch < 0.1) {
+                    if (head_pitch <= -0.21) {
+                        y_correction = 2;
+                    }
+                    else if (head_pitch <= -0.31) {
+                        y_correction = 3;
+                    }
+
+                    mouth_pos = mouth_pos.subtract(0, y_correction, 0);
+                }
+
+                int particle_count = 10;
+                double particle_speed = 0.02;
+
+                // generate frost particles in mouth
+                server_level.sendParticles(
+                        ParticleTypes.SNOWFLAKE,
+                        mouth_pos.x, mouth_pos.y, mouth_pos.z,
+                        particle_count,
+                        0, 0, 0,
+                        particle_speed
+                );
             }
             else {
                 // cancel attack if ice head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
