@@ -27,6 +27,7 @@ import java.util.List;
 public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     private final float damage = 20f;
+    private boolean entity_was_impaled = false;
     private boolean has_landed = false;
     private int despawn_delay = 5; // in ticks. This is needed so the icicle doesn't disappear before it hits the ground
 
@@ -56,6 +57,12 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    private void playLandSounds() {
+        float noise_volume = 1.5f;
+        this.playSound(SoundEvents.GLASS_BREAK, noise_volume, 1f);
+        this.playSound(SoundEvents.GENERIC_EXPLODE.get(), noise_volume, 1f);
+    }
+
     private void generateLandingParticles(Vec3 landingPos, int radius) {
         if (this.level() instanceof ServerLevel server_level) {
             BlockPos center_pos = BlockPos.containing(landingPos).below();
@@ -105,10 +112,30 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        Level level = this.level();
+
+        // handle impaling target
+        if (!this.entity_was_impaled) {
+            AABB vertical_collision_box = this.getBoundingBox().inflate(0, 1, 0);
+            List<Entity> entities_impaled = level.getEntities(null, vertical_collision_box);
+
+            for (Entity entity : entities_impaled) {
+                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity)) {
+                    this.entity_was_impaled = true;
+                    this.has_landed = true;
+
+                    this.playLandSounds();
+
+                    entity.hurt(this.damageSources().fallingBlock(this), this.damage);
+
+                    break;
+                }
+            }
+        }
+
+        // handle missing target & landing instead
         if (this.verticalCollision && !this.has_landed) {
-            float noise_volume = 1.5f;
-            this.playSound(SoundEvents.GLASS_BREAK, noise_volume, 1f);
-            this.playSound(SoundEvents.GENERIC_EXPLODE.get(), noise_volume, 1f);
+            this.playLandSounds();
 
             Vec3 landing_pos = this.position();
 
@@ -117,7 +144,6 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
             this.generateLandingParticles(landing_pos, radius);
 
             // hurt nearby entities
-            Level level = this.level();
             AABB damage_area = this.getBoundingBox().inflate(radius, 0, radius);
             List<Entity> nearby_entities = level.getEntities(null, damage_area);
 
@@ -138,6 +164,7 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
             this.has_landed = true;
         }
 
+        // handle despawn
         if (this.has_landed) {
             if (this.despawn_delay > 0) {
                 this.despawn_delay--;
