@@ -60,7 +60,10 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     private void playLandSounds() {
         float noise_volume = 1.5f;
         this.playSound(SoundEvents.GLASS_BREAK, noise_volume, 1f);
-        this.playSound(SoundEvents.GENERIC_EXPLODE.get(), noise_volume, 1f);
+
+        if (!this.isInWater() && !this.isInLava() && !this.entity_was_impaled) {
+            this.playSound(SoundEvents.GENERIC_EXPLODE.get(), noise_volume, 1f);
+        }
     }
 
     private void generateLandingParticles(Vec3 landingPos, int radius) {
