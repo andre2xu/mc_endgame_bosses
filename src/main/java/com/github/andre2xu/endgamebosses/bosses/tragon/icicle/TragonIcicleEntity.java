@@ -120,7 +120,12 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
             List<Entity> entities_impaled = level.getEntities(null, vertical_collision_box);
 
             for (Entity entity : entities_impaled) {
-                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity)) {
+                Vec3 current_pos = this.position();
+                Vec3 target_head_pos = entity.getEyePosition();
+
+                boolean target_is_below_icicle = current_pos.y > target_head_pos.y;
+
+                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity) && target_is_below_icicle) {
                     this.entity_was_impaled = true;
                     this.has_landed = true;
 
