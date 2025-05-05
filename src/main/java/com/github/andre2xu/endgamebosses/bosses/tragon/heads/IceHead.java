@@ -1,6 +1,8 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
+import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class IceHead extends TragonHead {
     public IceHead(TragonEntity parent, float maxHealth) {
@@ -252,10 +255,22 @@ public class IceHead extends TragonHead {
     private static class Icicles implements TragonHeadAttack {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private int num_of_icicles_to_spawn = 0;
+        private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public Icicles(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void decrementAttackDelay() {
+            if (this.attack_delay > 0) {
+                this.attack_delay--;
+            }
+        }
+
+        private void resetAttackDelay() {
+            this.attack_delay = 20 * new Random().nextInt(1, 4); // 1 to 3 seconds
         }
 
         @Override
@@ -266,6 +281,8 @@ public class IceHead extends TragonHead {
         @Override
         public void resetAttack() {
             this.target = null;
+            this.num_of_icicles_to_spawn = 0;
+            this.attack_delay = 0;
             this.attack_is_finished = false;
         }
 
@@ -273,6 +290,12 @@ public class IceHead extends TragonHead {
         public void start() {
             // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
             this.target = this.tragon.getTarget();
+
+            // pick a random amount of icicles to spawn for attack
+            this.num_of_icicles_to_spawn = new Random().nextInt(2, 6); // 2 to 5
+
+            // set a delay for the first attack
+            this.resetAttackDelay();
         }
 
         @Override
@@ -315,6 +338,30 @@ public class IceHead extends TragonHead {
                         0, 0, 0,
                         particle_speed
                 );
+
+                if (this.attack_delay > 0) {
+                    this.decrementAttackDelay();
+                }
+                else {
+                    if (this.num_of_icicles_to_spawn > 0) {
+                        TragonIcicleEntity icicle = ProjectilesRegistry.TRAGON_ICICLE.get().create(server_level);
+
+                        if (icicle != null) {
+                            icicle.setPos(this.target.position().add(0, 15, 0)); // appear above the target
+
+                            server_level.addFreshEntity(icicle);
+                        }
+
+                        this.num_of_icicles_to_spawn--;
+
+                        // set a delay for the next attack
+                        this.resetAttackDelay();
+                    }
+                    else {
+                        // stop attack
+                        this.attack_is_finished = true;
+                    }
+                }
             }
             else {
                 // cancel attack if ice head is dead, target doesn't exist, target is dead, target is too close, or target is in creative/spectator mode
