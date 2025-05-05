@@ -800,7 +800,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
                 // temp
                 for (TragonHead head : alive_heads) {
-                    if (head instanceof LightningHead) {
+                    if (head instanceof IceHead) {
                         this.attacking_head = head;
                         break;
                     }
