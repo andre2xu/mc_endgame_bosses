@@ -1054,7 +1054,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.target = this.tragon.getTarget();
 
             // set a delay for when the Tragon should hide in its shell
-            this.hide_in_shell_delay = 20 * new Random().nextInt(2, 3); // 2 to 3 seconds
+            this.hide_in_shell_delay = 20 * new Random().nextInt(1, 3); // 1 to 2 seconds
 
             super.start();
         }
