@@ -1032,11 +1032,19 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private boolean is_hiding_in_shell = false;
         private int spin_start_delay = 0;
         private boolean is_spinning = false;
+        private float spin_angle = 0;
+        private int max_spin_speed_countdown = 0;
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
             this.tragon = tragon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE));
+        }
+
+        private void spin(float angle) {
+            this.tragon.setYBodyRot(angle);
+            this.tragon.setYHeadRot(angle);
+            this.tragon.setYRot(angle);
         }
 
         public boolean canAttack() {
@@ -1049,6 +1057,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.is_hiding_in_shell = false;
             this.spin_start_delay = 0;
             this.is_spinning = false;
+            this.spin_angle = 0;
+            this.max_spin_speed_countdown = 0;
             this.attack_is_finished = false;
         }
 
@@ -1062,6 +1072,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
             // set a delay for when the Tragon should start spinning
             this.spin_start_delay = 20 * 2; // 2 seconds
+
+            // set how long it will take the Tragon to spin at full speed
+            this.max_spin_speed_countdown = 20 * 3; // 3 seconds
 
             super.start();
         }
@@ -1104,6 +1117,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     }
                     else {
                         this.is_spinning = true;
+
+                        // OBJECTIVE: Start spinning slowly and gradually increase, then launch towards target
+                        if (this.max_spin_speed_countdown > 0) {
+                            if (this.max_spin_speed_countdown >= 40) {
+                                this.spin_angle = 40;
+                            }
+                            else if (this.max_spin_speed_countdown >= 20) {
+                                this.spin_angle = 60;
+                            }
+                            else {
+                                this.spin_angle = 90;
+                            }
+
+                            this.max_spin_speed_countdown--;
+                        }
+
+                        this.spin(this.tragon.getYRot() + this.spin_angle);
                     }
                 }
             }
