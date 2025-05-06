@@ -1189,11 +1189,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         }
                         else {
                             if (this.launch_delay > 0) {
-                                this.launch_delay--;
-                            }
-                            else {
-                                // get launch destination
-                                if (this.position_behind_target == null) {
+                                // get launch destination just before the delay hits zero. This allows the target to dodge
+                                if (this.launch_delay == 10 && this.position_behind_target == null) {
                                     Vec3 target_pos = this.target.position();
                                     Vec3 vector_to_target = target_pos.subtract(this.tragon.position()).normalize();
 
@@ -1201,6 +1198,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                     this.position_behind_target = target_pos.add(vector_to_target.multiply(blocks_away_from_target, 1, blocks_away_from_target));
                                 }
 
+                                this.launch_delay--;
+                            }
+                            else {
                                 // spin towards destination
                                 if (Math.sqrt(this.tragon.distanceToSqr(this.position_behind_target)) > 8) {
                                     this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
