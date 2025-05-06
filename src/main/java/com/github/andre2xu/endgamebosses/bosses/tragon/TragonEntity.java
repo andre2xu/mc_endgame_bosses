@@ -510,7 +510,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public boolean isCloseToTarget() {
         LivingEntity target = this.getTarget();
 
-        return target != null && this.distanceTo(target) <= 12;
+        return target != null && this.distanceTo(target) <= 6;
     }
 
     @SuppressWarnings("SimplifiableConditionalExpression")
