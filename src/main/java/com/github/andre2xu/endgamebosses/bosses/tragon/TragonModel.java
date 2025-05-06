@@ -38,6 +38,20 @@ public class TragonModel extends GeoModel<TragonEntity> {
         // set pitch rotation of heads
         if (animatable.isHidingInShell()) {
             this.setPitchOfHeads(0);
+
+            // hide all bones except shell & body
+            String[] bones_to_hide = {
+                    "heads",
+                    "tail",
+                    "leg1",
+                    "leg2",
+                    "arm1",
+                    "arm2"
+            };
+
+            for (String bone_name : bones_to_hide) {
+                getBone(bone_name).ifPresent(bone -> bone.setHidden(true));
+            }
         }
         else {
             this.setPitchOfHeads(animatable.getHeadPitch());
