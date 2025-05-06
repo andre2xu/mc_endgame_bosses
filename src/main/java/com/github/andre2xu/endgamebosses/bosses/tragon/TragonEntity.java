@@ -5,6 +5,7 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.heads.FireHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.IceHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.LightningHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.TragonHead;
+import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fluids.FluidType;
@@ -1028,6 +1031,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static class ShellSpinAttackGoal extends Goal {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private List<Entity> entities_in_surrounding_area = null;
         private Vec3 position_behind_target = null;
         private int hide_in_shell_delay = 0;
         private boolean is_hiding_in_shell = false;
@@ -1037,6 +1041,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private int max_spin_speed_countdown = 0;
         private int launch_delay = 0;
         private int attack_duration = 0;
+        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
@@ -1050,12 +1055,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.tragon.setYRot(angle);
         }
 
+        private void hurtEntitiesInTheWay() {
+            if (this.entities_in_surrounding_area != null) {
+                for (Entity entity : this.entities_in_surrounding_area) {
+                    if (!(entity instanceof TragonIcicleEntity) && this.tragon.distanceTo(entity) <= 5) {
+                        entity.hurt(this.tragon.damageSources().mobAttack(this.tragon), this.attack_damage);
+                    }
+                }
+            }
+        }
+
         public boolean canAttack() {
             return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         private void resetAttack() {
             this.target = null;
+            this.entities_in_surrounding_area = null;
             this.position_behind_target = null;
             this.hide_in_shell_delay = 0;
             this.is_hiding_in_shell = false;
@@ -1158,17 +1174,26 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 this.launch_delay--;
                             }
                             else {
-                                // get launch destination
+                                // get launch destination & cache entities in surrounding area
                                 if (this.position_behind_target == null) {
                                     Vec3 target_pos = this.target.position();
                                     Vec3 vector_to_target = target_pos.subtract(this.tragon.position()).normalize();
 
                                     int blocks_away_from_target = 30;
                                     this.position_behind_target = target_pos.add(vector_to_target.multiply(blocks_away_from_target, 1, blocks_away_from_target));
+
+                                    // get entities
+                                    AABB surrounding_area = this.tragon.getBoundingBox().inflate(40, 0, 40);
+
+                                    if (this.tragon.level() instanceof ServerLevel server_level) {
+                                        this.entities_in_surrounding_area = server_level.getEntities(null, surrounding_area);
+                                    }
                                 }
 
                                 // spin towards destination
                                 this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
+
+                                this.hurtEntitiesInTheWay();
 
                                 if (this.attack_duration > 0) {
                                     // slow down
