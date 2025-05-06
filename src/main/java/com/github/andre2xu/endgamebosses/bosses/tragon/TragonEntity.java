@@ -17,6 +17,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -494,8 +495,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     @SuppressWarnings("SimplifiableConditionalExpression")
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
-        if (pSource.is(DamageTypeTags.IS_LIGHTNING) || pSource.is(DamageTypeTags.IS_FREEZING)) {
-            // immune to lightning & freezing
+        if (pSource.is(DamageTypeTags.IS_LIGHTNING) || pSource.is(DamageTypeTags.IS_FREEZING) || pSource.is(DamageTypes.CACTUS)) {
+            // immune to these damages
             return false;
         }
 
