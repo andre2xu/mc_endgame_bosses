@@ -1202,7 +1202,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 }
 
                                 // spin towards destination
-                                this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
+                                if (Math.sqrt(this.tragon.distanceToSqr(this.position_behind_target)) > 8) {
+                                    this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
+                                }
 
                                 if (this.attack_duration > 0) {
                                     // slow down
