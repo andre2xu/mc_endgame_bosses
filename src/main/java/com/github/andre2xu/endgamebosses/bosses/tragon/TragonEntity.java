@@ -1030,6 +1030,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int hide_in_shell_delay = 0;
         private boolean is_hiding_in_shell = false;
+        private int spin_start_delay = 0;
+        private boolean is_spinning = false;
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
@@ -1045,6 +1047,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.target = null;
             this.hide_in_shell_delay = 0;
             this.is_hiding_in_shell = false;
+            this.spin_start_delay = 0;
+            this.is_spinning = false;
             this.attack_is_finished = false;
         }
 
@@ -1055,6 +1059,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
             // set a delay for when the Tragon should hide in its shell
             this.hide_in_shell_delay = 20 * new Random().nextInt(1, 3); // 1 to 2 seconds
+
+            // set a delay for when the Tragon should start spinning
+            this.spin_start_delay = 20 * 2; // 2 seconds
 
             super.start();
         }
@@ -1073,7 +1080,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                this.tragon.getLookControl().setLookAt(this.target);
+                if (!this.is_spinning) {
+                    this.tragon.getLookControl().setLookAt(this.target);
+                }
 
                 if (!this.is_hiding_in_shell) {
                     if (this.hide_in_shell_delay > 0) {
@@ -1087,6 +1096,14 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         this.tragon.setHidingInShell(true);
 
                         this.tragon.setInvulnerable(true);
+                    }
+                }
+                else {
+                    if (this.spin_start_delay > 0) {
+                        this.spin_start_delay--;
+                    }
+                    else {
+                        this.is_spinning = true;
                     }
                 }
             }
