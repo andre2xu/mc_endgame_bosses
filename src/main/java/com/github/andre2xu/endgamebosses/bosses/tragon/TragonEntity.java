@@ -1040,6 +1040,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private float spin_angle = 0;
         private int max_spin_speed_countdown = 0;
         private int launch_delay = 0;
+        private int tick_counter = 0;
         private int attack_duration = 0;
         private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
@@ -1056,7 +1057,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void hurtEntitiesInTheWay() {
-            if (this.entities_in_surrounding_area != null) {
+            // check every 0.5 seconds whether entities are close to the Tragon while it's spinning and if so hurt them
+            if (this.is_spinning && this.entities_in_surrounding_area != null && this.tick_counter % 10 == 0) {
                 for (Entity entity : this.entities_in_surrounding_area) {
                     if (!(entity instanceof TragonIcicleEntity) && this.tragon.distanceTo(entity) <= 5) {
                         entity.hurt(this.tragon.damageSources().mobAttack(this.tragon), this.attack_damage);
@@ -1080,6 +1082,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.spin_angle = 0;
             this.max_spin_speed_countdown = 0;
             this.launch_delay = 0;
+            this.tick_counter = 0;
             this.attack_duration = 0;
             this.attack_is_finished = false;
         }
@@ -1223,6 +1226,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 // cancel attack if Tragon is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
                 this.attack_is_finished = true;
             }
+
+            this.tick_counter++;
         }
 
         @Override
