@@ -1099,16 +1099,16 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.target = this.tragon.getTarget();
 
             // set a delay for when the Tragon should hide in its shell
-            this.hide_in_shell_delay = 20 * new Random().nextInt(1, 3); // 1 to 2 seconds
+            this.hide_in_shell_delay = 20; // 1 second
 
             // set a delay for when the Tragon should start spinning
-            this.spin_start_delay = 20 * 2; // 2 seconds
+            this.spin_start_delay = 20; // 1 second
 
             // set how long it will take the Tragon to spin at full speed
             this.max_spin_speed_countdown = 20 * 3; // 3 seconds
 
             // set a delay for when the Tragon should launch itself towards the target after reaching full spin speed
-            this.launch_delay = 20 * 2; // 2 seconds
+            this.launch_delay = 20; // 1 second
 
             // set a duration for the spin attack
             this.attack_duration = 20 * 3; // 3 seconds
