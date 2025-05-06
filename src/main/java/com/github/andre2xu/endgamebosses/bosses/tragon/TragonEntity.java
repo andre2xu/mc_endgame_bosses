@@ -1094,6 +1094,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void stop() {
             if (this.attack_is_finished) {
+                // come out of shell
+                if (this.is_hiding_in_shell) {
+                    this.tragon.triggerAnim("movement_trigger_anim_controller", "come_out_of_shell");
+
+                    this.tragon.setHidingInShell(false); // allow heads to rotate again (see model class)
+
+                    this.tragon.setInvulnerable(false);
+                }
+
                 this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
                 this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
@@ -1118,7 +1127,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
                         this.is_hiding_in_shell = true;
 
-                        this.tragon.setHidingInShell(true);
+                        this.tragon.setHidingInShell(true); // prevent head rotation (see model class)
 
                         this.tragon.setInvulnerable(true);
                     }
