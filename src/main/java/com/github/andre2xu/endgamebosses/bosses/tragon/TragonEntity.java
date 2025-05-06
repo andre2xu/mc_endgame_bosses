@@ -1085,6 +1085,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         this.is_hiding_in_shell = true;
 
                         this.tragon.setHidingInShell(true);
+
+                        this.tragon.setInvulnerable(true);
                     }
                 }
             }
