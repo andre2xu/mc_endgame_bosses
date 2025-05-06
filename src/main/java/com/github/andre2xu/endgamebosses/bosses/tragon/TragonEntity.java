@@ -1057,11 +1057,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void hurtEntitiesInTheWay() {
-            // check every 0.5 seconds whether entities are close to the Tragon while it's spinning and if so hurt them
-            if (this.is_spinning && this.entities_in_surrounding_area != null && this.tick_counter % 10 == 0) {
+            // check every 0.25 seconds whether entities are close to the Tragon while it's spinning and if so hurt them
+            if (this.is_spinning && this.entities_in_surrounding_area != null && this.tick_counter % 5 == 0) {
                 for (Entity entity : this.entities_in_surrounding_area) {
-                    if (!(entity instanceof TragonIcicleEntity) && this.tragon.distanceTo(entity) <= 5) {
+                    if (entity instanceof LivingEntity living_entity && !(living_entity instanceof TragonIcicleEntity) && this.tragon.distanceTo(living_entity) <= 8) {
                         entity.hurt(this.tragon.damageSources().mobAttack(this.tragon), this.attack_damage);
+
+                        living_entity.knockback(
+                                4f,
+                                this.tragon.getX() - living_entity.getX(),
+                                this.tragon.getZ() - living_entity.getZ()
+                        );
                     }
                 }
             }
