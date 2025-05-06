@@ -1028,12 +1028,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static class ShellSpinAttackGoal extends Goal {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private Vec3 position_behind_target = null;
         private int hide_in_shell_delay = 0;
         private boolean is_hiding_in_shell = false;
         private int spin_start_delay = 0;
         private boolean is_spinning = false;
         private float spin_angle = 0;
         private int max_spin_speed_countdown = 0;
+        private int launch_delay = 0;
+        private int attack_duration = 0;
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
@@ -1053,12 +1056,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.position_behind_target = null;
             this.hide_in_shell_delay = 0;
             this.is_hiding_in_shell = false;
             this.spin_start_delay = 0;
             this.is_spinning = false;
             this.spin_angle = 0;
             this.max_spin_speed_countdown = 0;
+            this.launch_delay = 0;
+            this.attack_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -1075,6 +1081,12 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
             // set how long it will take the Tragon to spin at full speed
             this.max_spin_speed_countdown = 20 * 3; // 3 seconds
+
+            // set a delay for when the Tragon should launch itself towards the target after reaching full spin speed
+            this.launch_delay = 20 * 2; // 2 seconds
+
+            // set a duration for the spin attack
+            this.attack_duration = 20 * 3; // 3 seconds
 
             super.start();
         }
@@ -1118,7 +1130,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     else {
                         this.is_spinning = true;
 
-                        // OBJECTIVE: Start spinning slowly and gradually increase, then launch towards target
+                        // OBJECTIVE: Start spinning slowly and gradually spin faster until full speed is reached. Then launch towards target. Slow down once the attack duration is close to zero
                         if (this.max_spin_speed_countdown > 0) {
                             if (this.max_spin_speed_countdown >= 40) {
                                 this.spin_angle = 40;
@@ -1131,6 +1143,40 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                             }
 
                             this.max_spin_speed_countdown--;
+                        }
+                        else {
+                            if (this.launch_delay > 0) {
+                                this.launch_delay--;
+                            }
+                            else {
+                                // get launch destination
+                                if (this.position_behind_target == null) {
+                                    Vec3 target_pos = this.target.position();
+                                    Vec3 vector_to_target = target_pos.subtract(this.tragon.position()).normalize();
+
+                                    int blocks_away_from_target = 30;
+                                    this.position_behind_target = target_pos.add(vector_to_target.multiply(blocks_away_from_target, 1, blocks_away_from_target));
+                                }
+
+                                // spin towards destination
+                                this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
+
+                                if (this.attack_duration > 0) {
+                                    // slow down
+                                    if (this.attack_duration >= 30) {
+                                        this.spin_angle = 60;
+                                    }
+                                    else if (this.attack_duration >= 15) {
+                                        this.spin_angle = 40;
+                                    }
+
+                                    this.attack_duration--;
+                                }
+                                else {
+                                    // stop attack
+                                    this.attack_is_finished = true;
+                                }
+                            }
                         }
 
                         this.spin(this.tragon.getYRot() + this.spin_angle);
