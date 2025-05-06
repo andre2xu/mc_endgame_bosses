@@ -1018,6 +1018,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static class ShellSpinAttackGoal extends Goal {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private int hide_in_shell_delay = 0;
+        private boolean is_hiding_in_shell = false;
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
@@ -1031,6 +1033,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.hide_in_shell_delay = 0;
+            this.is_hiding_in_shell = false;
             this.attack_is_finished = false;
         }
 
@@ -1038,6 +1042,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
             this.target = this.tragon.getTarget();
+
+            // set a delay for when the Tragon should hide in its shell
+            this.hide_in_shell_delay = 20 * new Random().nextInt(2, 3); // 2 to 3 seconds
 
             super.start();
         }
@@ -1057,6 +1064,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void tick() {
             if (this.canAttack()) {
                 this.tragon.getLookControl().setLookAt(this.target);
+
+                if (!this.is_hiding_in_shell) {
+                    if (this.hide_in_shell_delay > 0) {
+                        this.hide_in_shell_delay--;
+                    }
+                    else {
+                        this.tragon.triggerAnim("movement_trigger_anim_controller", "hide_in_shell");
+
+                        this.is_hiding_in_shell = true;
+                    }
+                }
             }
             else {
                 // cancel attack if Tragon is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
