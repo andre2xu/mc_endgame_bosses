@@ -1155,6 +1155,15 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     else {
                         this.is_spinning = true;
 
+                        // cache entities in surrounding area
+                        if (this.entities_in_surrounding_area == null) {
+                            AABB surrounding_area = this.tragon.getBoundingBox().inflate(40, 0, 40);
+
+                            if (this.tragon.level() instanceof ServerLevel server_level) {
+                                this.entities_in_surrounding_area = server_level.getEntities(null, surrounding_area);
+                            }
+                        }
+
                         // OBJECTIVE: Start spinning slowly and gradually spin faster until full speed is reached. Then launch towards target. Slow down once the attack duration is close to zero
                         if (this.max_spin_speed_countdown > 0) {
                             if (this.max_spin_speed_countdown >= 40) {
@@ -1174,26 +1183,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 this.launch_delay--;
                             }
                             else {
-                                // get launch destination & cache entities in surrounding area
+                                // get launch destination
                                 if (this.position_behind_target == null) {
                                     Vec3 target_pos = this.target.position();
                                     Vec3 vector_to_target = target_pos.subtract(this.tragon.position()).normalize();
 
                                     int blocks_away_from_target = 30;
                                     this.position_behind_target = target_pos.add(vector_to_target.multiply(blocks_away_from_target, 1, blocks_away_from_target));
-
-                                    // get entities
-                                    AABB surrounding_area = this.tragon.getBoundingBox().inflate(40, 0, 40);
-
-                                    if (this.tragon.level() instanceof ServerLevel server_level) {
-                                        this.entities_in_surrounding_area = server_level.getEntities(null, surrounding_area);
-                                    }
                                 }
 
                                 // spin towards destination
                                 this.tragon.setDeltaMovement(this.position_behind_target.subtract(this.tragon.position()).normalize().scale(3)); // movement speed
-
-                                this.hurtEntitiesInTheWay();
 
                                 if (this.attack_duration > 0) {
                                     // slow down
@@ -1214,6 +1214,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         }
 
                         this.spin(this.tragon.getYRot() + this.spin_angle);
+
+                        this.hurtEntitiesInTheWay();
                     }
                 }
             }
