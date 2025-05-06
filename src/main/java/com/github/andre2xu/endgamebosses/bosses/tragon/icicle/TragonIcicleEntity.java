@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -103,6 +104,21 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
         // immune to fall damage
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
+    public boolean isAffectedByPotions() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
+        return false;
     }
 
     @Override
