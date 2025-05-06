@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.icicle;
 
+import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -66,6 +67,10 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
+    private boolean canHurt(Entity entity) {
+        return !(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity) && !(entity instanceof HitboxEntity);
+    }
+
     private void generateLandingParticles(Vec3 landingPos, int radius) {
         if (this.level() instanceof ServerLevel server_level) {
             BlockPos center_pos = BlockPos.containing(landingPos).below();
@@ -128,7 +133,7 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
 
                 boolean target_is_below_icicle = current_pos.y > target_head_pos.y;
 
-                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity) && target_is_below_icicle) {
+                if (this.canHurt(entity) && target_is_below_icicle) {
                     this.entity_was_impaled = true;
                     this.has_landed = true;
 
@@ -156,7 +161,7 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
             List<Entity> nearby_entities = level.getEntities(null, damage_area);
 
             for (Entity entity : nearby_entities) {
-                if (!(entity instanceof TragonIcicleEntity) && !(entity instanceof TragonEntity)) {
+                if (this.canHurt(entity)) {
                     float final_damage = this.damage;
                     double distance_from_landing_pos = Math.sqrt(entity.distanceToSqr(landing_pos));
 
