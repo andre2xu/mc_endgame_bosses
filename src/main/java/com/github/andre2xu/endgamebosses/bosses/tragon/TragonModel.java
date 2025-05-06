@@ -36,7 +36,12 @@ public class TragonModel extends GeoModel<TragonEntity> {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
         // set pitch rotation of heads
-        this.setPitchOfHeads(animatable.getHeadPitch());
+        if (animatable.isHidingInShell()) {
+            this.setPitchOfHeads(0);
+        }
+        else {
+            this.setPitchOfHeads(animatable.getHeadPitch());
+        }
 
         // set position of neck hitboxes
         this.updateNeckHitbox(animatable, instanceId, "fire_head_neck", "fh_skull");
