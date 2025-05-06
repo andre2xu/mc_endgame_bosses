@@ -657,7 +657,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // OBJECTIVE: Walk towards target when on land
 
-                            this.setDeltaMovement(vector_to_target.normalize().scale(1));
+                            this.setDeltaMovement(vector_to_target.normalize().scale(0.8));
                             this.setNoGravity(false);
 
                             if (this.horizontalCollision) {
