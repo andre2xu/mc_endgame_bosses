@@ -687,7 +687,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         if (should_attack) {
                             if (distance_from_target <= 8) {
                                 // OBJECTIVE: Target got close. Stop following them and do a melee attack
-                                this.setAttackAction(Action.Attack.NONE); // temp
+                                this.setAttackAction(Action.Attack.SHELL_SPIN);
                             }
                             else {
                                 this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK); // temp
