@@ -84,6 +84,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Vector3f> LIGHTNING_HEAD_MOUTH_POSITION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> ICE_HEAD_MOUTH_POSITION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
+    private static final EntityDataAccessor<Boolean> IS_HIDING_IN_SHELL = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.BOOLEAN); // this is used in the Tragon's model class as a flag
     private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
 
     // ACTIONS
@@ -245,6 +246,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(ICE_HEAD_MOUTH_POSITION, new Vector3f(0,0,0));
 
         pBuilder.define(HEAD_PITCH, 0.0f);
+        pBuilder.define(IS_HIDING_IN_SHELL, false);
         pBuilder.define(ATTACK_ACTION, 0); // none
     }
 
@@ -291,6 +293,14 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     public float getHeadPitch() {
         return this.entityData.get(HEAD_PITCH);
+    }
+
+    public boolean isHidingInShell() {
+        return this.entityData.get(IS_HIDING_IN_SHELL);
+    }
+
+    public void setHidingInShell(boolean isHiding) {
+        this.entityData.set(IS_HIDING_IN_SHELL, isHiding);
     }
 
     public void updateBonePosition(String boneName, Vec3 bonePos) {
