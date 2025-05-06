@@ -603,6 +603,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new OneHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new TwoHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new ThreeHeadAttackGoal(this));
+        this.goalSelector.addGoal(1, new ShellSpinAttackGoal(this));
     }
 
     @Override
@@ -1013,6 +1014,46 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.RANGE && this.tragon.getAttackAction() == Action.Attack.THREE_HEAD_ATTACK;
+        }
+    }
+
+    private static class ShellSpinAttackGoal extends Goal {
+        private final TragonEntity tragon;
+        private LivingEntity target = null;
+        private boolean attack_is_finished = false;
+
+        public ShellSpinAttackGoal(TragonEntity tragon) {
+            this.tragon = tragon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE));
+        }
+
+        private void resetAttack() {
+            this.target = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
+            this.target = this.tragon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            if (this.attack_is_finished) {
+                this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+                this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
+            }
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.MELEE && this.tragon.getAttackAction() == Action.Attack.SHELL_SPIN;
         }
     }
 }
