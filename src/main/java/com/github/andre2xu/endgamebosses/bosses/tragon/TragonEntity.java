@@ -1025,6 +1025,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE));
         }
 
+        public boolean canAttack() {
+            return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
             this.target = null;
             this.attack_is_finished = false;
@@ -1047,6 +1051,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             }
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                this.tragon.getLookControl().setLookAt(this.target);
+            }
+            else {
+                // cancel attack if Tragon is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
