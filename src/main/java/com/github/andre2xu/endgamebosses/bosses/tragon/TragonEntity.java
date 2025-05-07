@@ -107,6 +107,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
             // melee
             SHELL_SPIN,
+            JUMP_ON_TARGET,
 
             // range
             ONE_HEAD_ATTACK, // only used when 1 head remains
@@ -452,6 +453,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 action_id = 4;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
+            case Action.Attack.JUMP_ON_TARGET:
+                action_id = 5;
+                this.attack_type = Action.AttackType.MELEE;
+                break;
             default:
                 this.attack_type = Action.AttackType.MELEE;
         }
@@ -476,6 +481,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 break;
             case 4:
                 attack_action = Action.Attack.SHELL_SPIN;
+                break;
+            case 5:
+                attack_action = Action.Attack.JUMP_ON_TARGET;
                 break;
             default:
         }
