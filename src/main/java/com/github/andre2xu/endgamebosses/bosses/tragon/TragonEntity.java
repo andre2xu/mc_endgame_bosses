@@ -1267,6 +1267,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int jump_start_delay = 0;
         private Vec3 landing_spot = null;
+        private boolean max_altitude_reached = false;
         private boolean attack_is_finished = false;
 
         public JumpOnTargetAttackGoal(TragonEntity tragon) {
@@ -1282,6 +1283,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.target = null;
             this.jump_start_delay = 0;
             this.landing_spot = null;
+            this.max_altitude_reached = false;
             this.attack_is_finished = false;
         }
 
@@ -1300,6 +1302,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void stop() {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
+            this.tragon.setAttackAction(Action.Attack.NONE); // allow Tragon to choose another attack
+
             super.stop();
         }
 
@@ -1315,7 +1319,31 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     this.jump_start_delay--;
                 }
                 else {
+                    Vec3 current_pos = this.tragon.position();
+                    int max_altitude = 20; // blocks
 
+                    if (!this.max_altitude_reached && current_pos.y < this.landing_spot.y + max_altitude) {
+                        this.tragon.setNoGravity(true); // disable gravity
+
+                        Vec3 vector_above_landing_spot = this.landing_spot.add(0, max_altitude, 0).subtract(current_pos);
+
+                        this.tragon.setDeltaMovement(vector_above_landing_spot.normalize().scale(2)); // jump speed
+
+                        // this is in case the Tragon hits a ceiling
+                        if (this.tragon.verticalCollision && !this.tragon.onGround()) {
+                            this.max_altitude_reached = true;
+                        }
+                    }
+                    else {
+                        this.max_altitude_reached = true;
+
+                        this.tragon.setNoGravity(false); // re-enable gravity
+
+                        if (this.tragon.verticalCollision) {
+                            // stop attack
+                            this.attack_is_finished = true;
+                        }
+                    }
                 }
             }
             else {
