@@ -1265,6 +1265,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static class JumpOnTargetAttackGoal extends Goal {
         private final TragonEntity tragon;
         private LivingEntity target = null;
+        private int jump_start_delay = 0;
+        private Vec3 landing_spot = null;
         private boolean attack_is_finished = false;
 
         public JumpOnTargetAttackGoal(TragonEntity tragon) {
@@ -1278,6 +1280,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.jump_start_delay = 0;
+            this.landing_spot = null;
             this.attack_is_finished = false;
         }
 
@@ -1285,6 +1289,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
             this.target = this.tragon.getTarget();
+
+            // set a delay for the jump
+            this.jump_start_delay = 20; // 1 second
 
             super.start();
         }
@@ -1299,7 +1306,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("PREPARING TO JUMP ON TARGET");
+                if (this.jump_start_delay > 0) {
+                    if (this.jump_start_delay == 5) {
+                        // save target's position as the landing spot
+                        this.landing_spot = this.target.position();
+                    }
+
+                    this.jump_start_delay--;
+                }
+                else {
+
+                }
             }
             else {
                 // cancel attack if Tragon is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
