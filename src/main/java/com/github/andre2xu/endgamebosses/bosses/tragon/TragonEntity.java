@@ -1327,7 +1327,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         public void tick() {
             if (this.canAttack()) {
                 if (this.jump_start_delay > 0) {
-                    if (this.jump_start_delay == 5) {
+                    if (this.jump_start_delay == 1) {
                         // save target's position as the landing spot
                         this.landing_spot = this.target.position();
                     }
