@@ -28,8 +28,8 @@ import java.util.Random;
 public class FireHead extends TragonHead {
     private final TragonEntity parent;
 
-    public FireHead(TragonEntity parent, float maxHealth) {
-        super(parent, maxHealth);
+    public FireHead(TragonEntity parent, float maxHealth, String neckHitboxId) {
+        super(parent, maxHealth, neckHitboxId);
 
         this.parent = parent;
 

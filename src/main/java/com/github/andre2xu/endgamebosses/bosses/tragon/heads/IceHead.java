@@ -23,8 +23,8 @@ import java.util.Random;
 public class IceHead extends TragonHead {
     private final TragonEntity parent;
 
-    public IceHead(TragonEntity parent, float maxHealth) {
-        super(parent, maxHealth);
+    public IceHead(TragonEntity parent, float maxHealth, String neckHitboxId) {
+        super(parent, maxHealth, neckHitboxId);
 
         this.parent = parent;
 

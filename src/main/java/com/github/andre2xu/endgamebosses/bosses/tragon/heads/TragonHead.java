@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class TragonHead {
     private final TragonEntity parent;
+    private final String neck_hitbox_id;
     private float health;
     private boolean has_taken_damage = false; // this flag ensures that the Tragon's 'readAdditionalSaveData' method only updates the health of a head if it has already taken damage
     private final ArrayList<TragonHeadAttack> all_attacks = new ArrayList<>();
@@ -15,9 +16,10 @@ public class TragonHead {
     private TragonHeadAttack attack = null;
     private boolean mouth_is_open = false;
 
-    public TragonHead(TragonEntity parent, float maxHealth) {
+    public TragonHead(TragonEntity parent, float maxHealth, String neckHitboxId) {
         this.parent = parent;
         this.health = maxHealth;
+        this.neck_hitbox_id = neckHitboxId;
     }
 
     public void setHealth(float newHealth) {

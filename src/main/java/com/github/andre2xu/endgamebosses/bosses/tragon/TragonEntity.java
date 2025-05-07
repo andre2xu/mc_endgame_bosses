@@ -154,9 +154,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // create head data (these are not the actual heads)
         float head_health = this.getHealth() / 3;
 
-        this.heads.put(this.fire_head_neck_id, new FireHead(this, head_health));
-        this.heads.put(this.lightning_head_neck_id, new LightningHead(this, head_health));
-        this.heads.put(this.ice_head_neck_id, new IceHead(this, head_health));
+        this.heads.put(this.fire_head_neck_id, new FireHead(this, head_health, this.fire_head_neck_id));
+        this.heads.put(this.lightning_head_neck_id, new LightningHead(this, head_health, this.lightning_head_neck_id));
+        this.heads.put(this.ice_head_neck_id, new IceHead(this, head_health, this.ice_head_neck_id));
 
         // add custom controls
         this.lookControl = new TragonLookControl(this); // change the default look control

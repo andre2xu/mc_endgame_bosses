@@ -19,8 +19,8 @@ import java.util.Random;
 public class LightningHead extends TragonHead {
     private final TragonEntity parent;
 
-    public LightningHead(TragonEntity parent, float maxHealth) {
-        super(parent, maxHealth);
+    public LightningHead(TragonEntity parent, float maxHealth, String neckHitboxId) {
+        super(parent, maxHealth, neckHitboxId);
 
         this.parent = parent;
 
