@@ -760,33 +760,31 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                             else {
                                 // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
 
-                                this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK); // temp
+                                int num_of_heads_alive = this.getAliveHeads().size();
 
-                                // int num_of_heads_alive = this.getAliveHeads().size();
-                                //
-                                // if (num_of_heads_alive == 3) {
-                                //     boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
-                                //
-                                //     if (do_3_head_attack) {
-                                //         this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
-                                //     }
-                                //     else {
-                                //         this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
-                                //     }
-                                // }
-                                // else if (num_of_heads_alive == 2) {
-                                //     boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
-                                //
-                                //     if (do_2_head_attack) {
-                                //         this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
-                                //     }
-                                //     else {
-                                //         this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
-                                //     }
-                                // }
-                                // else if (num_of_heads_alive == 1) {
-                                //     this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
-                                // }
+                                if (num_of_heads_alive == 3) {
+                                    boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+
+                                    if (do_3_head_attack) {
+                                        this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
+                                    }
+                                    else {
+                                        this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
+                                    }
+                                }
+                                else if (num_of_heads_alive == 2) {
+                                    boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+
+                                    if (do_2_head_attack) {
+                                        this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
+                                    }
+                                    else {
+                                        this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
+                                    }
+                                }
+                                else if (num_of_heads_alive == 1) {
+                                    this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
+                                }
                             }
                         }
                     }
@@ -905,15 +903,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 ArrayList<TragonHead> alive_heads = this.tragon.getAliveHeads();
 
                 // choose the Tragon head that will attack
-                // this.attacking_head = alive_heads.get(new Random().nextInt(0, alive_heads.size()));
-
-                // temp
-                for (TragonHead head : alive_heads) {
-                    if (head instanceof IceHead) {
-                        this.attacking_head = head;
-                        break;
-                    }
-                }
+                this.attacking_head = alive_heads.get(new Random().nextInt(0, alive_heads.size()));
 
                 this.attacking_head.chooseAttack();
             }
