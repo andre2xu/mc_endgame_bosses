@@ -607,6 +607,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     public void die(@NotNull DamageSource pDamageSource) {
         super.die(pDamageSource);
 
+        // play death sound
+        this.playSound(SoundEvents.RAVAGER_DEATH, 4f, 0.6f);
+
         // discard hitboxes
         for (PartEntity<?> hitbox : this.hitboxes) {
             hitbox.discard();
