@@ -628,6 +628,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new TwoHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new ThreeHeadAttackGoal(this));
         this.goalSelector.addGoal(1, new ShellSpinAttackGoal(this));
+        this.goalSelector.addGoal(1, new JumpOnTargetAttackGoal(this));
     }
 
     @Override
@@ -725,6 +726,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
                                 if (biome_tag.contains("ocean") && in_deep_liquid) {
                                     this.setAttackAction(Action.Attack.SHELL_SPIN);
+                                }
+                                else {
+                                    this.setAttackAction(Action.Attack.JUMP_ON_TARGET);
                                 }
                             }
                             else {
@@ -1255,6 +1259,57 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.MELEE && this.tragon.getAttackAction() == Action.Attack.SHELL_SPIN;
+        }
+    }
+
+    private static class JumpOnTargetAttackGoal extends Goal {
+        private final TragonEntity tragon;
+        private LivingEntity target = null;
+        private boolean attack_is_finished = false;
+
+        public JumpOnTargetAttackGoal(TragonEntity tragon) {
+            this.tragon = tragon;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE, Flag.JUMP));
+        }
+
+        public boolean canAttack() {
+            return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        private void resetAttack() {
+            this.target = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
+            this.target = this.tragon.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                System.out.println("PREPARING TO JUMP ON TARGET");
+            }
+            else {
+                // cancel attack if Tragon is dead, target doesn't exist, target is dead, or target is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.MELEE && this.tragon.getAttackAction() == Action.Attack.JUMP_ON_TARGET;
         }
     }
 }
