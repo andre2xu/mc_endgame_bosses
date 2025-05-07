@@ -1093,7 +1093,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             }
         }
 
-        public boolean canAttack() {
+        private boolean canAttack() {
             return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
@@ -1272,7 +1272,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE, Flag.JUMP));
         }
 
-        public boolean canAttack() {
+        private boolean canAttack() {
             return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
