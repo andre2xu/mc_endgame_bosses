@@ -741,50 +741,46 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
                     if (!is_attacking) {
-                        boolean should_attack = new Random().nextInt(1, 3) == 1; // 1 in 2 chances to attack
+                        if (this.isCloseToTarget()) {
+                            // OBJECTIVE: Target got close. Stop following them and do a melee attack
 
-                        if (should_attack) {
-                            if (this.isCloseToTarget()) {
-                                // OBJECTIVE: Target got close. Stop following them and do a melee attack
+                            Holder<Biome> biome_holder = this.level().getBiome(BlockPos.containing(this.position()));
+                            String biome_tag = biome_holder.getRegisteredName();
 
-                                Holder<Biome> biome_holder = this.level().getBiome(BlockPos.containing(this.position()));
-                                String biome_tag = biome_holder.getRegisteredName();
-
-                                if (biome_tag.contains("ocean") && in_deep_liquid) {
-                                    this.setAttackAction(Action.Attack.SHELL_SPIN);
-                                }
-                                else {
-                                    this.setAttackAction(Action.Attack.JUMP_ON_TARGET);
-                                }
+                            if (biome_tag.contains("ocean") && in_deep_liquid) {
+                                this.setAttackAction(Action.Attack.SHELL_SPIN);
                             }
                             else {
-                                // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
+                                this.setAttackAction(Action.Attack.JUMP_ON_TARGET);
+                            }
+                        }
+                        else {
+                            // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
 
-                                int num_of_heads_alive = this.getAliveHeads().size();
+                            int num_of_heads_alive = this.getAliveHeads().size();
 
-                                if (num_of_heads_alive == 3) {
-                                    boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+                            if (num_of_heads_alive == 3) {
+                                boolean do_3_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
 
-                                    if (do_3_head_attack) {
-                                        this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
-                                    }
-                                    else {
-                                        this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
-                                    }
+                                if (do_3_head_attack) {
+                                    this.setAttackAction(Action.Attack.THREE_HEAD_ATTACK);
                                 }
-                                else if (num_of_heads_alive == 2) {
-                                    boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
-
-                                    if (do_2_head_attack) {
-                                        this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
-                                    }
-                                    else {
-                                        this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
-                                    }
+                                else {
+                                    this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
                                 }
-                                else if (num_of_heads_alive == 1) {
+                            }
+                            else if (num_of_heads_alive == 2) {
+                                boolean do_2_head_attack = new Random().nextInt(1, 3) == 1; // 50/50
+
+                                if (do_2_head_attack) {
+                                    this.setAttackAction(Action.Attack.TWO_HEAD_ATTACK);
+                                }
+                                else {
                                     this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
                                 }
+                            }
+                            else if (num_of_heads_alive == 1) {
+                                this.setAttackAction(Action.Attack.ONE_HEAD_ATTACK);
                             }
                         }
                     }
