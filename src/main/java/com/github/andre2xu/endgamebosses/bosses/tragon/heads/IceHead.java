@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -207,6 +208,10 @@ public class IceHead extends TragonHead {
                     if (this.breath_duration > 0) {
                         // breathe frost
                         for (Vec3 point : this.breath_path) {
+                            if (this.breath_duration % 10 == 0) {
+                                this.tragon.playSound(SoundEvents.PLAYER_HURT_FREEZE, 2f, 0.5f);
+                            }
+
                             server_level.sendParticles(
                                     ParticleTypes.SNOWFLAKE,
                                     point.x, point.y, point.z,
@@ -350,6 +355,11 @@ public class IceHead extends TragonHead {
                 );
 
                 if (this.attack_delay > 0) {
+                    // play a sound
+                    if (this.num_of_icicles_to_spawn > 0 && this.attack_delay > 3 && this.attack_delay <= 6) {
+                        this.tragon.playSound(SoundEvents.PLAYER_HURT_FREEZE, 10f, 0.5f);
+                    }
+
                     this.decrementAttackDelay();
                 }
                 else {
