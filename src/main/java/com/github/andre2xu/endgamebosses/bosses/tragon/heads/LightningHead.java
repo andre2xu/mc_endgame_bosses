@@ -4,6 +4,7 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -117,6 +118,11 @@ public class LightningHead extends TragonHead {
                             if (this.attack_delay == 5) {
                                 // save target position when the delay has 0.25 seconds left. This is done so the lightning can be dodged but barely
                                 this.target_pos = this.target.blockPosition();
+                            }
+
+                            // play a sound periodically
+                            if (this.attack_delay % 5 == 0) {
+                                this.tragon.playSound(SoundEvents.BEACON_POWER_SELECT, 2f, 1f);
                             }
                         }
                         else {
@@ -255,6 +261,11 @@ public class LightningHead extends TragonHead {
                     if (this.attack_delay == 1) {
                         // save target position when the delay has 0.05 seconds left. This is done so the beam can be dodged but barely
                         this.target_pos = this.target.position();
+                    }
+
+                    // play a charge-up sound
+                    if (this.attack_delay > 20 && this.attack_delay % 5 == 0) {
+                        this.tragon.playSound(SoundEvents.BEACON_ACTIVATE, 3f, 1f);
                     }
                 }
                 else {
