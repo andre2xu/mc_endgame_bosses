@@ -30,6 +30,8 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
@@ -1275,6 +1277,20 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.LOOK, Flag.MOVE, Flag.JUMP));
         }
 
+        private void explodeLandingSpot() {
+            if (this.landing_spot != null && this.tragon.level() instanceof ServerLevel server_level) {
+                server_level.explode(
+                        this.tragon,
+                        Explosion.getDefaultDamageSource(server_level, this.tragon),
+                        new CustomExplosionDamageCalculator(), // this calculator has code to prevent the Tragon from taking damage
+                        this.tragon.getX(), this.tragon.getY(), this.tragon.getZ(),
+                        7, // radius
+                        false, // no fire
+                        Level.ExplosionInteraction.MOB
+                );
+            }
+        }
+
         private boolean canAttack() {
             return this.tragon != null && this.tragon.isAlive() && this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
@@ -1340,6 +1356,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         this.tragon.setNoGravity(false); // re-enable gravity
 
                         if (this.tragon.verticalCollision) {
+                            this.explodeLandingSpot();
+
                             // stop attack
                             this.attack_is_finished = true;
                         }
@@ -1355,6 +1373,19 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.tragon.getAttackType() == Action.AttackType.MELEE && this.tragon.getAttackAction() == Action.Attack.JUMP_ON_TARGET;
+        }
+
+
+
+        private static class CustomExplosionDamageCalculator extends ExplosionDamageCalculator {
+            @Override
+            public boolean shouldDamageEntity(@NotNull Explosion pExplosion, @NotNull Entity pEntity) {
+                if (pEntity instanceof TragonEntity || pEntity instanceof HitboxEntity) {
+                    return false;
+                }
+
+                return super.shouldDamageEntity(pExplosion, pEntity);
+            }
         }
     }
 }
