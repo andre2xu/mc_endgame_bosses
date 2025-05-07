@@ -7,6 +7,7 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.heads.LightningHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.heads.TragonHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
@@ -647,7 +649,14 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         if (in_deep_liquid) {
             this.setNoGravity(true); // don't sink in liquids
 
-            this.triggerAnim("movement_trigger_anim_controller", "swim");
+            boolean is_hiding_in_shell = this.isHidingInShell();
+
+            if (!is_hiding_in_shell) {
+                this.triggerAnim("movement_trigger_anim_controller", "swim");
+            }
+            else {
+                this.triggerAnim("movement_trigger_anim_controller", "hide_in_shell"); // done for the shell spin attack which only triggers when the Tragon is in an ocean and the target is close
+            }
         }
 
         // handle movement & attack decisions
@@ -701,7 +710,13 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         if (should_attack) {
                             if (this.isCloseToTarget()) {
                                 // OBJECTIVE: Target got close. Stop following them and do a melee attack
-                                this.setAttackAction(Action.Attack.SHELL_SPIN);
+
+                                Holder<Biome> biome_holder = this.level().getBiome(BlockPos.containing(this.position()));
+                                String biome_tag = biome_holder.getRegisteredName();
+
+                                if (biome_tag.contains("ocean")) {
+                                    this.setAttackAction(Action.Attack.SHELL_SPIN);
+                                }
                             }
                             else {
                                 // OBJECTIVE: Target is too far for a melee attack. Continue following them, while keeping a distance, and do a range attack
@@ -1123,7 +1138,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 if (this.is_hiding_in_shell) {
                     this.tragon.triggerAnim("movement_trigger_anim_controller", "come_out_of_shell");
 
-                    this.tragon.setHidingInShell(false); // allow heads to rotate again (see model class)
+                    this.tragon.setHidingInShell(false); // allow heads to rotate again (see model class) & the swimming animation to play in aiStep
 
                     this.tragon.setInvulnerable(false);
                 }
@@ -1148,11 +1163,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         this.hide_in_shell_delay--;
                     }
                     else {
-                        this.tragon.triggerAnim("movement_trigger_anim_controller", "hide_in_shell");
-
                         this.is_hiding_in_shell = true;
 
-                        this.tragon.setHidingInShell(true); // prevent head rotation (see model class)
+                        this.tragon.setHidingInShell(true); // prevent head rotation (see model class) & replace the swimming animation in aiStep
 
                         this.tragon.setInvulnerable(true);
                     }
