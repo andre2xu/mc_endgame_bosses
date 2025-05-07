@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -112,6 +113,8 @@ public class FireHead extends TragonHead {
 
                             Vec3 direction = target_pos.subtract(mouth_pos).add(0, fireball_spawn_y_offset, 0); // from mouth to target
                             Vec3 fireball_spawn_point = mouth_pos.subtract(0, fireball_spawn_y_offset, 0).add(direction.normalize().scale(1)); // adjust the spawn position so that it aligns better with the mouth
+
+                            this.tragon.playSound(SoundEvents.BLAZE_SHOOT, 3f, 1f);
 
                             server_level.addFreshEntity(new CustomFireball(
                                     fireball_spawn_point,
@@ -337,6 +340,10 @@ public class FireHead extends TragonHead {
                     if (this.breath_duration > 0) {
                         // breathe flames
                         for (Vec3 point : this.breath_path) {
+                            if (this.breath_duration % 6 == 0) {
+                                this.tragon.playSound(SoundEvents.BLAZE_BURN, 3f, 1f);
+                            }
+
                             server_level.sendParticles(
                                     ParticleTypes.FLAME,
                                     point.x, point.y, point.z,
