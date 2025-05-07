@@ -8,6 +8,8 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.heads.TragonHead;
 import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +34,8 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
@@ -576,6 +580,23 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         // apply the same damage to the head whose hitbox was hurt
         TragonHead head = this.heads.get(hitboxName);
         head.hurt(damage);
+
+        // show blood particles
+        Level level = this.level();
+
+        for (PartEntity<?> hitbox : this.hitboxes) {
+            if (hitbox instanceof HitboxEntity hitbox_entity && hitbox_entity.getHitboxName().equals(hitboxName) && level instanceof ServerLevel server_level) {
+                server_level.sendParticles(
+                        new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.APPLE)), // closest particle to blood is the apple eating crumbs
+                        hitbox_entity.getX(), hitbox_entity.getY(), hitbox_entity.getZ(),
+                        15, // particle count
+                        0, 0, 0,
+                        0.05
+                );
+
+                break;
+            }
+        }
 
         return is_hurt;
     }
