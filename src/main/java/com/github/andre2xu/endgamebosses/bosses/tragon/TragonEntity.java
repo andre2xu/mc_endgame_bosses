@@ -715,7 +715,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                                 Holder<Biome> biome_holder = this.level().getBiome(BlockPos.containing(this.position()));
                                 String biome_tag = biome_holder.getRegisteredName();
 
-                                if (biome_tag.contains("ocean")) {
+                                if (biome_tag.contains("ocean") && in_deep_liquid) {
                                     this.setAttackAction(Action.Attack.SHELL_SPIN);
                                 }
                             }
