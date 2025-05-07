@@ -709,7 +709,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     this.getLookControl().setLookAt(target);
 
                     float distance_from_target = this.distanceTo(target);
-                    int distance_to_keep_from_target = this.boss_phase == 2 ? 20 : 35; // stick close in phase 2 and stay far in phase 1
+                    int distance_to_keep_from_target = this.boss_phase == 2 ? 30 : 35; // stick close in phase 2 and stay far in phase 1
 
                     if (distance_from_target > distance_to_keep_from_target) {
                         Vec3 vector_to_target = target.position().subtract(this.position());
