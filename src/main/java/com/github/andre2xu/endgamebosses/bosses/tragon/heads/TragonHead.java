@@ -1,6 +1,14 @@
 package com.github.andre2xu.endgamebosses.bosses.tragon.heads;
 
+import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -32,6 +40,32 @@ public class TragonHead {
 
             // play death sound
             this.parent.playHeadDeathSound();
+
+            // show blood particles
+            PartEntity<?>[] all_hitboxes = this.parent.getParts();
+
+            if (all_hitboxes != null && this.parent.level() instanceof ServerLevel server_level) {
+                for (PartEntity<?> hitbox : all_hitboxes) {
+                    if (hitbox instanceof HitboxEntity hitbox_entity && hitbox_entity.getHitboxName().equals(this.neck_hitbox_id)) {
+                        Vec3 tragon_look_angle = this.parent.getLookAngle(); // direction Tragon is facing
+                        Vec3 spawn_pos = hitbox_entity.position().add(tragon_look_angle.normalize().scale(2)); // slightly in front of neck
+
+                        Vec3 particle_offset = spawn_pos.normalize().multiply(0.5, 0, 0.5); // make blood spurt forward
+
+                        for (int i=0; i < 10; i++) {
+                            server_level.sendParticles(
+                                    new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.APPLE)), // closest particle to blood is the apple eating crumbs
+                                    spawn_pos.x, hitbox_entity.getY() + 3, spawn_pos.z,
+                                    5, // particle count
+                                    particle_offset.x, particle_offset.y, particle_offset.z,
+                                    0.01 // speed
+                            );
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
     }
 

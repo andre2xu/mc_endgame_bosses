@@ -591,7 +591,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         hitbox_entity.getX(), hitbox_entity.getY(), hitbox_entity.getZ(),
                         15, // particle count
                         0, 0, 0,
-                        0.05
+                        0.05 // speed
                 );
 
                 break;
