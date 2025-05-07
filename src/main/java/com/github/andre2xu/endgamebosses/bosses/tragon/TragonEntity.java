@@ -16,6 +16,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -767,6 +769,33 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                 }
             }
         }
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected void playHurtSound(@NotNull DamageSource pSource) {
+        boolean play_hurt_sound = new Random().nextInt(1, 6) == 1; // 1 in 5 chance
+
+        if (play_hurt_sound) {
+            this.playSound(SoundEvents.RAVAGER_ROAR, 4f, 0.8f);
+        }
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return null;
+    }
+
+    @Override
+    public void playAmbientSound() {
+        this.playSound(SoundEvents.ENDER_DRAGON_GROWL, 4f, 1f);
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 20 * new Random().nextInt(5, 21);
     }
 
 
