@@ -1340,7 +1340,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                         Explosion.getDefaultDamageSource(server_level, this.tragon),
                         new CustomExplosionDamageCalculator(), // this calculator has code to prevent the Tragon from taking damage
                         this.tragon.getX(), this.tragon.getY(), this.tragon.getZ(),
-                        7, // radius
+                        9, // radius
                         false, // no fire
                         Level.ExplosionInteraction.MOB
                 );
