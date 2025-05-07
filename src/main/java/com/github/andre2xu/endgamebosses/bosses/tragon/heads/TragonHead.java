@@ -27,6 +27,9 @@ public class TragonHead {
             this.parent.setHeadAliveFlag(this, false); // mark head as dead so that it gets rendered as headless in the model class
 
             this.health = 0; // prevent health from having a negative value
+
+            // play death sound
+            this.parent.playHeadDeathSound();
         }
     }
 

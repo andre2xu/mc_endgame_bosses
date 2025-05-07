@@ -777,6 +777,10 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
 
     // SOUNDS
+    public void playHeadDeathSound() {
+        this.playSound(SoundEvents.SLIME_JUMP, 4f, 1f);
+    }
+
     @Override
     protected void playHurtSound(@NotNull DamageSource pSource) {
         boolean play_hurt_sound = new Random().nextInt(1, 6) == 1; // 1 in 5 chance
