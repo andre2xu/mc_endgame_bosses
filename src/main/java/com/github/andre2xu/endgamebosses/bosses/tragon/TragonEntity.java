@@ -57,6 +57,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     - Increase damage dealt to target from frost breath
     - Increase damage dealt to target from fire breath
     - Increase damage dealt to target from laser beam
+    - Increase damage dealt to target from shell spin attack
     - Make damages inflicted to targets underwater less than that of land
 
     OPTIONAL:
