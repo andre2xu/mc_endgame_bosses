@@ -1186,6 +1186,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void start() {
+            this.tragon.setNoGravity(true);
+
             // save a reference of the target to avoid having to call 'this.tragon.getTarget' which can sometimes return null
             this.target = this.tragon.getTarget();
 
@@ -1217,6 +1219,8 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
                     this.tragon.setHidingInShell(false); // allow heads to rotate again (see model class) & the swimming animation to play in aiStep
 
                     this.tragon.setInvulnerable(false);
+
+                    this.tragon.setNoGravity(false); // fall back down
                 }
 
                 this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
