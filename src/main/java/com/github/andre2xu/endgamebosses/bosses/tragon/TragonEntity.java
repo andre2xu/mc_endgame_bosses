@@ -525,6 +525,21 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         return false;
     }
 
+    private void floatInLiquid(double allowedDepth) {
+        Vec3 current_pos = this.position();
+        BlockPos block_pos = BlockPos.containing(current_pos);
+
+        Level level = this.level();
+
+        for (double i=0; i < allowedDepth; i++) {
+            block_pos = block_pos.above();
+        }
+
+        if (!level.getBlockState(block_pos).isAir()) {
+            this.getJumpControl().jump(); // swim up
+        }
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isCloseToTarget() {
         LivingEntity target = this.getTarget();
@@ -682,11 +697,13 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         // handle general behaviour in water
         boolean in_deep_liquid = this.isInDeepLiquid();
-        double allowed_depth_in_liquids = 3;
+        double allowed_depth_in_liquids = 4;
 
         if (in_deep_liquid) {
-            this.setNoGravity(true); // don't sink in liquids
+            // swim up when below the allowed depth
+            this.floatInLiquid(allowed_depth_in_liquids);
 
+            // handle animation
             boolean is_hiding_in_shell = this.isHidingInShell();
 
             if (!is_hiding_in_shell) {
