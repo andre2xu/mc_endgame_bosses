@@ -19,7 +19,7 @@ public class BossRegistry {
 
     public static RegistryObject<EntityType<TragonEntity>> TRAGON = BOSS_TYPES.register("tragon", () -> EntityType.Builder.of(TragonEntity::new, MobCategory.MONSTER).sized(13f, 11f).build("tragon"));
 
-    public static RegistryObject<EntityType<MamaEntity>> MAMA = BOSS_TYPES.register("mama", () -> EntityType.Builder.of(MamaEntity::new, MobCategory.MONSTER).build("mama"));
+    public static RegistryObject<EntityType<MamaEntity>> MAMA = BOSS_TYPES.register("mama", () -> EntityType.Builder.of(MamaEntity::new, MobCategory.MONSTER).sized(20f, 6f).build("mama"));
 
 
 
