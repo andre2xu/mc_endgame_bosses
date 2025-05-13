@@ -2,6 +2,8 @@ package com.github.andre2xu.endgamebosses;
 
 import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
+import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
+import com.github.andre2xu.endgamebosses.bosses.mama.MamaRenderer;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonRenderer;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
@@ -44,7 +46,8 @@ public class EndgameBosses {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String[] BOSSES = {
             "mechalodon",
-            "tragon"
+            "tragon",
+            "mama"
     };
 
 
@@ -152,6 +155,7 @@ public class EndgameBosses {
             // bosses
             event.registerEntityRenderer(BossRegistry.MECHALODON.get(), MechalodonRenderer::new);
             event.registerEntityRenderer(BossRegistry.TRAGON.get(), TragonRenderer::new);
+            event.registerEntityRenderer(BossRegistry.MAMA.get(), MamaRenderer::new);
 
             // projectiles
             event.registerEntityRenderer(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileRenderer::new);
@@ -173,6 +177,7 @@ public class EndgameBosses {
             // bosses
             event.put(BossRegistry.MECHALODON.get(), MechalodonEntity.createAttributes());
             event.put(BossRegistry.TRAGON.get(), TragonEntity.createAttributes());
+            event.put(BossRegistry.MAMA.get(), MamaEntity.createAttributes());
 
             // projectiles
             event.put(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileEntity.createAttributes());
