@@ -10,11 +10,13 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
+    // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    protected static final RawAnimation WALK_ANIM = RawAnimation.begin().then("animation.mama.walk", Animation.LoopType.PLAY_ONCE);
 
 
 
@@ -32,7 +34,12 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     // GECKOLIB SETUP
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // add triggerable animations
+        controllers.add(new AnimationController<>(this, "movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("walk", WALK_ANIM)
+        );
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
