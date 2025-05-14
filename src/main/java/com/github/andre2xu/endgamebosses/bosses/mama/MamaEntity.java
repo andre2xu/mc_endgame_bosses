@@ -61,4 +61,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             super.doPush(entity);
         }
     }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        this.triggerAnim("movement_trigger_anim_controller", "walk");
+    }
 }
