@@ -3,6 +3,7 @@ package com.github.andre2xu.endgamebosses.bosses.mama;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -67,6 +68,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected void registerGoals() {
+        // target the player that hurt Mama
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
+
         // find and select a target
         this.targetSelector.addGoal(3, new SelectTargetGoal(this));
     }
