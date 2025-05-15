@@ -2,6 +2,8 @@ package com.github.andre2xu.endgamebosses.bosses.mama.egg_sac;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -17,6 +19,15 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
         super(pEntityType, pLevel);
     }
 
+    public static AttributeSupplier createAttributes() {
+        return PathfinderMob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .build();
+    }
+
+
+
+    // GECKOLIB SETUP
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
