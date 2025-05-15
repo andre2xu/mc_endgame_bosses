@@ -378,7 +378,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     }
 
     public void updateHitboxPosition(String hitboxName, Vec3 bonePos) {
-        // this is called in the 'setCustomAnimations' method of the model class because that's where the bone positions can be accessed
+        // this is called in the 'setCustomAnimations' method of the model class, and in 'ModelBonePositionsPacket::handle', because those are where the bone positions can be accessed
 
         Level level = this.level();
 
