@@ -38,8 +38,8 @@ public class ModelBonePositionsPacket {
             if (server_player != null && server_player.level() instanceof ServerLevel server_level && !server_level.isClientSide) {
                 Entity entity = server_level.getEntity((int) this.entity_id);
 
-                if (entity instanceof MechalodonEntity) {
-                    ((MechalodonEntity) entity).updateBonePosition(this.bone_name, this.bone_pos);
+                if (entity instanceof MechalodonEntity mechalodon) {
+                    mechalodon.updateBonePosition(this.bone_name, this.bone_pos);
                 }
                 else if (entity instanceof TragonEntity tragon) {
                     tragon.updateBonePosition(this.bone_name, this.bone_pos);
