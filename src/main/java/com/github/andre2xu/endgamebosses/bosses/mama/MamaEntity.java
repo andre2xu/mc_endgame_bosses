@@ -39,6 +39,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8) // resistant to knockback but not immune
+                .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 0.8) // resistant to explosion knockback but not immune
                 .build();
     }
 
