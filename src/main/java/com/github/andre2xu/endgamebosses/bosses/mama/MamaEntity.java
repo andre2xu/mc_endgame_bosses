@@ -1,13 +1,16 @@
 package com.github.andre2xu.endgamebosses.bosses.mama;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -26,6 +29,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     public MamaEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        // add custom controls
+        this.lookControl = new MamaLookControl(this); // change the default look control
     }
 
     public static AttributeSupplier createAttributes() {
@@ -78,6 +84,39 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
+
+        LivingEntity target = this.getTarget();
+
+        if (target != null) {
+            this.getLookControl().setLookAt(target);
+        }
+    }
+
+
+
+    // CONTROLS
+    private static class MamaLookControl extends LookControl {
+        public MamaLookControl(Mob pMob) {
+            super(pMob);
+        }
+
+        @Override
+        public void setLookAt(@NotNull Entity pEntity) {
+            super.setLookAt(pEntity);
+
+            Vec3 target_pos = pEntity.position();
+
+            // set body yaw to face target
+            double yaw_dx = target_pos.x - this.mob.getX();
+            double yaw_dz = target_pos.z - this.mob.getZ();
+
+            float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
+            float new_yaw = (float) Math.toDegrees(-yaw_angle_towards_target);
+
+            this.mob.setYRot(new_yaw);
+            this.mob.setYBodyRot(new_yaw);
+            this.mob.setYHeadRot(new_yaw);
+        }
     }
 
 
