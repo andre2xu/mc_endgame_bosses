@@ -22,6 +22,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
@@ -93,6 +94,23 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     @Override
     public @Nullable PartEntity<?>[] getParts() {
         return this.hitboxes;
+    }
+
+    public void updateHitboxPosition(String hitboxName, Vec3 bonePos) {
+        // this is called in the 'setCustomAnimations' method of the model class, and in 'ModelBonePositionsPacket::handle', because those are where the bone positions can be accessed
+
+        Level level = this.level();
+
+        for (PartEntity<?> hitbox : this.hitboxes) {
+            if (Objects.equals(((HitboxEntity) hitbox).getHitboxName(), hitboxName)) {
+                if (!level.isClientSide) {
+                    hitbox.setPos(bonePos);
+                }
+                else {
+                    hitbox.moveTo(bonePos);
+                }
+            }
+        }
     }
 
 
