@@ -1,0 +1,33 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.mama_egg_sac",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "body",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-6, 0, -6], "size": [12, 2, 12], "uv": [0, 47]},
+						{"origin": [-7, 18, -7], "size": [14, 1, 14], "uv": [0, 32]},
+						{"origin": [-6, 19, -6], "size": [12, 2, 12], "uv": [48, 47]},
+						{"origin": [-4, 23, -4], "size": [8, 1, 8], "uv": [68, 61]},
+						{"origin": [-8, 3.5, -9], "size": [16, 12, 1], "uv": [64, 0]},
+						{"origin": [-9, 3.5, -8], "size": [1, 12, 16], "uv": [34, 61]},
+						{"origin": [-8, 3.5, 8], "size": [16, 12, 1], "uv": [64, 13]},
+						{"origin": [8, 3.5, -8], "size": [1, 12, 16], "uv": [0, 61]},
+						{"origin": [-5, 21, -5], "size": [10, 2, 10], "uv": [56, 32]},
+						{"origin": [-8, 2, -8], "size": [16, 16, 16], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}
