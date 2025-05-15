@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.mama;
 
+import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -23,6 +25,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
+    // GENERAL
+    private final PartEntity<?>[] hitboxes;
+
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation WALK_ANIM = RawAnimation.begin().then("animation.mama.walk", Animation.LoopType.PLAY_ONCE);
@@ -31,6 +36,13 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     public MamaEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        this.hitboxes = new PartEntity[] {
+                new HitboxEntity(this, "head", 5, 5),
+                new HitboxEntity(this, "abdomen", 5, 5)
+        };
+
+        this.setId(ENTITY_COUNTER.getAndAdd(this.hitboxes.length + 1) + 1);
 
         // add custom controls
         this.lookControl = new MamaLookControl(this); // change the default look control
@@ -58,6 +70,29 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // EXTRA HITBOXES
+    @Override
+    public void setId(int pId) {
+        super.setId(pId);
+
+        // FIX: giving the hitboxes their own ids is required for hurt detection to work properly (see EnderDragon class)
+        for (int i = 0; i < this.hitboxes.length; i++) {
+            this.hitboxes[i].setId(pId + i + 1);
+        }
+    }
+
+    @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public @Nullable PartEntity<?>[] getParts() {
+        return this.hitboxes;
     }
 
 
