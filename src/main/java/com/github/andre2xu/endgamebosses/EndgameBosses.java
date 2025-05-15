@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses;
 
 import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
+import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
 import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaRenderer;
@@ -63,6 +64,9 @@ public class EndgameBosses {
 
         // register custom projectile types
         ProjectilesRegistry.register(modEventBus);
+
+        // register other entity types
+        MiscEntityRegistry.register(modEventBus);
 
         // register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
