@@ -95,7 +95,19 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
+            // rotate horizontally to face target
             this.getLookControl().setLookAt(target);
+
+            // move towards target but keep a distance
+            if (this.distanceTo(target) > 25) {
+                Vec3 current_pos = this.position();
+                Vec3 target_pos = target.position();
+                Vec3 vector_to_target = target_pos.subtract(current_pos);
+
+                this.setDeltaMovement(vector_to_target.normalize().scale(1));
+
+                this.triggerAnim("movement_trigger_anim_controller", "walk");
+            }
         }
     }
 
