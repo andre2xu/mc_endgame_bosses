@@ -15,7 +15,7 @@ public class MiscEntityRegistry {
     public static DeferredRegister<EntityType<?>> MISC_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, EndgameBosses.MODID);
     
     // TYPES
-    public static RegistryObject<EntityType<MamaEggSacEntity>> MAMA_EGG_SAC = MISC_ENTITY_TYPES.register("mama_egg_sac", () -> EntityType.Builder.of(MamaEggSacEntity::new, MobCategory.MISC).build("mama_egg_sac"));
+    public static RegistryObject<EntityType<MamaEggSacEntity>> MAMA_EGG_SAC = MISC_ENTITY_TYPES.register("mama_egg_sac", () -> EntityType.Builder.of(MamaEggSacEntity::new, MobCategory.MISC).sized(7f, 10f).build("mama_egg_sac"));
     
     
     
