@@ -38,9 +38,10 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     public MamaEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
+        // create hitboxes for Mama's body
         this.hitboxes = new PartEntity[] {
-                new HitboxEntity(this, "head", 5, 5),
-                new HitboxEntity(this, "abdomen", 5, 5)
+                new HitboxEntity(this, "head", 7, 3),
+                new HitboxEntity(this, "abdomen", 7, 5)
         };
 
         this.setId(ENTITY_COUNTER.getAndAdd(this.hitboxes.length + 1) + 1);
@@ -103,6 +104,16 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         for (PartEntity<?> hitbox : this.hitboxes) {
             if (Objects.equals(((HitboxEntity) hitbox).getHitboxName(), hitboxName)) {
+                // adjust hitbox position for abdomen
+                if (hitboxName.equals("abdomen")) {
+                    Vec3 backward_vector = this.getLookAngle(); // forward vector
+                    backward_vector = backward_vector.scale(-1); // reverse direction
+
+                    // move hitbox back and down
+                    bonePos = bonePos.add(backward_vector.normalize().multiply(1.5, 1, 1.5).subtract(0, 1, 0));
+                }
+
+
                 if (!level.isClientSide) {
                     hitbox.setPos(bonePos);
                 }
