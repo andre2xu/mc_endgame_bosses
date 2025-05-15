@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.networking.shared.packets;
 
+import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -44,6 +45,9 @@ public class ModelBonePositionsPacket {
                     tragon.updateBonePosition(this.bone_name, this.bone_pos);
 
                     tragon.updateHitboxPosition(this.bone_name, this.bone_pos);
+                }
+                else if (entity instanceof MamaEntity mama) {
+                    mama.updateHitboxPosition(this.bone_name, this.bone_pos);
                 }
             }
         });
