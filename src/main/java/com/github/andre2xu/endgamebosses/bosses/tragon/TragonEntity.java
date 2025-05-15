@@ -658,7 +658,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
 
         // find and select a target
-        this.targetSelector.addGoal(3, new TragonEntity.SelectTargetGoal(this));
+        this.targetSelector.addGoal(3, new SelectTargetGoal(this));
         
         /*
         HOW ATTACKING WORKS:
