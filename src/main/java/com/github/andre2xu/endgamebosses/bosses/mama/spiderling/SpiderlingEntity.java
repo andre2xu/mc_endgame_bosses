@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 
+import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -17,6 +18,9 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
     public SpiderlingEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        // set look control to be the same as Mama's
+        this.lookControl = new MamaEntity.MamaLookControl(this);
     }
 
     public static AttributeSupplier createAttributes() {
@@ -27,6 +31,7 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // GECKOLIB SETUP
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 

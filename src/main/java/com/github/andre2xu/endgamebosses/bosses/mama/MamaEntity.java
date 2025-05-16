@@ -192,7 +192,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
     // CONTROLS
-    private static class MamaLookControl extends LookControl {
+    public static class MamaLookControl extends LookControl {
         public MamaLookControl(Mob pMob) {
             super(pMob);
         }
