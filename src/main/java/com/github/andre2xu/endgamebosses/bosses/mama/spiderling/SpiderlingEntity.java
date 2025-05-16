@@ -91,10 +91,17 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             this.getLookControl().setLookAt(target);
 
             // move towards target
-            if (this.distanceTo(target) > 3) {
-                Vec3 vector_towards_target = target.position().subtract(this.position());
+            float distance_to_target = this.distanceTo(target);
 
-                this.setDeltaMovement(vector_towards_target.normalize().scale(0.2));
+            if (distance_to_target > 3) {
+                double speed = 0.2;
+
+                if (distance_to_target > 10) {
+                    speed = 0.4; // speed boost to catch up to target
+                }
+
+                Vec3 vector_towards_target = target.position().subtract(this.position());
+                this.setDeltaMovement(vector_towards_target.normalize().scale(speed));
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
