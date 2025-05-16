@@ -198,6 +198,10 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
                 this.setDeltaMovement(vector_to_target.normalize().scale(1));
 
+                if (this.horizontalCollision) {
+                    this.jumpFromGround();
+                }
+
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
         }
