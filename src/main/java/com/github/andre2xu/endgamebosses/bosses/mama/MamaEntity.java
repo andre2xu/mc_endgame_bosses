@@ -163,8 +163,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
-        if (pSource.is(DamageTypes.CRAMMING)) {
-            // don't get hurt from overcrowding
+        if (pSource.is(DamageTypes.CRAMMING) || pSource.is(DamageTypes.IN_WALL)) {
+            // don't get hurt from overcrowding or suffocation
             return false;
         }
 
