@@ -3,6 +3,7 @@ package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -58,5 +60,24 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
         // find and select a target
         this.targetSelector.addGoal(3, new MamaEntity.SelectTargetGoal(this)); // sharing the same target goal as Mama
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        LivingEntity target = this.getTarget();
+
+        if (target != null) {
+            // rotate horizontally to face target
+            this.getLookControl().setLookAt(target);
+
+            // move towards target
+            if (this.distanceTo(target) > 3) {
+                Vec3 vector_towards_target = target.position().subtract(this.position());
+
+                this.setDeltaMovement(vector_towards_target.normalize().scale(0.2));
+            }
+        }
     }
 }
