@@ -2,6 +2,8 @@ package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -58,6 +60,16 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     // AI
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
+
+    @Override
+    public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        if (pSource.is(DamageTypes.CRAMMING)) {
+            // don't get hurt from overcrowding
+            return false;
+        }
+
+        return super.hurt(pSource, pAmount);
+    }
 
     @Override
     protected void registerGoals() {

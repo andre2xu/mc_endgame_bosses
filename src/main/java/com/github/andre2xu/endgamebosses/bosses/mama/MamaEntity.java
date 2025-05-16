@@ -3,6 +3,8 @@ package com.github.andre2xu.endgamebosses.bosses.mama;
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -155,6 +157,16 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         if (!(entity instanceof Player)) {
             super.doPush(entity);
         }
+    }
+
+    @Override
+    public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        if (pSource.is(DamageTypes.CRAMMING)) {
+            // don't get hurt from overcrowding
+            return false;
+        }
+
+        return super.hurt(pSource, pAmount);
     }
 
     @Override
