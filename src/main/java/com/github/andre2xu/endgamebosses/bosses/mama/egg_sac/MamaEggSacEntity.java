@@ -1,6 +1,11 @@
 package com.github.andre2xu.endgamebosses.bosses.mama.egg_sac;
 
+import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
+import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
+import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
+import com.github.andre2xu.endgamebosses.bosses.mama.spiderling.SpiderlingEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -12,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -81,6 +87,39 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
     @Override
     public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
         return false;
+    }
+
+    @Override
+    public void die(@NotNull DamageSource pDamageSource) {
+        super.die(pDamageSource);
+
+        // handle spawning
+        if (this.level() instanceof ServerLevel server_level) {
+            MamaEntity mama = BossRegistry.MAMA.get().create(server_level);
+
+            if (mama != null) {
+                Vec3 egg_sac_position = this.position();
+
+                // spawn Mama
+                mama.setPos(egg_sac_position);
+                server_level.addFreshEntity(mama);
+
+                // spawn her spiderlings
+                int num_of_spiderlings = 30;
+
+                for (int i=0; i < num_of_spiderlings; i++) {
+                    SpiderlingEntity spiderling = MiscEntityRegistry.SPIDERLING.get().create(server_level);
+
+                    if (spiderling != null) {
+                        spiderling.setPos(egg_sac_position);
+                        server_level.addFreshEntity(spiderling);
+                    }
+                }
+            }
+        }
+
+        // remove from game
+        this.discard();
     }
 
 
