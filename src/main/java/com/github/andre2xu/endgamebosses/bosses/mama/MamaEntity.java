@@ -219,7 +219,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
     // CUSTOM GOALS
-    private static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
+    public static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
         public SelectTargetGoal(Mob pMob) {
             // this is a custom constructor made to reduce the amount of parameters. It doesn't override any constructor from the parent
 

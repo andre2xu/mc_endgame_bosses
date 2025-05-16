@@ -5,6 +5,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -38,5 +40,17 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // AI
+    @Override
+    protected void registerGoals() {
+        // target the player that hurt the spiderling
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
+
+        // find and select a target
+        this.targetSelector.addGoal(3, new MamaEntity.SelectTargetGoal(this)); // sharing the same target goal as Mama
     }
 }
