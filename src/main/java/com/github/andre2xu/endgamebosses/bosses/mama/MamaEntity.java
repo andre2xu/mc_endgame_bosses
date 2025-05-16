@@ -26,6 +26,20 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
+    /*
+    See 'CHANGE LATER' comments
+
+    TODO:
+    - Increase MAX_HEALTH attribute
+    - Increase MAX_HEALTH attribute of egg sac
+    - Increase MAX_HEALTH attribute of spiderlings
+
+    OPTIONAL:
+    - Add boss music for Mama
+    */
+
+
+
     // GENERAL
     private final PartEntity<?>[] hitboxes;
 
