@@ -7,7 +7,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class SpiderlingModel extends GeoModel<SpiderlingEntity> {
     @Override
     public ResourceLocation getModelResource(SpiderlingEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(EndgameBosses.MODID, "geo/entity/mama/mama.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(EndgameBosses.MODID, "geo/entity/mama/spiderling.geo.json");
     }
 
     @Override
