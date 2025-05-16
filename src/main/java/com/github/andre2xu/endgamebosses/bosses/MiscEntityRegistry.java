@@ -18,7 +18,7 @@ public class MiscEntityRegistry {
     // TYPES
     public static RegistryObject<EntityType<MamaEggSacEntity>> MAMA_EGG_SAC = MISC_ENTITY_TYPES.register("mama_egg_sac", () -> EntityType.Builder.of(MamaEggSacEntity::new, MobCategory.MISC).sized(7f, 10f).build("mama_egg_sac"));
 
-    public static RegistryObject<EntityType<SpiderlingEntity>> SPIDERLING = MISC_ENTITY_TYPES.register("spiderling", () -> EntityType.Builder.of(SpiderlingEntity::new, MobCategory.MISC).build("spiderling"));
+    public static RegistryObject<EntityType<SpiderlingEntity>> SPIDERLING = MISC_ENTITY_TYPES.register("spiderling", () -> EntityType.Builder.of(SpiderlingEntity::new, MobCategory.MISC).sized(3f, 1.3f).build("spiderling"));
     
     
     
