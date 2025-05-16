@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -8,6 +9,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -45,6 +48,9 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
+
     @Override
     protected void registerGoals() {
         // target the player that hurt the spiderling
