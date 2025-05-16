@@ -1,6 +1,9 @@
 package com.github.andre2xu.endgamebosses.bosses.mama.egg_sac;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -10,6 +13,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -77,5 +81,18 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
     @Override
     public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
         return false;
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return SoundEvents.SLIME_BLOCK_BREAK;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) {
+        return SoundEvents.SLIME_HURT;
     }
 }
