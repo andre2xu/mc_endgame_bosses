@@ -1,5 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.mama;
 
+import com.github.andre2xu.endgamebosses.bosses.mama.egg_sac.MamaEggSacEntity;
+import com.github.andre2xu.endgamebosses.bosses.mama.spiderling.SpiderlingEntity;
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -153,8 +155,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected void doPush(@NotNull Entity entity) {
-        // don't push players (i.e. allow them to get close)
-        if (!(entity instanceof Player)) {
+        // don't push players (i.e. allow them to get close), spiderlings, or egg sac
+        if (!(entity instanceof Player) && !(entity instanceof SpiderlingEntity) && !(entity instanceof MamaEggSacEntity)) {
             super.doPush(entity);
         }
     }
