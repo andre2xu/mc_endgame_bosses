@@ -72,6 +72,8 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
         this.mama = mama;
         this.mama_id = mama.getMamaId(); // this is not a redundancy. See 'addAdditionalSaveData' & 'readAdditionalSaveData'
+
+        this.mama.incrementChildCount();
     }
 
     @Override
@@ -109,6 +111,15 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public void die(@NotNull DamageSource pDamageSource) {
+        super.die(pDamageSource);
+
+        if (this.mama != null) {
+            this.mama.decrementChildCount();
+        }
+    }
+
+    @Override
     protected void registerGoals() {
         // target the player that hurt the spiderling
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
@@ -130,6 +141,7 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             for (MamaEntity mama_entity : all_mama_entities_in_area) {
                 if (mama_entity.getMamaId() == this.mama_id) {
                     this.mama = mama_entity;
+                    this.mama.incrementChildCount();
                     break;
                 }
             }
