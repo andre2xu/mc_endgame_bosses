@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -117,6 +117,14 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
         if (this.mama != null) {
             this.mama.decrementChildCount();
         }
+    }
+
+    @Override
+    public void push(@NotNull Entity pEntity) {
+        super.push(pEntity);
+
+        // move legs when being pushed
+        this.triggerAnim("movement_trigger_anim_controller", "walk");
     }
 
     @Override
