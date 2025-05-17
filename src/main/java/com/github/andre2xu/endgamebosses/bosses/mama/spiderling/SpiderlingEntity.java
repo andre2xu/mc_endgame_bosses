@@ -147,6 +147,11 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             }
         }
 
+        // remove Mama reference if she's dead
+        if (this.mama != null && !this.mama.isAlive()) {
+            this.mama = null;
+        }
+
         // handle behaviour towards target
         LivingEntity target = this.getTarget();
 
