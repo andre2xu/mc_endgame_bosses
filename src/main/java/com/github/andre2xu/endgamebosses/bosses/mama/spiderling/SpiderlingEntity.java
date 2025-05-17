@@ -14,12 +14,15 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.List;
 
 public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
@@ -118,6 +121,21 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // get Mama reference (this block only triggers when the world is reloaded)
+        if (this.mama == null && this.mama_id != null) {
+            AABB area_to_check_for_mama = this.getBoundingBox().inflate(100); // 100 blocks in the xyz axes
+
+            List<MamaEntity> all_mama_entities_in_area = this.level().getEntitiesOfClass(MamaEntity.class, area_to_check_for_mama);
+
+            for (MamaEntity mama_entity : all_mama_entities_in_area) {
+                if (mama_entity.getMamaId() == this.mama_id) {
+                    this.mama = mama_entity;
+                    break;
+                }
+            }
+        }
+
+        // handle behaviour towards target
         LivingEntity target = this.getTarget();
 
         if (target != null) {
