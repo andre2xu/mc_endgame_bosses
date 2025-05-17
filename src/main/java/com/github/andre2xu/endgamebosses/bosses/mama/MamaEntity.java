@@ -4,6 +4,7 @@ import com.github.andre2xu.endgamebosses.bosses.mama.egg_sac.MamaEggSacEntity;
 import com.github.andre2xu.endgamebosses.bosses.mama.spiderling.SpiderlingEntity;
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -45,6 +46,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
     // GENERAL
+    private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings decrement Mama's child count when they die so they need this id to find the correct Mama instance
     private final PartEntity<?>[] hitboxes;
 
     // ANIMATIONS
@@ -66,6 +68,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         // add custom controls
         this.lookControl = new MamaLookControl(this); // change the default look control
+
+        // generate id
+        this.mama_id = System.currentTimeMillis();
     }
 
     public static AttributeSupplier createAttributes() {
@@ -90,6 +95,31 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // DATA
+    public long getMamaId() {
+        return this.mama_id;
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        // save Mama ID to persistent storage
+        if (this.mama_id != null) {
+            pCompound.putLong("mama_id", this.mama_id);
+        }
+
+        super.addAdditionalSaveData(pCompound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+
+        // update Mama ID to match the one that was saved
+        this.mama_id = pCompound.getLong("mama_id");
     }
 
 
