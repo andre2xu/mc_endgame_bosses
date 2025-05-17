@@ -112,6 +112,8 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
 
                     if (spiderling != null) {
                         spiderling.setPos(egg_sac_position);
+                        spiderling.setMama(mama);
+
                         server_level.addFreshEntity(spiderling);
                     }
                 }

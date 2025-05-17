@@ -2,6 +2,7 @@ package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +22,11 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
+    // GENERAL
+    private Long mama_id = null;
+    private MamaEntity mama = null;
+
+    // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation WALK_ANIM = RawAnimation.begin().then("animation.mama.walk", Animation.LoopType.PLAY_ONCE);
 
@@ -53,6 +59,34 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // DATA
+    public void setMama(MamaEntity mama) {
+        // this is called in the 'die' method of the MamaEggSacEntity class, i.e. before the spiderling is spawned
+
+        this.mama = mama;
+        this.mama_id = mama.getMamaId(); // this is not a redundancy. See 'addAdditionalSaveData' & 'readAdditionalSaveData'
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        // save Mama ID to persistent storage
+        if (this.mama_id != null) {
+            pCompound.putLong("mama_id", this.mama_id);
+        }
+
+        super.addAdditionalSaveData(pCompound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+
+        // retrieve Mama ID from persistent storage
+        this.mama_id = pCompound.getLong("mama_id");
     }
 
 
