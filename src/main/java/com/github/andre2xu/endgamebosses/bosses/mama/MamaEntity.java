@@ -38,6 +38,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     - Increase MAX_HEALTH attribute
     - Increase MAX_HEALTH attribute of egg sac
     - Increase MAX_HEALTH attribute of spiderlings
+    - Implement spiderling damage
 
     OPTIONAL:
     - Add boss music for Mama
