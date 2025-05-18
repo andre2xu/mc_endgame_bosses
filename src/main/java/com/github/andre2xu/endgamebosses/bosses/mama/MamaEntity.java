@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -253,13 +254,15 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
-        // update boss health bar
-        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
-        this.server_boss_event.setProgress(boss_health_remaining);
+        if (this.level() instanceof ServerLevel) {
+            // update boss health bar
+            float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+            this.server_boss_event.setProgress(boss_health_remaining);
 
-        // update boss phase
-        if (this.boss_phase == 1 && (boss_health_remaining <= 0.5 || this.child_count <= 10)) {
-            this.boss_phase = 2;
+            // update boss phase
+            if (this.boss_phase == 1 && (boss_health_remaining <= 0.4 || this.child_count <= 10)) {
+                this.boss_phase = 2;
+            }
         }
 
         // handle movement & attack decisions
