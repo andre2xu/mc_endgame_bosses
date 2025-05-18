@@ -10,6 +10,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
@@ -462,6 +464,29 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 this.mama.setYHeadRot(turn_angle);
 
                 this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+            }
+        }
+
+        private void generateCobwebsAroundTarget() {
+            if (this.target_pos != null && this.mama.level() instanceof ServerLevel server_level) {
+                BlockPos center = new BlockPos((int) this.target_pos.x, (int) this.target_pos.y, (int) this.target_pos.z);
+
+                int radius = 2;
+
+                for (int dx = -radius; dx <= radius; dx++) {
+                    for (int dy = -2; dy <= 0; dy++) {
+                        for (int dz = -radius; dz <= radius; dz++) {
+                            BlockPos current_block_pos = center.offset(dx, dy, dz);
+                            BlockState current_block_state = server_level.getBlockState(current_block_pos);
+
+                            boolean block_above_is_air = server_level.getBlockState(current_block_pos.above()).isAir();
+
+                            if (!current_block_state.isAir() && !current_block_state.is(Blocks.COBWEB) && block_above_is_air) {
+                                server_level.setBlockAndUpdate(current_block_pos.above(), Blocks.COBWEB.defaultBlockState());
+                            }
+                        }
+                    }
+                }
             }
         }
 
