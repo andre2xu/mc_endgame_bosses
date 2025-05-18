@@ -440,6 +440,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class WebShootAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private Vec3 target_pos = null;
         private int attack_delay = 0; // delay is set in the 'start' method
         private int attack_cooldown = 0; // first attack has no cooldown
         private boolean attack_is_finished = false;
@@ -496,6 +497,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.target_pos = null;
             this.attack_delay = 0;
             this.attack_is_finished = false;
         }
@@ -533,13 +535,20 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                     this.attack_cooldown--;
                 }
                 else {
-                    this.turnAround();
-
                     if (this.attack_delay > 0) {
+                        if (this.attack_delay > 10) {
+                            this.turnAround();
+                        }
+                        else {
+                            // save the target's position when there's 0.5 seconds left. This is done to give them a chance to dodge
+                            this.target_pos = this.target.position();
+                        }
+
                         this.attack_delay--;
                     }
                     else {
-                        System.out.println("SHOOTING WEB");
+                        // spawn cobwebs around the target's last known location
+                        this.generateCobwebsAroundTarget();
 
                         // stop attack
                         this.attack_is_finished = true;
