@@ -479,6 +479,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         public void stop() {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
+            this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
+
             super.stop();
         }
 
