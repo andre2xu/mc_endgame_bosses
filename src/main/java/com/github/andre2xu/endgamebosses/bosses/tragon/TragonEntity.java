@@ -80,7 +80,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private final String lightning_head_neck_id = "lightning_head_neck";
     private final String ice_head_neck_id = "ice_head_neck";
     private final HashMap<String, TragonHead> heads = new HashMap<>();
-    private TragonEntity.Action.AttackType attack_type = TragonEntity.Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
