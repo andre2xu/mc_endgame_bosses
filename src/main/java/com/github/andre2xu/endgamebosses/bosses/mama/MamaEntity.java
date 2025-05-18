@@ -437,6 +437,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     private static class WebShoot extends Goal {
         private final MamaEntity mama;
+        private LivingEntity target = null;
         private boolean attack_is_finished = false;
 
         public WebShoot(MamaEntity mama) {
@@ -444,8 +445,21 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
+            this.target = null;
             this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
+            this.target = this.mama.getTarget();
+
+            super.start();
         }
 
         @Override
