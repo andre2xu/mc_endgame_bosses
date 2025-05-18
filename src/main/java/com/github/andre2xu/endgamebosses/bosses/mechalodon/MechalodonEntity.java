@@ -92,7 +92,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Vector3f> SIDE_THRUSTER2_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> BACK_THRUSTER_POSITION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3);
 
-
     // ACTIONS
     public enum Action {;
         // these determine which attack goal is run OR how the Mechalodon will move (see aiStep)
