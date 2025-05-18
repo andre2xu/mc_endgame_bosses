@@ -292,6 +292,16 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
     @Override
+    public void makeStuckInBlock(@NotNull BlockState pState, @NotNull Vec3 pMotionMultiplier) {
+        if (pState.is(Blocks.COBWEB)) {
+            // don't get stuck in cobwebs
+            return;
+        }
+
+        super.makeStuckInBlock(pState, pMotionMultiplier);
+    }
+
+    @Override
     public boolean isPushable() {
         return false;
     }

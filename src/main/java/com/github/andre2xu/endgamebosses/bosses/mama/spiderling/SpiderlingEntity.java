@@ -14,8 +14,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -99,6 +101,16 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     // AI
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
+
+    @Override
+    public void makeStuckInBlock(@NotNull BlockState pState, @NotNull Vec3 pMotionMultiplier) {
+        if (pState.is(Blocks.COBWEB)) {
+            // don't get stuck in cobwebs
+            return;
+        }
+
+        super.makeStuckInBlock(pState, pMotionMultiplier);
+    }
 
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
