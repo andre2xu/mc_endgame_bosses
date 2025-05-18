@@ -5,7 +5,11 @@ import com.github.andre2xu.endgamebosses.bosses.mama.spiderling.SpiderlingEntity
 import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
@@ -50,6 +54,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings decrement Mama's child count when they die so they need this id to find the correct Mama instance
     private int child_count = 0;
     private final PartEntity<?>[] hitboxes;
+
+    // BOSS FIGHT
+    private final ServerBossEvent server_boss_event = new ServerBossEvent(
+            Component.literal("Mama"),
+            BossEvent.BossBarColor.RED,
+            BossEvent.BossBarOverlay.NOTCHED_12
+    );
+    private int boss_phase = 1;
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
@@ -184,6 +196,23 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // BOSS FIGHT
+    @Override
+    public void startSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.startSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.addPlayer(pServerPlayer);
+    }
+
+    @Override
+    public void stopSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.stopSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.removePlayer(pServerPlayer);
+    }
+
+
+
     // AI
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
@@ -224,6 +253,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // update boss health bar
+        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+        this.server_boss_event.setProgress(boss_health_remaining);
+
+        // handle movement & attack decisions
         LivingEntity target = this.getTarget();
 
         if (target != null) {
