@@ -35,6 +35,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
@@ -351,6 +352,15 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 }
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
+            }
+
+            // choose attack
+            if (this.boss_phase == 1) {
+                boolean should_attack = new Random().nextInt(1, 5) == 1; // 1 in 4 chances to attack
+
+                if (should_attack) {
+                    this.setAttackAction(Action.Attack.WEB_SHOOT);
+                }
             }
         }
     }
