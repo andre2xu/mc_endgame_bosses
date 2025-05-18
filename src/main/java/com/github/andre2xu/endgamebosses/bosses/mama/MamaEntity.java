@@ -85,6 +85,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             // melee
 
             // range
+            WEB_SHOOT
         }
     }
 
@@ -247,6 +248,40 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    private void setAttackAction(Action.Attack attackAction) {
+        int action_id = 0; // none
+
+        switch (attackAction) {
+            case Action.Attack.WEB_SHOOT:
+                action_id = 1;
+                this.attack_type = Action.AttackType.RANGE;
+                break;
+            default:
+                this.attack_type = Action.AttackType.MELEE;
+        }
+
+        this.entityData.set(ATTACK_ACTION, action_id);
+    }
+
+    private Action.Attack getAttackAction() {
+        Action.Attack attack_action = Action.Attack.NONE;
+
+        int action_id = this.entityData.get(ATTACK_ACTION);
+
+        switch (action_id) {
+            case 1:
+                attack_action = Action.Attack.WEB_SHOOT;
+                break;
+            default:
+        }
+
+        return attack_action;
+    }
+
+    public Action.AttackType getAttackType() {
+        return this.attack_type;
+    }
+
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
