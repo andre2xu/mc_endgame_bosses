@@ -12,6 +12,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -559,6 +560,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                     else {
                         // spawn cobwebs around the target's last known location
                         this.generateCobwebsAroundTarget();
+
+                        this.mama.playSound(SoundEvents.SLIME_SQUISH, 2f, 1f);
 
                         // stop attack
                         this.attack_is_finished = true;
