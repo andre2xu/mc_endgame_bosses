@@ -257,6 +257,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
         this.server_boss_event.setProgress(boss_health_remaining);
 
+        // update boss phase
+        if (this.boss_phase == 1 && (boss_health_remaining <= 0.5 || this.child_count <= 10)) {
+            this.boss_phase = 2;
+        }
+
         // handle movement & attack decisions
         LivingEntity target = this.getTarget();
 
