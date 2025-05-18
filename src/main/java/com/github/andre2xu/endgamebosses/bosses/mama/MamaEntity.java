@@ -438,6 +438,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class WebShootAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private int attack_delay = 0; // delay is set in the 'start' method
         private int attack_cooldown = 0; // first attack has no cooldown
         private boolean attack_is_finished = false;
 
@@ -470,6 +471,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.attack_delay = 0;
             this.attack_is_finished = false;
         }
 
@@ -477,6 +479,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
             this.target = this.mama.getTarget();
+
+            // set delay for attack to let Mama turn around first
+            this.attack_delay = 20 * 2; // 2 seconds
 
             super.start();
         }
@@ -493,17 +498,30 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
+                // OBJECTIVE: Turn around and spawn cobwebs around the target's position
+
                 if (this.attack_cooldown > 0) {
+                    // look at target while attack cooldown is counting down
+
+                    this.mama.getLookControl().setLookAt(this.target);
+
                     this.attack_cooldown--;
                 }
                 else {
-                    System.out.println("SHOOTING WEB");
+                    this.turnAround();
 
-                    // stop attack
-                    this.attack_is_finished = true;
+                    if (this.attack_delay > 0) {
+                        this.attack_delay--;
+                    }
+                    else {
+                        System.out.println("SHOOTING WEB");
 
-                    // set cooldown
-                    this.attack_cooldown = 20 * 3; // 3 seconds
+                        // stop attack
+                        this.attack_is_finished = true;
+
+                        // set cooldown
+                        this.attack_cooldown = 20 * 2; // 2 seconds
+                    }
                 }
             }
             else {
