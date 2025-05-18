@@ -459,6 +459,19 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
             this.target = this.mama.getTarget();
 
+            // turn around so that the abdomen is facing the target
+            if (this.target != null) {
+                this.mama.getLookControl().setLookAt(this.target);
+
+                float new_yaw = this.mama.getYRot() + 180;
+
+                this.mama.setYRot(new_yaw);
+                this.mama.setYBodyRot(new_yaw);
+                this.mama.setYHeadRot(new_yaw);
+
+                this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+            }
+
             super.start();
         }
 
