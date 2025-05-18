@@ -438,6 +438,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class WebShootAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private int attack_cooldown = 0; // first attack has no cooldown
         private boolean attack_is_finished = false;
 
         public WebShootAttackGoal(MamaEntity mama) {
@@ -482,6 +483,28 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                if (this.attack_cooldown > 0) {
+                    this.attack_cooldown--;
+                }
+                else {
+                    System.out.println("SHOOTING WEB");
+
+                    // stop attack
+                    this.attack_is_finished = true;
+
+                    // set cooldown
+                    this.attack_cooldown = 20 * 3; // 3 seconds
+                }
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
