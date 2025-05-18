@@ -6,8 +6,10 @@ import com.github.andre2xu.endgamebosses.bosses.misc.HitboxEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -53,7 +55,6 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     // GENERAL
     private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings decrement Mama's child count when they die so they need this id to find the correct Mama instance
-    private int child_count = 0;
     private final PartEntity<?>[] hitboxes;
 
     // BOSS FIGHT
@@ -63,6 +64,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             BossEvent.BossBarOverlay.NOTCHED_12
     );
     private int boss_phase = 1;
+
+    // DATA ACCESSORS
+    private static final EntityDataAccessor<Integer> CHILD_COUNT = SynchedEntityData.defineId(MamaEntity.class, EntityDataSerializers.INT);
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
@@ -120,11 +124,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     }
 
     public void incrementChildCount() {
-        this.child_count++;
+        this.entityData.set(CHILD_COUNT, this.entityData.get(CHILD_COUNT) + 1);
     }
 
     public void decrementChildCount() {
-        this.child_count--;
+        this.entityData.set(CHILD_COUNT, this.entityData.get(CHILD_COUNT) - 1);
     }
 
     @Override
@@ -143,6 +147,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         // update Mama ID to match the one that was saved
         this.mama_id = pCompound.getLong("mama_id");
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+
+        // give data accessors starting values
+        pBuilder.define(CHILD_COUNT, 0);
     }
 
 
@@ -254,15 +266,13 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
-        if (this.level() instanceof ServerLevel) {
-            // update boss health bar
-            float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
-            this.server_boss_event.setProgress(boss_health_remaining);
+        // update boss health bar
+        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+        this.server_boss_event.setProgress(boss_health_remaining);
 
-            // update boss phase
-            if (this.boss_phase == 1 && (boss_health_remaining <= 0.4 || this.child_count <= 10)) {
-                this.boss_phase = 2;
-            }
+        // update boss phase
+        if (this.boss_phase == 1 && (boss_health_remaining <= 0.4 || this.entityData.get(CHILD_COUNT) <= 10)) {
+            this.boss_phase = 2;
         }
 
         // handle movement & attack decisions
