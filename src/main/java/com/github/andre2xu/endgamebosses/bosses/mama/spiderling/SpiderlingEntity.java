@@ -140,6 +140,11 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // remove Mama reference if she's dead
+        if (this.mama != null && !this.mama.isAlive()) {
+            this.mama = null;
+        }
+
         // get Mama reference (this block only triggers when the world is reloaded)
         if (this.mama == null && this.mama_id != null) {
             AABB area_to_check_for_mama = this.getBoundingBox().inflate(100); // 100 blocks in the xyz axes
@@ -147,17 +152,12 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             List<MamaEntity> all_mama_entities_in_area = this.level().getEntitiesOfClass(MamaEntity.class, area_to_check_for_mama);
 
             for (MamaEntity mama_entity : all_mama_entities_in_area) {
-                if (mama_entity.getMamaId() == this.mama_id) {
+                if (mama_entity.isAlive() && mama_entity.getMamaId() == this.mama_id) {
                     this.mama = mama_entity;
                     this.mama.incrementChildCount();
                     break;
                 }
             }
-        }
-
-        // remove Mama reference if she's dead
-        if (this.mama != null && !this.mama.isAlive()) {
-            this.mama = null;
         }
 
         // handle behaviour towards target
