@@ -19,6 +19,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -34,6 +35,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -317,6 +319,15 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         // find and select a target
         this.targetSelector.addGoal(3, new SelectTargetGoal(this));
+
+        /*
+        HOW ATTACKING WORKS:
+        - There are two types: MELEE and RANGE (see Action.AttackType enums)
+        - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with the target selector goals. The priority of 1 means they will be executed instead of a target selector goal
+        - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
+        - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
+        */
+        this.goalSelector.addGoal(1, new WebShoot(this));
     }
 
     @Override
@@ -412,6 +423,32 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                     .forCombat()
                     .range(MAX_TARGET_DISTANCE)
                     .selector(pTargetPredicate);
+        }
+    }
+
+    private static class WebShoot extends Goal {
+        private final MamaEntity mama;
+        private boolean attack_is_finished = false;
+
+        public WebShoot(MamaEntity mama) {
+            this.mama = mama;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mama.getAttackType() == Action.AttackType.RANGE && this.mama.getAttackAction() == Action.Attack.WEB_SHOOT;
         }
     }
 }
