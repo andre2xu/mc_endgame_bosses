@@ -54,7 +54,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
 
     // GENERAL
-    private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings decrement Mama's child count when they die so they need this id to find the correct Mama instance
+    private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings increment/decrement Mama's child count so they need this id to find the correct Mama instance
     private final PartEntity<?>[] hitboxes;
 
     // BOSS FIGHT
