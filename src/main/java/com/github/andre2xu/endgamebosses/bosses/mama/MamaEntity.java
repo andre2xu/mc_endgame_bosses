@@ -176,6 +176,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         // give data accessors starting values
         pBuilder.define(CHILD_COUNT, 0);
+        pBuilder.define(ATTACK_ACTION, 0); // none
     }
 
 
