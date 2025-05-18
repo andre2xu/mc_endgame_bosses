@@ -448,13 +448,17 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void turnAround() {
             if (this.target != null) {
-                this.mama.getLookControl().setLookAt(this.target);
+                // calculate turn angle needed to make abdomen face the target
+                double yaw_dx = this.target.getX() - this.mama.getX();
+                double yaw_dz = this.target.getZ() - this.mama.getZ();
 
-                float new_yaw = this.mama.getYRot() + 180;
+                float yaw_angle_towards_target = (float) Mth.atan2(yaw_dx, yaw_dz); // angle is in radians. This formula is: θ = Tan^-1(opp/adj)
+                float turn_angle = (float) Math.toDegrees(-yaw_angle_towards_target) + 180;
 
-                this.mama.setYRot(new_yaw);
-                this.mama.setYBodyRot(new_yaw);
-                this.mama.setYHeadRot(new_yaw);
+                // turn around
+                this.mama.setYRot(turn_angle);
+                this.mama.setYBodyRot(turn_angle);
+                this.mama.setYHeadRot(turn_angle);
 
                 this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
             }
