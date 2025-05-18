@@ -347,31 +347,40 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            // rotate horizontally to face target
-            this.getLookControl().setLookAt(target);
+            if (!target.isFallFlying()) {
+                boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
-            // move towards target but keep a distance
-            if (this.distanceTo(target) > 25) {
-                Vec3 current_pos = this.position();
-                Vec3 target_pos = target.position();
-                Vec3 vector_to_target = target_pos.subtract(current_pos);
+                if (!is_attacking) {
+                    this.getLookControl().setLookAt(target); // rotate horizontally to face target
 
-                this.setDeltaMovement(vector_to_target.normalize().scale(1));
+                    // move towards target but keep a distance
+                    if (this.distanceTo(target) > 25) {
+                        Vec3 current_pos = this.position();
+                        Vec3 target_pos = target.position();
+                        Vec3 vector_to_target = target_pos.subtract(current_pos);
 
-                if (this.horizontalCollision) {
-                    this.jumpFromGround();
+                        this.setDeltaMovement(vector_to_target.normalize().scale(1));
+
+                        if (this.horizontalCollision) {
+                            this.jumpFromGround();
+                        }
+
+                        this.triggerAnim("movement_trigger_anim_controller", "walk");
+                    }
+
+                    // choose attack
+                    if (this.boss_phase == 1) {
+                        boolean should_attack = new Random().nextInt(1, 5) == 1; // 1 in 4 chances to attack
+
+                        if (should_attack) {
+                            this.setAttackAction(Action.Attack.WEB_SHOOT);
+                        }
+                    }
                 }
-
-                this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
-
-            // choose attack
-            if (this.boss_phase == 1) {
-                boolean should_attack = new Random().nextInt(1, 5) == 1; // 1 in 4 chances to attack
-
-                if (should_attack) {
-                    this.setAttackAction(Action.Attack.WEB_SHOOT);
-                }
+            else {
+                // watch target
+                this.getLookControl().setLookAt(target);
             }
         }
     }
