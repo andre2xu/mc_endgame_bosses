@@ -327,7 +327,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
-        this.goalSelector.addGoal(1, new WebShoot(this));
+        this.goalSelector.addGoal(1, new WebShootAttackGoal(this));
     }
 
     @Override
@@ -435,12 +435,12 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private static class WebShoot extends Goal {
+    private static class WebShootAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
         private boolean attack_is_finished = false;
 
-        public WebShoot(MamaEntity mama) {
+        public WebShootAttackGoal(MamaEntity mama) {
             this.mama = mama;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
