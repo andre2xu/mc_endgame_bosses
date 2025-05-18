@@ -486,7 +486,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 int radius = 2;
 
                 for (int dx = -radius; dx <= radius; dx++) {
-                    for (int dy = -2; dy <= 0; dy++) {
+                    for (int dy = -3; dy <= 0; dy++) {
                         for (int dz = -radius; dz <= radius; dz++) {
                             BlockPos current_block_pos = center.offset(dx, dy, dz);
                             BlockState current_block_state = server_level.getBlockState(current_block_pos);
