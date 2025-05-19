@@ -742,6 +742,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class LeapForwardAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private Vec3 landing_pos = null;
+        private double halfway_distance_to_landing_pos = 0;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
         private boolean attack_is_finished = false;
@@ -757,6 +759,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.landing_pos = null;
+            this.halfway_distance_to_landing_pos = 0;
             this.defensive_pose_duration = 0;
             this.attack_is_finished = false;
         }
@@ -791,7 +795,6 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             if (this.canAttack()) {
                 if (this.defensive_pose_duration > 0) {
                     // warn target of attack
-
                     this.mama.getLookControl().setLookAt(this.target);
 
                     if (this.defensive_pose_duration > 10) {
@@ -803,10 +806,45 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         this.is_in_defensive_pose = false;
                     }
 
+                    // save target position a few seconds before leaping. This gives them time to dodge
+                    if (this.defensive_pose_duration == 5) {
+                        this.landing_pos = this.target.position();
+
+                        this.halfway_distance_to_landing_pos = Math.sqrt(this.mama.distanceToSqr(this.landing_pos)) / 2;
+                    }
+
                     this.defensive_pose_duration--;
                 }
                 else {
-                    System.out.println("LEAPING FORWARD");
+                    if (this.landing_pos != null) {
+                        double current_distance_to_landing_spot = Math.sqrt(this.mama.distanceToSqr(this.landing_pos));
+
+                        if (current_distance_to_landing_spot > 2) {
+                            // OBJECTIVE: Jump 8 blocks in the air towards the landing spot. Fall back down once the halfway distance has been reached
+
+                            Vec3 current_pos = this.mama.position();
+
+                            double height = 0;
+
+                            if (current_distance_to_landing_spot > this.halfway_distance_to_landing_pos) {
+                                height = 8;
+                            }
+
+                            this.mama.setDeltaMovement(new Vec3(
+                                    this.landing_pos.x - current_pos.x,
+                                    (this.landing_pos.y + height) - current_pos.y,
+                                    this.landing_pos.z - current_pos.z
+                            ).normalize().scale(1.5)); // jump speed
+                        }
+                        else {
+                            // stop attack
+                            this.attack_is_finished = true;
+                        }
+                    }
+                    else {
+                        // cancel attack
+                        this.attack_is_finished = true;
+                    }
                 }
             }
             else {
