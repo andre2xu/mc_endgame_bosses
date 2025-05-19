@@ -98,6 +98,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation WALK_ANIM = RawAnimation.begin().then("animation.mama.walk", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation DEFENSIVE = RawAnimation.begin().then("animation.mama.defensive", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation DEFENSIVE_REVERSE = RawAnimation.begin().then("animation.mama.defensive_reverse", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -135,6 +137,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         // add triggerable animations
         controllers.add(new AnimationController<>(this, "movement_trigger_anim_controller", state -> PlayState.STOP)
                 .triggerableAnim("walk", WALK_ANIM)
+        );
+
+        controllers.add(new AnimationController<>(this, "attack_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("defensive", DEFENSIVE)
+                .triggerableAnim("defensive_reverse", DEFENSIVE_REVERSE)
         );
     }
 
