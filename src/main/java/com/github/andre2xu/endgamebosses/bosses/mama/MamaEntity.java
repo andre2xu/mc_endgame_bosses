@@ -633,6 +633,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private final MamaEntity mama;
         private LivingEntity target = null;
         private final float attack_damage = 1f; // CHANGE LATER
+        private int attack_duration = 0;
         private boolean attack_is_finished = false;
 
         public ChargeAttackGoal(MamaEntity mama) {
@@ -646,6 +647,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.attack_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -653,6 +655,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
             this.target = this.mama.getTarget();
+
+            // set attack duration
+            this.attack_duration = 20 * new Random().nextInt(3, 5); // 3 to 4 seconds
 
             super.start();
         }
@@ -669,20 +674,29 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                // face target
-                this.mama.getLookControl().setLookAt(this.target);
+                if (this.attack_duration > 0) {
+                    // face target
+                    this.mama.getLookControl().setLookAt(this.target);
 
-                // follow target and get close to them
-                Vec3 vector_to_target = this.target.position().subtract(this.mama.position());
+                    // follow target and get close to them
+                    Vec3 vector_to_target = this.target.position().subtract(this.mama.position());
 
-                if (this.mama.distanceTo(this.target) > 8) {
-                    this.mama.setDeltaMovement(vector_to_target.normalize().scale(1.1));
+                    if (this.mama.distanceTo(this.target) > 8) {
+                        this.mama.setDeltaMovement(vector_to_target.normalize().scale(1.1));
 
-                    this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+                        this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+                    }
+                    else {
+                        // damage target upon reaching them
+                        this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                    }
+
+                    // decrease duration
+                    this.attack_duration--;
                 }
                 else {
-                    // damage target upon reaching them
-                    this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                    // stop attack
+                    this.attack_is_finished = true;
                 }
             }
             else {
