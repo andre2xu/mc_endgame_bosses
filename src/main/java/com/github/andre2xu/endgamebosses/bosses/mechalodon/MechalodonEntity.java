@@ -1000,7 +1000,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     this.mechalodon.triggerAnim("movement_trigger_anim_controller", "swim_fast");
 
                     // check if collision occurred
-                    boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+                    boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                     if (has_collided_with_target) {
                         // damage target
@@ -1260,7 +1260,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 ).normalize().scale(0.3)); // movement speed
 
                 // check if collision occurred
-                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+                boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                 if (has_collided_with_target) {
                     // run bite animation
@@ -1400,7 +1400,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         ).normalize().scale(1)); // movement speed
 
                         // check if collision occurred
-                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(target.getBoundingBox());
+                        boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                         if (has_collided_with_target) {
                             this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
