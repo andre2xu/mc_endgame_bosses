@@ -746,6 +746,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private double halfway_distance_to_landing_pos = 0;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
+        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public LeapForwardAttackGoal(MamaEntity mama) {
@@ -839,6 +840,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // stop attack
                             this.attack_is_finished = true;
+                        }
+
+                        // check if a collision occurred with the target during the leap
+                        boolean has_collided_with_target = this.mama.getBoundingBox().intersects(this.target.getBoundingBox());
+
+                        if (has_collided_with_target && this.mama.distanceTo(this.target) <= 6) {
+                            // damage target
+                            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
                         }
                     }
                     else {
