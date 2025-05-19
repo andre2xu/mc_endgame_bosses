@@ -821,14 +821,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         double current_distance_to_landing_spot = Math.sqrt(this.mama.distanceToSqr(this.landing_pos));
 
                         if (current_distance_to_landing_spot > 2) {
-                            // OBJECTIVE: Jump 8 blocks in the air towards the landing spot. Fall back down once the halfway distance has been reached
+                            // OBJECTIVE: Jump N blocks in the air towards the landing spot. Fall back down once the halfway distance has been reached
 
                             Vec3 current_pos = this.mama.position();
 
                             double height = 0;
 
                             if (current_distance_to_landing_spot > this.halfway_distance_to_landing_pos) {
-                                height = 8;
+                                height = Math.floor(this.halfway_distance_to_landing_pos);
                             }
 
                             this.mama.setDeltaMovement(new Vec3(
