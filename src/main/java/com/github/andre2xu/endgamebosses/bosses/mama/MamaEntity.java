@@ -364,6 +364,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
         this.goalSelector.addGoal(1, new WebShootAttackGoal(this));
+        this.goalSelector.addGoal(1, new ChargeAttackGoal(this));
     }
 
     @Override
@@ -623,6 +624,48 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.mama.getAttackType() == Action.AttackType.RANGE && this.mama.getAttackAction() == Action.Attack.WEB_SHOOT;
+        }
+    }
+
+    private static class ChargeAttackGoal extends Goal {
+        private final MamaEntity mama;
+        private LivingEntity target = null;
+        private boolean attack_is_finished = false;
+
+        public ChargeAttackGoal(MamaEntity mama) {
+            this.mama = mama;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        private void resetAttack() {
+            this.target = null;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
+            this.target = this.mama.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.mama.getAttackType() == Action.AttackType.MELEE && this.mama.getAttackAction() == Action.Attack.CHARGE;
         }
     }
 }
