@@ -755,7 +755,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.target != null && this.target.isAlive() && this.mama.distanceTo(this.target) <= 30 && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         private void resetAttack() {
@@ -857,7 +857,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 }
             }
             else {
-                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                // cancel attack if target doesn't exist, is dead, is far away, or is in creative/spectator mode
                 this.attack_is_finished = true;
             }
         }
