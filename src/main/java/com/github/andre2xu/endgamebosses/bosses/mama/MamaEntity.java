@@ -412,6 +412,26 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                             this.setAttackAction(Action.Attack.WEB_SHOOT);
                         }
                     }
+                    else if (this.boss_phase == 2) {
+                        boolean should_attack = new Random().nextInt(1, 4) == 1; // 1 in 3 chances to attack
+
+                        if (should_attack) {
+                            int attack_choice = new Random().nextInt(1, 7);
+
+                            switch (attack_choice) {
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                    this.setAttackAction(Action.Attack.CHARGE);
+                                    break;
+                                case 5:
+                                case 6:
+                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                                default:
+                            }
+                        }
+                    }
                 }
             }
             else {
