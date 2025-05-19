@@ -632,6 +632,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class ChargeAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private int defensive_pose_duration = 0;
         private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration = 0;
         private boolean attack_is_finished = false;
@@ -647,6 +648,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.defensive_pose_duration = 0;
             this.attack_duration = 0;
             this.attack_is_finished = false;
         }
@@ -655,6 +657,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         public void start() {
             // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
             this.target = this.mama.getTarget();
+
+            // set defensive pose duration
+            this.defensive_pose_duration = 20 * 3; // 2 seconds for the pose, 1 second to end the pose
 
             // set attack duration
             this.attack_duration = 20 * new Random().nextInt(3, 5); // 3 to 4 seconds
@@ -674,29 +679,43 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                if (this.attack_duration > 0) {
-                    // face target
-                    this.mama.getLookControl().setLookAt(this.target);
+                // face target
+                this.mama.getLookControl().setLookAt(this.target);
 
-                    // follow target and get close to them
-                    Vec3 vector_to_target = this.target.position().subtract(this.mama.position());
+                if (this.defensive_pose_duration > 0) {
+                    // warn target of attack
 
-                    if (this.mama.distanceTo(this.target) > 8) {
-                        this.mama.setDeltaMovement(vector_to_target.normalize().scale(1.1));
-
-                        this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+                    if (this.defensive_pose_duration > 10) {
+                        this.mama.triggerAnim("attack_trigger_anim_controller", "defensive");
                     }
                     else {
-                        // damage target upon reaching them
-                        this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                        this.mama.triggerAnim("attack_trigger_anim_controller", "defensive_reverse");
                     }
 
-                    // decrease duration
-                    this.attack_duration--;
+                    this.defensive_pose_duration--;
                 }
                 else {
-                    // stop attack
-                    this.attack_is_finished = true;
+                    if (this.attack_duration > 0) {
+                        // follow target and get close to them
+                        Vec3 vector_to_target = this.target.position().subtract(this.mama.position());
+
+                        if (this.mama.distanceTo(this.target) > 8) {
+                            this.mama.setDeltaMovement(vector_to_target.normalize().scale(1.1));
+
+                            this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+                        }
+                        else {
+                            // damage target upon reaching them
+                            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                        }
+
+                        // decrease duration
+                        this.attack_duration--;
+                    }
+                    else {
+                        // stop attack
+                        this.attack_is_finished = true;
+                    }
                 }
             }
             else {
