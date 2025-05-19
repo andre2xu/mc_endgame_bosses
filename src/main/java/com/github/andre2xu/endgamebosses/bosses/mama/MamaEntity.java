@@ -419,18 +419,20 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         if (should_attack) {
                             int attack_choice = new Random().nextInt(1, 7);
 
-                            switch (attack_choice) {
-                                case 1:
-                                case 2:
-                                case 3:
-                                case 4:
-                                    this.setAttackAction(Action.Attack.CHARGE);
-                                    break;
-                                case 5:
-                                case 6:
-                                    this.setAttackAction(Action.Attack.LEAP_FORWARD);
-                                default:
-                            }
+                            // switch (attack_choice) {
+                            //     case 1:
+                            //     case 2:
+                            //     case 3:
+                            //     case 4:
+                            //         this.setAttackAction(Action.Attack.CHARGE);
+                            //         break;
+                            //     case 5:
+                            //     case 6:
+                            //         this.setAttackAction(Action.Attack.LEAP_FORWARD);
+                            //     default:
+                            // }
+
+                            this.setAttackAction(Action.Attack.CHARGE); // temp
                         }
                     }
                 }
@@ -630,6 +632,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class ChargeAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public ChargeAttackGoal(MamaEntity mama) {
@@ -661,6 +664,31 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                // face target
+                this.mama.getLookControl().setLookAt(this.target);
+
+                // follow target and get close to them
+                Vec3 vector_to_target = this.target.position().subtract(this.mama.position());
+
+                if (this.mama.distanceTo(this.target) > 8) {
+                    this.mama.setDeltaMovement(vector_to_target.normalize().scale(1.1));
+
+                    this.mama.triggerAnim("movement_trigger_anim_controller", "walk");
+                }
+                else {
+                    // damage target upon reaching them
+                    this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                }
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
