@@ -742,6 +742,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private static class LeapForwardAttackGoal extends Goal {
         private final MamaEntity mama;
         private LivingEntity target = null;
+        private int defensive_pose_duration = 0;
+        private boolean is_in_defensive_pose = false;
         private boolean attack_is_finished = false;
 
         public LeapForwardAttackGoal(MamaEntity mama) {
@@ -755,6 +757,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.target = null;
+            this.defensive_pose_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -763,11 +766,19 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             // save a reference of the target to avoid having to call 'this.mama.getTarget' which can sometimes return null
             this.target = this.mama.getTarget();
 
+            // set defensive pose duration
+            this.defensive_pose_duration = 20 * 3; // 2 seconds for the pose, 1 second to end the pose
+
             super.start();
         }
 
         @Override
         public void stop() {
+            if (this.is_in_defensive_pose) {
+                this.mama.triggerAnim("attack_trigger_anim_controller", "defensive_reverse");
+                this.is_in_defensive_pose = false;
+            }
+
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
@@ -778,7 +789,25 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("LEAPING FORWARD");
+                if (this.defensive_pose_duration > 0) {
+                    // warn target of attack
+
+                    this.mama.getLookControl().setLookAt(this.target);
+
+                    if (this.defensive_pose_duration > 10) {
+                        this.mama.triggerAnim("attack_trigger_anim_controller", "defensive");
+                        this.is_in_defensive_pose = true;
+                    }
+                    else {
+                        this.mama.triggerAnim("attack_trigger_anim_controller", "defensive_reverse");
+                        this.is_in_defensive_pose = false;
+                    }
+
+                    this.defensive_pose_duration--;
+                }
+                else {
+                    System.out.println("LEAPING FORWARD");
+                }
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
