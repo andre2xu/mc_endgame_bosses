@@ -633,6 +633,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private final MamaEntity mama;
         private LivingEntity target = null;
         private int defensive_pose_duration = 0;
+        private boolean is_in_defensive_pose = false;
         private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration = 0;
         private boolean attack_is_finished = false;
@@ -669,6 +670,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void stop() {
+            if (this.is_in_defensive_pose) {
+                this.mama.triggerAnim("attack_trigger_anim_controller", "defensive_reverse");
+                this.is_in_defensive_pose = false;
+            }
+
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             this.mama.setAttackAction(Action.Attack.NONE); // allow Mama to follow target & make attack decisions again
@@ -687,9 +693,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
                     if (this.defensive_pose_duration > 10) {
                         this.mama.triggerAnim("attack_trigger_anim_controller", "defensive");
+                        this.is_in_defensive_pose = true;
                     }
                     else {
                         this.mama.triggerAnim("attack_trigger_anim_controller", "defensive_reverse");
+                        this.is_in_defensive_pose = false;
                     }
 
                     this.defensive_pose_duration--;
