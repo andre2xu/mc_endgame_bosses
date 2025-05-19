@@ -89,6 +89,8 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             NONE,
 
             // melee
+            CHARGE,
+            LEAP_FORWARD,
 
             // range
             WEB_SHOOT
@@ -270,6 +272,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 action_id = 1;
                 this.attack_type = Action.AttackType.RANGE;
                 break;
+            case Action.Attack.CHARGE:
+                action_id = 2;
+                this.attack_type = Action.AttackType.MELEE;
+                break;
+            case Action.Attack.LEAP_FORWARD:
+                action_id = 3;
+                this.attack_type = Action.AttackType.MELEE;
+                break;
             default:
                 this.attack_type = Action.AttackType.MELEE;
         }
@@ -285,6 +295,12 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         switch (action_id) {
             case 1:
                 attack_action = Action.Attack.WEB_SHOOT;
+                break;
+            case 2:
+                attack_action = Action.Attack.CHARGE;
+                break;
+            case 3:
+                attack_action = Action.Attack.LEAP_FORWARD;
                 break;
             default:
         }
