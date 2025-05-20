@@ -653,6 +653,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
+        private int attack_sound_cooldown = 0; // no cooldown for first attack
         private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration = 0;
         private boolean attack_is_finished = false;
@@ -669,6 +670,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private void resetAttack() {
             this.target = null;
             this.defensive_pose_duration = 0;
+            this.attack_sound_cooldown = 0;
             this.attack_duration = 0;
             this.attack_is_finished = false;
         }
@@ -735,8 +737,13 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                             // damage target upon reaching them
                             this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
 
-                            // play a bite sound
-                            this.mama.playSound(SoundEvents.CAT_EAT, 2f, 0.6f);
+                            if (this.attack_sound_cooldown == 0) {
+                                // play a bite sound
+                                this.mama.playSound(SoundEvents.GENERIC_EAT, 2f, 0.7f);
+
+                                // set cooldown
+                                this.attack_sound_cooldown = 10;
+                            }
                         }
 
                         // decrease duration
@@ -746,6 +753,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         // stop attack
                         this.attack_is_finished = true;
                     }
+                }
+
+                // decrease cooldown for attack sound
+                if (this.attack_sound_cooldown > 0) {
+                    this.attack_sound_cooldown--;
                 }
             }
             else {
