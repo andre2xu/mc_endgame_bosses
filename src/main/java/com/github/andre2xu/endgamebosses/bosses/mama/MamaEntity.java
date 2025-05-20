@@ -12,6 +12,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -352,6 +353,13 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public void die(@NotNull DamageSource pDamageSource) {
+        this.playSound(SoundEvents.SPIDER_DEATH, 3f, 0.6f);
+
+        super.die(pDamageSource);
+    }
+
+    @Override
     protected void registerGoals() {
         // target the player that hurt Mama
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
@@ -440,6 +448,19 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                 this.getLookControl().setLookAt(target);
             }
         }
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected void playHurtSound(@NotNull DamageSource pSource) {
+        this.playSound(SoundEvents.SPIDER_HURT, 3f, 0.2f);
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return null;
     }
 
 
