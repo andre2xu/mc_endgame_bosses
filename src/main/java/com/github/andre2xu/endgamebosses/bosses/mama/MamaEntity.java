@@ -48,6 +48,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     See 'CHANGE LATER' comments
 
     TODO:
+    - Make egg sac invincible until the Ender Dragon has been defeated
     - Increase MAX_HEALTH attribute
     - Increase MAX_HEALTH attribute of egg sac
     - Increase MAX_HEALTH attribute of spiderlings
