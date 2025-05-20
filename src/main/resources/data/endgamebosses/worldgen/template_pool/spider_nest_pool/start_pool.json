@@ -5,7 +5,7 @@
       "weight": 1,
       "element": {
         "location": "endgamebosses:spider_nest", // path to: resources/data/endgamebosses/structure/spider_nest.nbt
-        "processors": "minecraft:empty",
+        "processors": "endgamebosses:remove_vines_and_leaves", // path to: resources/data/endgamebosses/worldgen/processor/remove_vines_and_leaves.json
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }

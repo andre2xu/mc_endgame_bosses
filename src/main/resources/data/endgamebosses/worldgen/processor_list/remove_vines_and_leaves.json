@@ -1,0 +1,30 @@
+{
+  // see 'https://github.com/misode/mcmeta/tree/data/data/minecraft/worldgen/processor_list' for examples
+  "processors": [
+    // NOTE: these don't work for some reason but I'll leave them here for reference
+    {
+      // remove leaves
+      "integrity": 0, // 0% chance to stay
+      "processor_type": "minecraft:block_rot", // remove blocks
+      "rottable_blocks": ["minecraft:jungle_leaves", "minecraft:oak_leaves"]
+    },
+    {
+      // remove vines
+      "processor_type": "minecraft:rule",
+      "rules": [
+        {
+          "input_predicate": {
+            "block": "minecraft:vine",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          },
+          "output_state": {
+            "Name": "minecraft:air"
+          }
+        }
+      ]
+    }
+  ]
+}
