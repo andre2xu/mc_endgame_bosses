@@ -418,7 +418,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         }
                     }
                     else if (this.boss_phase == 2) {
-                        boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances to attack
+                        boolean should_attack = new Random().nextInt(1, 6) == 1; // 1 in 5 chances to attack
 
                         if (should_attack) {
                             int attack_choice = new Random().nextInt(1, 3);
