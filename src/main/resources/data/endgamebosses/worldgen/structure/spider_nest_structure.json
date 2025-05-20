@@ -8,7 +8,7 @@
   "start_height": {
     "absolute": -10
   },
-  "project_start_to_heightmap": "MOTION_BLOCKING_NO_LEAVES", // prevent leaves & vines spawning inside the nest
+  "project_start_to_heightmap": "MOTION_BLOCKING_NO_LEAVES",
   "use_expansion_hack": false,
   "spawn_overrides": {
     "creature": {
