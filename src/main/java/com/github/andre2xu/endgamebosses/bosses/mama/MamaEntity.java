@@ -744,6 +744,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
         private final float attack_damage = 1f; // CHANGE LATER
+        private int attack_duration = 0;
         private boolean attack_is_finished = false;
 
         public LeapForwardAttackGoal(MamaEntity mama) {
@@ -760,6 +761,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.landing_pos = null;
             this.halfway_distance_to_landing_pos = 0;
             this.defensive_pose_duration = 0;
+            this.attack_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -770,6 +772,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
             // set defensive pose duration
             this.defensive_pose_duration = 20 * 3; // 2 seconds for the pose, 1 second to end the pose
+
+            // set attack duration
+            this.attack_duration = 20 * 6; // 6 seconds
 
             super.start();
         }
@@ -851,6 +856,14 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         // cancel attack
                         this.attack_is_finished = true;
                     }
+                }
+
+                // the only purpose of the attack duration is to stop the attack after some time if Mama can't reach the landing spot for some reason
+                if (this.attack_duration > 0) {
+                    this.attack_duration--;
+                }
+                else {
+                    this.attack_is_finished = true;
                 }
             }
             else {
