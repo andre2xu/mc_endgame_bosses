@@ -18,6 +18,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -736,6 +738,10 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // damage target upon reaching them
                             this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+
+                            // inflict poison
+                            MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 20 * 8); // 8 seconds
+                            this.target.addEffect(poison);
 
                             if (this.attack_sound_cooldown == 0) {
                                 // play a bite sound
