@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "_comment": " This biome tag can specify the biome directly. Or specify another biome tag by starting with #",
+  "values": [
+    // all biome tags can be found in: https://minecraft.wiki/w/Biome_tag_(Java_Edition)
+    "#minecraft:is_jungle"
+  ]
+}

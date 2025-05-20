@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "endgamebosses:spider_nest_structure", // path to: resources/data/endgamebosses/worldgen/structure/spider_nest_structure.json
+      "weight": 100
+    }
+  ],
+  "placement": {
+    "salt": 1642136474,
+    "spacing": 20,
+    "separation": 6,
+    "type": "minecraft:random_spread"
+  }
+}
