@@ -7,6 +7,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -199,6 +201,14 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                 }
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
+            }
+            else {
+                // bite target
+                target.hurt(this.damageSources().mobAttack(this), 1f);
+
+                // inflict small dose of poison
+                MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 20); // 1 second
+                target.addEffect(poison);
             }
         }
     }
