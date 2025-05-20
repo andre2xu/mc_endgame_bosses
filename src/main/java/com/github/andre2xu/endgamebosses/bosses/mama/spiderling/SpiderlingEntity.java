@@ -187,7 +187,7 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             // move towards target
             float distance_to_target = this.distanceTo(target);
 
-            if (distance_to_target > 3) {
+            if (distance_to_target > 2.5) {
                 double speed = 0.1;
 
                 if (distance_to_target > 10) {
