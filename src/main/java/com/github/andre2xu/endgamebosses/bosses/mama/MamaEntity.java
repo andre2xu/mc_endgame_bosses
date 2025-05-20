@@ -774,7 +774,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.defensive_pose_duration = 20 * 3; // 2 seconds for the pose, 1 second to end the pose
 
             // set attack duration
-            this.attack_duration = 20 * 6; // 6 seconds
+            this.attack_duration = this.defensive_pose_duration + (20 * 2); // 5 seconds in total
 
             super.start();
         }
