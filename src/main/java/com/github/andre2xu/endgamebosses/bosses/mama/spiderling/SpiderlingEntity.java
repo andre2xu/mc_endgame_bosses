@@ -186,12 +186,12 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                 double speed = 0.1;
 
                 if (distance_to_target > 10) {
-                    speed = 0.2; // speed boost to catch up to target
+                    speed = 0.5; // speed boost to catch up to target
                 }
 
                 this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(speed));
 
-                if (this.horizontalCollision) {
+                if (this.horizontalCollision && this.onGround()) {
                     this.jumpFromGround();
                 }
 
