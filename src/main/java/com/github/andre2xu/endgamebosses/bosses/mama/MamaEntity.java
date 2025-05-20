@@ -764,6 +764,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private final MamaEntity mama;
         private LivingEntity target = null;
         private Vec3 landing_pos = null;
+        private boolean jump_sound_played = false;
         private double halfway_distance_to_landing_pos = 0;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
@@ -783,6 +784,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private void resetAttack() {
             this.target = null;
             this.landing_pos = null;
+            this.jump_sound_played = false;
             this.halfway_distance_to_landing_pos = 0;
             this.defensive_pose_duration = 0;
             this.attack_duration = 0;
@@ -857,6 +859,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                                 height = Math.floor(this.halfway_distance_to_landing_pos);
                             }
 
+                            if (!this.jump_sound_played) {
+                                this.mama.playSound(SoundEvents.HORSE_JUMP, 2f, 0.8f);
+                                this.jump_sound_played = true;
+                            }
+
                             this.mama.setDeltaMovement(new Vec3(
                                     this.landing_pos.x - current_pos.x,
                                     (this.landing_pos.y + height) - current_pos.y,
@@ -866,6 +873,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // stop attack
                             this.attack_is_finished = true;
+
+                            // play land sound
+                            this.mama.playSound(SoundEvents.HORSE_LAND, 2f, 0.7f);
                         }
 
                         // check if a collision occurred with the target during the leap
@@ -874,6 +884,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         if (has_collided_with_target && this.mama.distanceTo(this.target) <= 6) {
                             // damage target
                             this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+
+                            // play land sound
+                            this.mama.playSound(SoundEvents.HORSE_LAND, 2f, 0.7f);
                         }
                     }
                     else {
