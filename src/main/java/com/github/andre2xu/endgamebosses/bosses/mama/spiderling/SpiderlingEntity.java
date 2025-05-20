@@ -3,6 +3,8 @@ package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -198,5 +201,18 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
         }
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected void playHurtSound(@NotNull DamageSource pSource) {
+        this.playSound(SoundEvents.SPIDER_HURT, 1f, 1f);
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return null;
     }
 }
