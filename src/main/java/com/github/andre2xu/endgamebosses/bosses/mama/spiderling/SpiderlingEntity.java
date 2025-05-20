@@ -183,13 +183,17 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
             float distance_to_target = this.distanceTo(target);
 
             if (distance_to_target > 3) {
-                double speed = 0.4;
+                double speed = 0.1;
 
                 if (distance_to_target > 10) {
-                    speed = 0.8; // speed boost to catch up to target
+                    speed = 0.2; // speed boost to catch up to target
                 }
 
-                this.getNavigation().moveTo(target, speed);
+                this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(speed));
+
+                if (this.horizontalCollision) {
+                    this.jumpFromGround();
+                }
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
