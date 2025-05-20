@@ -734,6 +734,9 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // damage target upon reaching them
                             this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+
+                            // play a bite sound
+                            this.mama.playSound(SoundEvents.CAT_EAT, 2f, 0.6f);
                         }
 
                         // decrease duration
