@@ -777,6 +777,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private Vec3 landing_pos = null;
         private boolean jump_sound_played = false;
+        private boolean land_sound_played = false;
         private double halfway_distance_to_landing_pos = 0;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
@@ -789,6 +790,13 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK, Flag.JUMP));
         }
 
+        private void playLandSound() {
+            if (!this.land_sound_played) {
+                this.mama.playSound(SoundEvents.HORSE_LAND, 2f, 0.7f);
+                this.land_sound_played = true;
+            }
+        }
+
         private boolean canAttack() {
             return this.target != null && this.target.isAlive() && this.mama.distanceTo(this.target) <= 40 && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
@@ -797,6 +805,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             this.target = null;
             this.landing_pos = null;
             this.jump_sound_played = false;
+            this.land_sound_played = false;
             this.halfway_distance_to_landing_pos = 0;
             this.defensive_pose_duration = 0;
             this.attack_duration = 0;
@@ -886,8 +895,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                             // stop attack
                             this.attack_is_finished = true;
 
-                            // play land sound
-                            this.mama.playSound(SoundEvents.HORSE_LAND, 2f, 0.7f);
+                            this.playLandSound();
                         }
 
                         // check if a collision occurred with the target during the leap
@@ -897,8 +905,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                             // damage target
                             this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
 
-                            // play land sound
-                            this.mama.playSound(SoundEvents.HORSE_LAND, 2f, 0.7f);
+                            this.playLandSound();
                         }
                     }
                     else {
