@@ -54,7 +54,8 @@ public class EndgameBosses {
     public static final String[] BOSSES = {
             "mechalodon",
             "tragon",
-            "mama"
+            "mama",
+            "samurice"
     };
 
 
