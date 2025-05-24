@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -44,4 +45,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     // AI
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
+
+    @Override
+    public boolean canDrownInFluidType(FluidType type) {
+        return false;
+    }
 }
