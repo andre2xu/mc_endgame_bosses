@@ -22,7 +22,7 @@ public class BossRegistry {
 
     public static RegistryObject<EntityType<MamaEntity>> MAMA = BOSS_TYPES.register("mama", () -> EntityType.Builder.of(MamaEntity::new, MobCategory.MONSTER).sized(20f, 6f).build("mama"));
 
-    public static RegistryObject<EntityType<SamuriceEntity>> SAMURICE = BOSS_TYPES.register("samurice", () -> EntityType.Builder.of(SamuriceEntity::new, MobCategory.MONSTER).build("samurice"));
+    public static RegistryObject<EntityType<SamuriceEntity>> SAMURICE = BOSS_TYPES.register("samurice", () -> EntityType.Builder.of(SamuriceEntity::new, MobCategory.MONSTER).sized(0.5f, 2.5f).build("samurice"));
 
 
 
