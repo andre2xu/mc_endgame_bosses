@@ -887,7 +887,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             final double MAX_TARGET_DISTANCE = 60d; // blocks
             this.targetConditions = TargetingConditions
                     .forCombat()
-                    .ignoreLineOfSight() // allow Tragon to continue following a target even if they're obstructed by the environment, e.g. under trees
+                    .ignoreLineOfSight() // allow the Tragon to see a target even if there's obstructions in the way, e.g. trees, small hills, etc.
                     .range(MAX_TARGET_DISTANCE)
                     .selector(pTargetPredicate);
         }
