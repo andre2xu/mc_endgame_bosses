@@ -15,6 +15,19 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class SamuriceEntity extends PathfinderMob implements GeoEntity {
+    /*
+    See 'CHANGE LATER' comments
+
+    TODO:
+    - Increase MAX_HEALTH attribute
+
+    OPTIONAL:
+    - Add boss music for Samurice
+    */
+
+
+
+    // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
 
 
