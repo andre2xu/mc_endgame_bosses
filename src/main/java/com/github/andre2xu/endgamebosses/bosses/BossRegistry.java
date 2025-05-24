@@ -3,6 +3,7 @@ package com.github.andre2xu.endgamebosses.bosses;
 import com.github.andre2xu.endgamebosses.EndgameBosses;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
+import com.github.andre2xu.endgamebosses.bosses.samurice.SamuriceEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -20,6 +21,8 @@ public class BossRegistry {
     public static RegistryObject<EntityType<TragonEntity>> TRAGON = BOSS_TYPES.register("tragon", () -> EntityType.Builder.of(TragonEntity::new, MobCategory.MONSTER).sized(13f, 11f).build("tragon"));
 
     public static RegistryObject<EntityType<MamaEntity>> MAMA = BOSS_TYPES.register("mama", () -> EntityType.Builder.of(MamaEntity::new, MobCategory.MONSTER).sized(20f, 6f).build("mama"));
+
+    public static RegistryObject<EntityType<SamuriceEntity>> SAMURICE = BOSS_TYPES.register("samurice", () -> EntityType.Builder.of(SamuriceEntity::new, MobCategory.MONSTER).build("samurice"));
 
 
 
