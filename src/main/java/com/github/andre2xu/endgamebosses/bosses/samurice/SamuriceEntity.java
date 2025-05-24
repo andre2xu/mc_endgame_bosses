@@ -1,10 +1,13 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -35,4 +38,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
     }
+
+
+
+    // AI
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 }
