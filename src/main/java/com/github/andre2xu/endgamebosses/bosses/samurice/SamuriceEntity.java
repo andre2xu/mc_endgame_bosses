@@ -39,6 +39,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // GENERALE
+    private int chase_delay = 0;
+
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
     private static final EntityDataAccessor<Boolean> GUARD_IS_UP = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
@@ -46,9 +49,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation RUN_ANIM = RawAnimation.begin().then("animation.samurice.run", Animation.LoopType.PLAY_ONCE);
-    protected static final RawAnimation GUARD_UP_ANIM = RawAnimation.begin().then("animation.samurice.guard_up", Animation.LoopType.PLAY_ONCE);
-    protected static final RawAnimation GUARD_DOWN_ANIM = RawAnimation.begin().then("animation.samurice.guard_down", Animation.LoopType.PLAY_ONCE);
-    protected static final RawAnimation GUARD_UP_MOVE_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation GUARD_UP_ANIM = RawAnimation.begin().then("animation.samurice.guard_up", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation GUARD_DOWN_ANIM = RawAnimation.begin().then("animation.samurice.guard_down", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation GUARD_UP_MOVE_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.LOOP);
+    protected static final RawAnimation GUARD_UP_STOP_MOVING_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
 
 
@@ -76,6 +80,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 .triggerableAnim("guard_up", GUARD_UP_ANIM)
                 .triggerableAnim("guard_down", GUARD_DOWN_ANIM)
                 .triggerableAnim("guard_up_move", GUARD_UP_MOVE_ANIM)
+                .triggerableAnim("guard_up_stop_moving", GUARD_UP_STOP_MOVING_ANIM)
         );
     }
 
@@ -136,6 +141,66 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         if (target != null) {
             this.getLookControl().setLookAt(target);
+
+            Vec3 target_pos = target.position();
+            Vec3 current_pos = this.position();
+            Vec3 vector_to_target = target_pos.subtract(current_pos).multiply(1, 0, 1).normalize();
+
+            if (this.distanceTo(target) > 6) {
+                // put guard down before running
+                if (this.isGuardUp()) {
+                    this.triggerAnim("movement_trigger_anim_controller", "guard_down");
+                    this.setIsGuardUp(false);
+                }
+
+                // run towards target
+                if (this.chase_delay > 0) {
+                    this.chase_delay--;
+                }
+                else {
+                    if (this.getY() == target.getY()) {
+                        this.setDeltaMovement(vector_to_target.scale(0.6));
+                    }
+                    else {
+                        this.getNavigation().moveTo(target, 0.8);
+                    }
+
+                    this.triggerAnim("movement_trigger_anim_controller", "run");
+                }
+            }
+            else {
+                // OBJECTIVE: When close to the target, put guard up and slowly move towards them
+
+                if (!this.isGuardUp()) {
+                    this.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                    this.setIsGuardUp(true);
+
+                    this.chase_delay = 20; // let target move far away for 1 second and then run towards them
+                }
+                else {
+                    if (this.distanceTo(target) > 3) {
+                        if (this.getY() == target.getY()) {
+                            this.setDeltaMovement(vector_to_target.scale(0.2));
+                        }
+                        else {
+                            this.getNavigation().moveTo(target, 0.4);
+                        }
+
+                        this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                    }
+                    else {
+                        // hold guard position when very close to the target
+                        this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+                    }
+                }
+            }
+        }
+        else {
+            // put guard down since there's no target
+            if (this.isGuardUp()) {
+                this.triggerAnim("movement_trigger_anim_controller", "guard_down");
+                this.setIsGuardUp(false);
+            }
         }
     }
 
