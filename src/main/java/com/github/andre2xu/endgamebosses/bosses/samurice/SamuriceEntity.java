@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Predicate;
@@ -44,6 +44,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
+    protected static final RawAnimation RUN_ANIM = RawAnimation.begin().then("animation.samurice.run", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation GUARD_UP_ANIM = RawAnimation.begin().then("animation.samurice.guard_up", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation GUARD_DOWN_ANIM = RawAnimation.begin().then("animation.samurice.guard_down", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation GUARD_UP_MOVE_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.PLAY_ONCE);
 
 
 
@@ -64,7 +68,15 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // GECKOLIB SETUP
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // add triggerable animations
+        controllers.add(new AnimationController<>(this, "movement_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("run", RUN_ANIM)
+                .triggerableAnim("guard_up", GUARD_UP_ANIM)
+                .triggerableAnim("guard_down", GUARD_DOWN_ANIM)
+                .triggerableAnim("guard_up_move", GUARD_UP_MOVE_ANIM)
+        );
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
