@@ -141,6 +141,13 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.mob.setYRot(new_yaw);
             this.mob.setYBodyRot(new_yaw);
             this.mob.setYHeadRot(new_yaw);
+
+            // set pitch to face target
+            float new_pitch = this.mob.getXRot();
+
+            if (new_pitch != 0) {
+                this.mob.getEntityData().set(HEAD_PITCH, (float) -Math.toRadians(new_pitch)); // GeckoLib uses radians. Rotation is done in the 'setCustomAnimations' method of the model class
+            }
         }
     }
 
