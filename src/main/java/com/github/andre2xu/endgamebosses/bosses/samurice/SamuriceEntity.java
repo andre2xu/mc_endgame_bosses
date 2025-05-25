@@ -1,6 +1,10 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice;
 
+import com.github.andre2xu.endgamebosses.bosses.mechalodon.MechalodonEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -36,6 +40,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // DATA ACCESSORS
+    private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
+
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -63,6 +70,21 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geo_cache;
+    }
+
+
+
+    // DATA
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+
+        // give data accessors starting values
+        pBuilder.define(HEAD_PITCH, 0.0f);
+    }
+
+    public float getHeadPitch() {
+        return this.entityData.get(HEAD_PITCH);
     }
 
 
