@@ -146,6 +146,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             Vec3 current_pos = this.position();
             Vec3 vector_to_target = target_pos.subtract(current_pos).multiply(1, 0, 1).normalize();
 
+            boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
+
             if (this.distanceTo(target) > 6) {
                 // put guard down before running
                 if (this.isGuardUp()) {
@@ -159,13 +161,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 }
                 else {
                     if (this.getY() == target.getY()) {
+                        this.getNavigation().stop();
                         this.setDeltaMovement(vector_to_target.scale(0.6));
                     }
                     else {
                         this.getNavigation().moveTo(target, 0.8);
                     }
 
-                    this.triggerAnim("movement_trigger_anim_controller", "run");
+                    if (!same_xz_position_as_target) {
+                        this.triggerAnim("movement_trigger_anim_controller", "run");
+                    }
                 }
             }
             else {
@@ -180,13 +185,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 else {
                     if (this.distanceTo(target) > 3) {
                         if (this.getY() == target.getY()) {
+                            this.getNavigation().stop();
                             this.setDeltaMovement(vector_to_target.scale(0.2));
                         }
                         else {
                             this.getNavigation().moveTo(target, 0.4);
                         }
 
-                        this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                        if (!same_xz_position_as_target) {
+                            this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                        }
                     }
                     else {
                         // hold guard position when very close to the target
