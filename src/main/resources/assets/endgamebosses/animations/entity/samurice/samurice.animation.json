@@ -6,7 +6,7 @@
 		},
 		"animation.samurice.run": {
 			"loop": true,
-			"animation_length": 0.625,
+			"animation_length": 0.5,
 			"bones": {
 				"head": {
 					"rotation": {
