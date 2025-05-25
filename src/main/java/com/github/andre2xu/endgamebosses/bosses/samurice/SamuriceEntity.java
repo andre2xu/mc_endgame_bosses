@@ -41,6 +41,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
+    private static final EntityDataAccessor<Boolean> GUARD_IS_UP = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
@@ -92,10 +93,19 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         // give data accessors starting values
         pBuilder.define(HEAD_PITCH, 0.0f);
+        pBuilder.define(GUARD_IS_UP, false);
     }
 
     public float getHeadPitch() {
         return this.entityData.get(HEAD_PITCH);
+    }
+
+    public boolean isGuardUp() {
+        return this.entityData.get(GUARD_IS_UP);
+    }
+
+    public void setIsGuardUp(boolean isGuardUp) {
+        this.entityData.set(GUARD_IS_UP, isGuardUp);
     }
 
 
