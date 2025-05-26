@@ -1,10 +1,14 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -41,6 +45,14 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // GENERALE
     private int chase_delay = 0;
+
+    // BOSS FIGHT
+    private final ServerBossEvent server_boss_event = new ServerBossEvent(
+            Component.literal("Samurice"),
+            BossEvent.BossBarColor.RED,
+            BossEvent.BossBarOverlay.NOTCHED_12
+    );
+    private int boss_phase = 1;
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
@@ -115,6 +127,23 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
 
+    // BOSS FIGHT
+    @Override
+    public void startSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.startSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.addPlayer(pServerPlayer);
+    }
+
+    @Override
+    public void stopSeenByPlayer(@NotNull ServerPlayer pServerPlayer) {
+        super.stopSeenByPlayer(pServerPlayer);
+
+        this.server_boss_event.removePlayer(pServerPlayer);
+    }
+
+
+
     // AI
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
@@ -137,6 +166,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     public void aiStep() {
         super.aiStep();
 
+        // update boss health bar
+        float boss_health_remaining = this.getHealth() / this.getMaxHealth(); // in percentage
+        this.server_boss_event.setProgress(boss_health_remaining);
+
+        // update boss phase
+        if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
+            this.boss_phase = 2;
+        }
+
+        // handle movement & attack decisions
         LivingEntity target = this.getTarget();
 
         if (target != null) {
