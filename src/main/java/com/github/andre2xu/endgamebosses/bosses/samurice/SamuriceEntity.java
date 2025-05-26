@@ -243,10 +243,18 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         if (this.getY() == target.getY()) {
                             this.getNavigation().stop();
                             this.setDeltaMovement(vector_to_target.multiply(1, 0, 1).normalize().scale(0.2));
+
+                            if (this.horizontalCollision && this.onGround()) {
+                                this.jumpFromGround();
+                            }
                         }
                         else if (this.isInFluidType()) {
                             this.getNavigation().stop();
                             this.setDeltaMovement(vector_to_target.normalize().scale(0.1));
+
+                            if (this.horizontalCollision) {
+                                this.getJumpControl().jump();
+                            }
                         }
                         else {
                             this.getNavigation().moveTo(target, 0.4);
