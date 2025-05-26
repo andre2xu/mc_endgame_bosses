@@ -233,7 +233,12 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     }
 
                     if (!same_xz_position_as_target) {
-                        this.triggerAnim("movement_trigger_anim_controller", "run");
+                        if (this.isInFluidType() && this.isUnderWater()) {
+                            this.triggerAnim("movement_trigger_anim_controller", "swim");
+                        }
+                        else {
+                            this.triggerAnim("movement_trigger_anim_controller", "run");
+                        }
                     }
                 }
             }
