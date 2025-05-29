@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -52,7 +53,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             BossEvent.BossBarColor.RED,
             BossEvent.BossBarOverlay.NOTCHED_12
     );
-    private int boss_phase = 1;
+    private static final EntityDataAccessor<Integer> BOSS_PHASE = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.INT); // the Samurice's phase is saved in persistent storage, which is only accessible server side, so this is used to synch the client phase value with the server side's
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
@@ -107,10 +108,31 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // DATA
     @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+
+        // update boss phase
+        int boss_phase = pCompound.getInt("boss_phase");
+
+        if (boss_phase >= 1) {
+            this.entityData.set(BOSS_PHASE, boss_phase);
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        // save boss phase
+        pCompound.putInt("boss_phase", this.entityData.get(BOSS_PHASE)); // NOTE: the Samurice can heal if it's in water which can cause it to revert back to phase 1 if the world is reloaded. This is meant to prevent that
+
+        super.addAdditionalSaveData(pCompound);
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
 
         // give data accessors starting values
+        pBuilder.define(BOSS_PHASE, 1);
         pBuilder.define(HEAD_PITCH, 0.0f);
         pBuilder.define(GUARD_IS_UP, false);
     }
@@ -178,8 +200,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         this.server_boss_event.setProgress(boss_health_remaining);
 
         // update boss phase
-        if (this.boss_phase == 1 && boss_health_remaining <= 0.5) {
-            this.boss_phase = 2;
+        if (this.entityData.get(BOSS_PHASE) == 1 && boss_health_remaining <= 0.5) {
+            this.entityData.set(BOSS_PHASE, 2);
         }
 
         // handle movement & attack decisions
