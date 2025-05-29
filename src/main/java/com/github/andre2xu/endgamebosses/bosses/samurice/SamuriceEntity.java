@@ -31,6 +31,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class SamuriceEntity extends PathfinderMob implements GeoEntity {
@@ -273,73 +274,29 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            this.getLookControl().setLookAt(target);
+            boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
-            Vec3 target_pos = target.position();
-            Vec3 current_pos = this.position();
-            Vec3 vector_to_target = target_pos.subtract(current_pos);
+            if (!is_attacking) {
+                this.getLookControl().setLookAt(target);
 
-            boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
+                Vec3 target_pos = target.position();
+                Vec3 current_pos = this.position();
+                Vec3 vector_to_target = target_pos.subtract(current_pos);
 
-            if (this.distanceTo(target) > 6) {
-                // put guard down before running
-                if (this.isGuardUp()) {
-                    this.triggerAnim("movement_trigger_anim_controller", "guard_down");
-                    this.setIsGuardUp(false);
-                }
+                boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
 
-                // run towards target
-                if (this.chase_delay > 0) {
-                    this.chase_delay--;
-                }
-                else {
-                    if (Math.abs(this.getY() - target.getY()) <= 1) {
-                        this.getNavigation().stop();
-
-                        if (vector_to_target.y > 0) {
-                            // prevent hovering
-                            vector_to_target = vector_to_target.multiply(1, 0, 1);
-                        }
-
-                        this.setDeltaMovement(vector_to_target.normalize().scale(0.6));
-
-                        if (this.horizontalCollision) {
-                            this.jumpFromGround();
-                        }
+                if (this.distanceTo(target) > 6) {
+                    // put guard down before running
+                    if (this.isGuardUp()) {
+                        this.triggerAnim("movement_trigger_anim_controller", "guard_down");
+                        this.setIsGuardUp(false);
                     }
-                    else if (this.isInFluidType()) {
-                        this.getNavigation().stop();
-                        this.setDeltaMovement(vector_to_target.normalize().scale(0.3));
 
-                        if (this.horizontalCollision) {
-                            this.getJumpControl().jump();
-                        }
+                    // run towards target
+                    if (this.chase_delay > 0) {
+                        this.chase_delay--;
                     }
                     else {
-                        this.getNavigation().moveTo(target, 0.8);
-                    }
-
-                    if (!same_xz_position_as_target) {
-                        if (this.isInFluidType() && this.isUnderWater()) {
-                            this.triggerAnim("movement_trigger_anim_controller", "swim");
-                        }
-                        else {
-                            this.triggerAnim("movement_trigger_anim_controller", "run");
-                        }
-                    }
-                }
-            }
-            else {
-                // OBJECTIVE: When close to the target, put guard up and slowly move towards them
-
-                if (!this.isGuardUp()) {
-                    this.triggerAnim("movement_trigger_anim_controller", "guard_up");
-                    this.setIsGuardUp(true);
-
-                    this.chase_delay = 20; // let target move far away for 1 second and then run towards them
-                }
-                else {
-                    if (this.distanceTo(target) > 3) {
                         if (Math.abs(this.getY() - target.getY()) <= 1) {
                             this.getNavigation().stop();
 
@@ -348,7 +305,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                                 vector_to_target = vector_to_target.multiply(1, 0, 1);
                             }
 
-                            this.setDeltaMovement(vector_to_target.normalize().scale(0.2));
+                            this.setDeltaMovement(vector_to_target.normalize().scale(0.6));
 
                             if (this.horizontalCollision) {
                                 this.jumpFromGround();
@@ -356,23 +313,78 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         }
                         else if (this.isInFluidType()) {
                             this.getNavigation().stop();
-                            this.setDeltaMovement(vector_to_target.normalize().scale(0.1));
+                            this.setDeltaMovement(vector_to_target.normalize().scale(0.3));
 
                             if (this.horizontalCollision) {
                                 this.getJumpControl().jump();
                             }
                         }
                         else {
-                            this.getNavigation().moveTo(target, 0.4);
+                            this.getNavigation().moveTo(target, 0.8);
                         }
 
                         if (!same_xz_position_as_target) {
-                            this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                            if (this.isInFluidType() && this.isUnderWater()) {
+                                this.triggerAnim("movement_trigger_anim_controller", "swim");
+                            }
+                            else {
+                                this.triggerAnim("movement_trigger_anim_controller", "run");
+                            }
+                        }
+
+                        // decide whether to dash towards target or not
+                        boolean should_dash_towards_target = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
+
+                        if (should_dash_towards_target) {
+                            this.setAttackAction(Action.Attack.DASH);
                         }
                     }
+                }
+                else {
+                    // OBJECTIVE: When close to the target, put guard up and slowly move towards them
+
+                    if (!this.isGuardUp()) {
+                        this.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                        this.setIsGuardUp(true);
+
+                        this.chase_delay = 20; // let target move far away for 1 second and then run towards them
+                    }
                     else {
-                        // hold guard position when very close to the target
-                        this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+                        if (this.distanceTo(target) > 3) {
+                            if (Math.abs(this.getY() - target.getY()) <= 1) {
+                                this.getNavigation().stop();
+
+                                if (vector_to_target.y > 0) {
+                                    // prevent hovering
+                                    vector_to_target = vector_to_target.multiply(1, 0, 1);
+                                }
+
+                                this.setDeltaMovement(vector_to_target.normalize().scale(0.2));
+
+                                if (this.horizontalCollision) {
+                                    this.jumpFromGround();
+                                }
+                            }
+                            else if (this.isInFluidType()) {
+                                this.getNavigation().stop();
+                                this.setDeltaMovement(vector_to_target.normalize().scale(0.1));
+
+                                if (this.horizontalCollision) {
+                                    this.getJumpControl().jump();
+                                }
+                            }
+                            else {
+                                this.getNavigation().moveTo(target, 0.4);
+                            }
+
+                            if (!same_xz_position_as_target) {
+                                this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                            }
+                        }
+                        else {
+                            // hold guard position when very close to the target
+                            this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+                        }
                     }
                 }
             }
