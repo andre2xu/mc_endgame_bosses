@@ -6,6 +6,70 @@
 		},
 		"animation.samurice.dash": {
 			"loop": "hold_on_last_frame",
+			"animation_length": 0.0417,
+			"bones": {
+				"upper_body": {
+					"rotation": {
+						"vector": [15, 0, 0]
+					},
+					"position": {
+						"vector": [0, -1, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [-17.5, 0, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-87.24194, -24.97457, -1.16524]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [22.5, 0, 72.5]
+					}
+				},
+				"sheath": {
+					"rotation": {
+						"vector": [0, -7.5, 0]
+					}
+				},
+				"back_fauld": {
+					"rotation": {
+						"vector": [20, 0, 0]
+					}
+				},
+				"front_fauld": {
+					"rotation": {
+						"vector": [-22.5, 0, 0]
+					}
+				},
+				"right_fauld": {
+					"rotation": {
+						"vector": [10, 0, 0]
+					}
+				},
+				"left_fauld": {
+					"rotation": {
+						"vector": [10, 0, 0]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"vector": [-27.5, 0, 0]
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.samurice.dash_reset": {
+			"loop": "hold_on_last_frame",
 			"animation_length": 0.125,
 			"bones": {
 				"upper_body": {
