@@ -10,6 +10,8 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -40,6 +42,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     TODO:
     - Increase MAX_HEALTH attribute
+    - Increase damage dealt to target from dashing
 
     OPTIONAL:
     - Add boss music for Samurice
@@ -463,6 +466,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private boolean has_dashed = false;
         private int pose_duration = 0; // how long in ticks the Samurice will stay in the dash pose at the end of the attack
+        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public DashAttackGoal(SamuriceEntity samurice) {
@@ -517,6 +521,13 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     this.samurice.triggerAnim("movement_trigger_anim_controller", "dash");
 
                     this.has_dashed = true;
+
+                    // damage target & apply frost effects
+                    this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
+
+                    int freezing_effect_duration = 20 * 5; // 5 seconds
+                    this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezing_effect_duration));
+                    this.target.setTicksFrozen(freezing_effect_duration);
                 }
 
                 if (this.pose_duration > 0) {
