@@ -490,7 +490,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.target = this.samurice.getTarget();
 
             // set pose duration
-            this.pose_duration = 10; // 0.5 seconds
+            this.pose_duration = 20; // 1 second
 
             super.start();
         }
@@ -522,18 +522,18 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                     this.has_dashed = true;
 
-                    // damage target & apply frost effects
+                    // damage target & apply a frost effect
                     this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
 
-                    int freezing_effect_duration = 20 * 5; // 5 seconds
-                    this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezing_effect_duration));
-                    this.target.setTicksFrozen(freezing_effect_duration);
+                    int frost_effect_duration = 20 * 5; // 5 seconds
+                    this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
+                    this.target.setTicksFrozen(frost_effect_duration);
                 }
 
                 if (this.pose_duration > 0) {
                     this.pose_duration--;
 
-                    if (this.pose_duration == 5) {
+                    if (this.pose_duration == 10) {
                         this.samurice.triggerAnim("movement_trigger_anim_controller", "dash_reset");
                     }
                 }
