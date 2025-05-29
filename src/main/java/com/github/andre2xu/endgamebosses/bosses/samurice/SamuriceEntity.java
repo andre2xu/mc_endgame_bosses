@@ -44,8 +44,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
 
-    // GENERALE
+    // GENERAL
     private int chase_delay = 0;
+    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -58,6 +59,22 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
     private static final EntityDataAccessor<Boolean> GUARD_IS_UP = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+
+    // ACTIONS
+    public enum Action {;
+        // these determine which attack goal is run
+
+        public enum AttackType {
+            MELEE
+        }
+
+        public enum Attack {
+            NONE,
+
+            // melee
+        }
+    }
 
     // ANIMATIONS
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
@@ -135,6 +152,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(BOSS_PHASE, 1);
         pBuilder.define(HEAD_PITCH, 0.0f);
         pBuilder.define(GUARD_IS_UP, false);
+        pBuilder.define(ATTACK_ACTION, 0); // none
     }
 
     public float getHeadPitch() {
@@ -169,6 +187,33 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    private void setAttackAction(Action.Attack attackAction) {
+        int action_id = 0; // none
+
+        switch (attackAction) {
+            default:
+                this.attack_type = Action.AttackType.MELEE;
+        }
+
+        this.entityData.set(ATTACK_ACTION, action_id);
+    }
+
+    private Action.Attack getAttackAction() {
+        Action.Attack attack_action = Action.Attack.NONE;
+
+        int action_id = this.entityData.get(ATTACK_ACTION);
+
+        switch (action_id) {
+            default:
+        }
+
+        return attack_action;
+    }
+
+    public Action.AttackType getAttackType() {
+        return this.attack_type;
+    }
+
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
