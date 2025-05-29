@@ -461,6 +461,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     private static class DashAttackGoal extends Goal {
         private final SamuriceEntity samurice;
         private LivingEntity target = null;
+        private boolean has_dashed = false;
+        private int pose_duration = 0; // how long in ticks the Samurice will stay in the dash pose at the end of the attack
         private boolean attack_is_finished = false;
 
         public DashAttackGoal(SamuriceEntity samurice) {
@@ -473,6 +475,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void resetAttack() {
+            this.has_dashed = false;
+            this.pose_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -481,6 +485,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             // save a reference of the target to avoid having to call 'this.samurice.getTarget' which can sometimes return null
             this.target = this.samurice.getTarget();
 
+            // set pose duration
+            this.pose_duration = 10; // 0.5 seconds
+
             super.start();
         }
 
@@ -488,13 +495,41 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         public void stop() {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
+            this.samurice.setAttackAction(Action.Attack.NONE); // allow the Samurice to follow target & make attack decisions again
+
             super.stop();
         }
 
         @Override
         public void tick() {
             if (this.canAttack()) {
-                System.out.println("DASHING");
+                if (!this.has_dashed) {
+                    Vec3 target_pos = this.target.position();
+                    Vec3 current_pos = this.samurice.position();
+                    Vec3 vector_to_target = target_pos.subtract(current_pos).normalize();
+
+                    int num_of_blocks_ahead_of_target = 1;
+
+                    Vec3 position_ahead_of_target = target_pos.add(vector_to_target.multiply(num_of_blocks_ahead_of_target, 1, num_of_blocks_ahead_of_target));
+
+                    this.samurice.getLookControl().setLookAt(this.target);
+                    this.samurice.moveTo(position_ahead_of_target);
+                    this.samurice.triggerAnim("movement_trigger_anim_controller", "dash");
+
+                    this.has_dashed = true;
+                }
+
+                if (this.pose_duration > 0) {
+                    this.pose_duration--;
+
+                    if (this.pose_duration == 5) {
+                        this.samurice.triggerAnim("movement_trigger_anim_controller", "dash_reset");
+                    }
+                }
+                else {
+                    // stop attack
+                    this.attack_is_finished = true;
+                }
             }
             else {
                 // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
