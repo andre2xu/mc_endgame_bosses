@@ -233,15 +233,15 @@ public class IceHead extends TragonHead {
                         if (this.breath_touches_target) {
                             this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
 
-                            int feezing_effect_duration = 20 * 2; // 2 seconds
+                            int freezing_effect_duration = 20 * 2; // 2 seconds
 
                             // make the target slower
-                            MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, feezing_effect_duration);
+                            MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezing_effect_duration);
 
                             this.target.addEffect(slowness);
 
                             // give them Minecraft's 'freeze' effect
-                            this.target.setTicksFrozen(feezing_effect_duration);
+                            this.target.setTicksFrozen(freezing_effect_duration);
                         }
 
                         // reset flag
