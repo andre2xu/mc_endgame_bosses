@@ -466,6 +466,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
         private void resetAttack() {
             this.attack_is_finished = false;
         }
@@ -483,6 +487,17 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.canAttack()) {
+                System.out.println("DASHING");
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
         }
 
         @Override
