@@ -625,6 +625,36 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         @Override
+        public void tick() {
+            if (this.canAttack()) {
+                // put guard up if it's down
+                if (!this.samurice.isGuardUp()) {
+                    this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                    this.samurice.setIsGuardUp(true);
+                }
+
+                // face target
+                this.samurice.getLookControl().setLookAt(this.target);
+
+                // get closer to target
+                if (this.samurice.distanceTo(this.target) > 2) {
+                    Vec3 vector_to_target = this.target.position().subtract(this.samurice.position()).normalize();
+
+                    this.samurice.setDeltaMovement(vector_to_target.scale(0.3));
+
+                    this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                }
+                else {
+                    System.out.println("CUT");
+                }
+            }
+            else {
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                this.attack_is_finished = true;
+            }
+        }
+
+        @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.MELEE && this.samurice.getAttackAction() == Action.Attack.CUTS;
         }
