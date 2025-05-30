@@ -211,11 +211,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
-    protected boolean isWithinGuardDistance(LivingEntity entity) {
+    private boolean isWithinGuardDistance(LivingEntity entity) {
         return this.distanceTo(entity) <= 6;
     }
 
-    protected void followTarget(LivingEntity target, double speed) {
+    private void followTarget(LivingEntity target, double speed) {
         Vec3 vector_to_target = target.position().subtract(this.position());
 
         if (Math.abs(this.getY() - target.getY()) <= 1) {
@@ -245,7 +245,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    protected void applyFrostTo(LivingEntity entity, int duration) {
+    private void applyFrostTo(LivingEntity entity, int duration) {
         int frost_effect_duration = 20 * duration; // seconds
 
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
