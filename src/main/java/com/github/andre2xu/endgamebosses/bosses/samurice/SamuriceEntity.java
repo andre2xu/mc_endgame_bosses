@@ -44,6 +44,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     TODO:
     - Increase MAX_HEALTH attribute
     - Increase damage dealt to target from dashing
+    - Increase damage dealt to target from cuts
 
     OPTIONAL:
     - Add boss music for Samurice
