@@ -214,6 +214,36 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         return this.distanceTo(entity) <= 6;
     }
 
+    protected void followTarget(LivingEntity target, double speed) {
+        Vec3 vector_to_target = target.position().subtract(this.position());
+
+        if (Math.abs(this.getY() - target.getY()) <= 1) {
+            this.getNavigation().stop();
+
+            if (vector_to_target.y > 0) {
+                // prevent hovering
+                vector_to_target = vector_to_target.multiply(1, 0, 1);
+            }
+
+            this.setDeltaMovement(vector_to_target.normalize().scale(speed));
+
+            if (this.horizontalCollision) {
+                this.jumpFromGround();
+            }
+        }
+        else if (this.isInFluidType()) {
+            this.getNavigation().stop();
+            this.setDeltaMovement(vector_to_target.normalize().scale(speed / 2));
+
+            if (this.horizontalCollision) {
+                this.getJumpControl().jump();
+            }
+        }
+        else {
+            this.getNavigation().moveTo(target, speed + 0.2);
+        }
+    }
+
     protected void applyFrostTo(LivingEntity entity, int duration) {
         int frost_effect_duration = 20 * duration; // seconds
 
@@ -317,7 +347,6 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                 Vec3 target_pos = target.position();
                 Vec3 current_pos = this.position();
-                Vec3 vector_to_target = target_pos.subtract(current_pos);
 
                 boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
 
@@ -333,31 +362,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         this.chase_delay--;
                     }
                     else {
-                        if (Math.abs(this.getY() - target.getY()) <= 1) {
-                            this.getNavigation().stop();
-
-                            if (vector_to_target.y > 0) {
-                                // prevent hovering
-                                vector_to_target = vector_to_target.multiply(1, 0, 1);
-                            }
-
-                            this.setDeltaMovement(vector_to_target.normalize().scale(0.6));
-
-                            if (this.horizontalCollision) {
-                                this.jumpFromGround();
-                            }
-                        }
-                        else if (this.isInFluidType()) {
-                            this.getNavigation().stop();
-                            this.setDeltaMovement(vector_to_target.normalize().scale(0.3));
-
-                            if (this.horizontalCollision) {
-                                this.getJumpControl().jump();
-                            }
-                        }
-                        else {
-                            this.getNavigation().moveTo(target, 0.8);
-                        }
+                        this.followTarget(target, 0.6);
 
                         if (!same_xz_position_as_target) {
                             if (this.isInFluidType() && this.isUnderWater()) {
@@ -387,31 +392,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     }
                     else {
                         if (this.distanceTo(target) > 3) {
-                            if (Math.abs(this.getY() - target.getY()) <= 1) {
-                                this.getNavigation().stop();
-
-                                if (vector_to_target.y > 0) {
-                                    // prevent hovering
-                                    vector_to_target = vector_to_target.multiply(1, 0, 1);
-                                }
-
-                                this.setDeltaMovement(vector_to_target.normalize().scale(0.2));
-
-                                if (this.horizontalCollision) {
-                                    this.jumpFromGround();
-                                }
-                            }
-                            else if (this.isInFluidType()) {
-                                this.getNavigation().stop();
-                                this.setDeltaMovement(vector_to_target.normalize().scale(0.1));
-
-                                if (this.horizontalCollision) {
-                                    this.getJumpControl().jump();
-                                }
-                            }
-                            else {
-                                this.getNavigation().moveTo(target, 0.4);
-                            }
+                            this.followTarget(target, 0.2);
 
                             if (!same_xz_position_as_target) {
                                 this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
