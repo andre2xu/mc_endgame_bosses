@@ -599,6 +599,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     private static class CutsAttackGoal extends Goal {
         private final SamuriceEntity samurice;
         private LivingEntity target = null;
+        private int num_of_cuts = 0;
+        private int cut_duration = 0; // in ticks. This determines how long until the Samurice can follow the target again
         private boolean attack_is_finished = false;
 
         public CutsAttackGoal(SamuriceEntity samurice) {
@@ -606,11 +608,37 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
+        private void cutTarget() {
+            int random_number = new Random().nextInt(1, 4);
+
+            switch (random_number) {
+                case 1:
+                    this.samurice.triggerAnim("attack_trigger_anim_controller", "horizontal_cut");
+                    this.cut_duration = 20;
+                    break;
+                case 2:
+                    this.samurice.triggerAnim("attack_trigger_anim_controller", "diagonal_cut");
+                    this.cut_duration = 20;
+                    break;
+                case 3:
+                    this.samurice.triggerAnim("attack_trigger_anim_controller", "downward_cut");
+                    this.cut_duration = 20;
+                    break;
+                default:
+            }
+
+            if (this.num_of_cuts > 0) {
+                this.num_of_cuts--;
+            }
+        }
+
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.target != null && this.target.isAlive() && this.samurice.distanceTo(this.target) <= 6 && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         private void resetAttack() {
+            this.num_of_cuts = 0;
+            this.cut_duration = 0;
             this.attack_is_finished = false;
         }
 
@@ -621,6 +649,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
             // save a reference of the target to avoid having to call 'this.samurice.getTarget' which can sometimes return null
             this.target = this.samurice.getTarget();
+
+            // decide the number of cuts to make
+            if (this.num_of_cuts == 0) {
+                this.num_of_cuts = new Random().nextInt(2, 4); // 2 to 3 cuts
+            }
 
             super.start();
         }
@@ -637,25 +670,40 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void tick() {
             if (this.canAttack()) {
-                // put guard up if it's down
-                if (!this.samurice.isGuardUp()) {
-                    this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up");
-                    this.samurice.setIsGuardUp(true);
-                }
+                // OBJECTIVE: Get close to the target and perform a cut. Repeat until the no. cuts to make is zero or the target moves far away
 
-                // face target
-                this.samurice.getLookControl().setLookAt(this.target);
+                if (this.num_of_cuts > 0) {
+                    if (this.cut_duration > 0) {
+                        this.cut_duration--;
+                    }
+                    else {
+                        // put guard up if it's down
+                        if (!this.samurice.isGuardUp()) {
+                            this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                            this.samurice.setIsGuardUp(true);
+                        }
 
-                // get closer to target
-                if (this.samurice.distanceTo(this.target) > 2) {
-                    Vec3 vector_to_target = this.target.position().subtract(this.samurice.position()).normalize();
+                        // face target
+                        this.samurice.getLookControl().setLookAt(this.target);
 
-                    this.samurice.setDeltaMovement(vector_to_target.scale(0.3));
+                        // get closer to target
+                        if (this.samurice.distanceTo(this.target) > 2) {
+                            Vec3 vector_to_target = this.target.position().subtract(this.samurice.position()).normalize();
 
-                    this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                            this.samurice.setDeltaMovement(vector_to_target.scale(0.3));
+
+                            this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                        }
+                        else {
+                            this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+
+                            this.cutTarget();
+                        }
+                    }
                 }
                 else {
-                    System.out.println("CUT");
+                    // stop attack
+                    this.attack_is_finished = true;
                 }
             }
             else {
