@@ -601,6 +601,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int num_of_cuts = 0;
         private int cut_duration = 0; // in ticks. This determines how long until the Samurice can follow the target again
+        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public CutsAttackGoal(SamuriceEntity samurice) {
@@ -631,6 +632,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 default:
             }
 
+            // damage target & apply a frost effect
+            if (this.targetIsWithinWeaponReach()) {
+                this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
+
+                int frost_effect_duration = 20 * 5; // 5 seconds
+                this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
+                this.target.setTicksFrozen(frost_effect_duration);
+            }
+
+            // reduce number of cuts left
             if (this.num_of_cuts > 0) {
                 this.num_of_cuts--;
             }
