@@ -210,6 +210,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    protected boolean isWithinGuardDistance(LivingEntity entity) {
+        return this.distanceTo(entity) <= 6;
+    }
+
     private void setAttackAction(Action.Attack attackAction) {
         int action_id = 0; // none
 
@@ -310,7 +314,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                 boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
 
-                if (this.distanceTo(target) > 6) {
+                if (!this.isWithinGuardDistance(target)) {
                     // put guard down before running
                     if (this.isGuardUp()) {
                         this.triggerAnim("movement_trigger_anim_controller", "guard_down");
@@ -648,7 +652,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && this.samurice.distanceTo(this.target) <= 6 && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.target != null && this.target.isAlive() && this.samurice.isWithinGuardDistance(this.target) && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
         }
 
         private void resetAttack() {
