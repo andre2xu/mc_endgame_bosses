@@ -389,7 +389,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         this.triggerAnim("movement_trigger_anim_controller", "guard_up");
                         this.setIsGuardUp(true);
 
-                        this.chase_delay = 20; // let target move far away for 1 second and then run towards them
+                        this.chase_delay = 20; // let target move far away for 1 second and then run towards them (this is for later)
                     }
                     else {
                         if (this.distanceTo(target) > 3) {
