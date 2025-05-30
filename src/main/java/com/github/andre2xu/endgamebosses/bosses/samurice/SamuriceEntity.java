@@ -96,6 +96,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     protected static final RawAnimation GUARD_UP_MOVE_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.LOOP);
     protected static final RawAnimation GUARD_UP_STOP_MOVING_ANIM = RawAnimation.begin().then("animation.samurice.guard_up_move", Animation.LoopType.HOLD_ON_LAST_FRAME);
 
+    protected static final RawAnimation HORIZONTAL_CUT_ANIM = RawAnimation.begin().then("animation.samurice.horizontal_cut", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation DIAGONAL_CUT_ANIM = RawAnimation.begin().then("animation.samurice.diagonal_cut", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation DOWNWARD_CUT_ANIM = RawAnimation.begin().then("animation.samurice.downward_cut", Animation.LoopType.PLAY_ONCE);
+
 
 
     public SamuriceEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
@@ -126,6 +130,12 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 .triggerableAnim("guard_down", GUARD_DOWN_ANIM)
                 .triggerableAnim("guard_up_move", GUARD_UP_MOVE_ANIM)
                 .triggerableAnim("guard_up_stop_moving", GUARD_UP_STOP_MOVING_ANIM)
+        );
+
+        controllers.add(new AnimationController<>(this, "attack_trigger_anim_controller", state -> PlayState.STOP)
+                .triggerableAnim("horizontal_cut", HORIZONTAL_CUT_ANIM)
+                .triggerableAnim("diagonal_cut", DIAGONAL_CUT_ANIM)
+                .triggerableAnim("downward_cut", DOWNWARD_CUT_ANIM)
         );
     }
 
