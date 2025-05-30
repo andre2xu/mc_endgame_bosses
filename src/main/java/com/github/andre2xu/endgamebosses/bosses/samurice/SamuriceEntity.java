@@ -608,6 +608,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
+        private boolean targetIsWithinWeaponReach() {
+            return this.target != null && this.samurice.distanceTo(target) <= 2;
+        }
+
         private void cutTarget() {
             int random_number = new Random().nextInt(1, 4);
 
@@ -687,7 +691,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         this.samurice.getLookControl().setLookAt(this.target);
 
                         // get closer to target
-                        if (this.samurice.distanceTo(this.target) > 2) {
+                        if (!this.targetIsWithinWeaponReach()) {
                             Vec3 vector_to_target = this.target.position().subtract(this.samurice.position()).normalize();
 
                             this.samurice.setDeltaMovement(vector_to_target.scale(0.3));
