@@ -7,6 +7,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -486,6 +487,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void start() {
+            // cancel any navigation
+            this.samurice.getNavigation().stop();
+
             // save a reference of the target to avoid having to call 'this.samurice.getTarget' which can sometimes return null
             this.target = this.samurice.getTarget();
 
@@ -516,6 +520,18 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                     Vec3 position_ahead_of_target = target_pos.add(vector_to_target.multiply(num_of_blocks_ahead_of_target, 1, num_of_blocks_ahead_of_target));
 
+                    // check if the end position will make the Samurice end up below the surface and if so correct it
+                    if (this.samurice.level() instanceof ServerLevel server_level) {
+                        BlockPos landing_spot = BlockPos.containing(position_ahead_of_target);
+
+                        boolean landing_spot_is_below_surface = server_level.getBlockState(landing_spot).isSolidRender(server_level, landing_spot);
+
+                        if (landing_spot_is_below_surface) {
+                            position_ahead_of_target = landing_spot.above().getCenter();
+                        }
+                    }
+
+                    // perform dash
                     this.samurice.getLookControl().setLookAt(this.target);
                     this.samurice.moveTo(position_ahead_of_target);
                     this.samurice.triggerAnim("movement_trigger_anim_controller", "dash");
