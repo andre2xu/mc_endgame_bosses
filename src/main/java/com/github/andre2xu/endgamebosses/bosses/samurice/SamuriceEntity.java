@@ -80,7 +80,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             NONE,
 
             // melee
-            DASH
+            DASH,
+            CUTS
         }
     }
 
@@ -207,6 +208,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 action_id = 1;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
+            case Action.Attack.CUTS:
+                action_id = 2;
+                this.attack_type = Action.AttackType.MELEE;
+                break;
             default:
         }
 
@@ -221,6 +226,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         switch (action_id) {
             case 1:
                 attack_action = Action.Attack.DASH;
+                break;
+            case 2:
+                attack_action = Action.Attack.CUTS;
                 break;
             default:
         }
