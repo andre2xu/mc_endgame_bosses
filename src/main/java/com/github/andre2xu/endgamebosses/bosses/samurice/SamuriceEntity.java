@@ -689,11 +689,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                         // get closer to target
                         if (!this.targetIsWithinWeaponReach()) {
-                            Vec3 vector_to_target = this.target.position().subtract(this.samurice.position()).normalize();
+                            this.samurice.followTarget(this.target, 0.3);
 
-                            this.samurice.setDeltaMovement(vector_to_target.scale(0.3));
+                            // play move animation
+                            Vec3 current_pos = this.samurice.position();
+                            Vec3 target_pos = this.target.position();
+                            boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
 
-                            this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                            if (!same_xz_position_as_target) {
+                                this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                            }
                         }
                         else {
                             this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
