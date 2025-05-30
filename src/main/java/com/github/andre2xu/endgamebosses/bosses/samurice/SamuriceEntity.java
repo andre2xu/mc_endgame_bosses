@@ -399,6 +399,13 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                         else {
                             // hold guard position when very close to the target
                             this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+
+                            // decide whether to attack or not
+                            boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
+
+                            if (should_attack) {
+                                this.setAttackAction(Action.Attack.CUTS);
+                            }
                         }
                     }
                 }
