@@ -618,11 +618,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     break;
                 case 2:
                     this.samurice.triggerAnim("attack_trigger_anim_controller", "diagonal_cut");
-                    this.cut_duration = 20;
+                    this.cut_duration = 15;
                     break;
                 case 3:
                     this.samurice.triggerAnim("attack_trigger_anim_controller", "downward_cut");
-                    this.cut_duration = 20;
+                    this.cut_duration = 15;
                     break;
                 default:
             }
