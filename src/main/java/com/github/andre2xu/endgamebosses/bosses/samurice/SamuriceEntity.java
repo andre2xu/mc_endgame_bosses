@@ -264,6 +264,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
         */
         this.goalSelector.addGoal(1, new DashAttackGoal(this));
+        this.goalSelector.addGoal(1, new CutsAttackGoal(this));
     }
 
     @Override
@@ -575,6 +576,50 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.MELEE && this.samurice.getAttackAction() == Action.Attack.DASH;
+        }
+    }
+
+    private static class CutsAttackGoal extends Goal {
+        private final SamuriceEntity samurice;
+        private LivingEntity target = null;
+        private boolean attack_is_finished = false;
+
+        public CutsAttackGoal(SamuriceEntity samurice) {
+            this.samurice = samurice;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private boolean canAttack() {
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // cancel any navigation
+            this.samurice.getNavigation().stop();
+
+            // save a reference of the target to avoid having to call 'this.samurice.getTarget' which can sometimes return null
+            this.target = this.samurice.getTarget();
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.samurice.setAttackAction(Action.Attack.NONE); // allow the Samurice to follow target & make attack decisions again
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.MELEE && this.samurice.getAttackAction() == Action.Attack.CUTS;
         }
     }
 }
