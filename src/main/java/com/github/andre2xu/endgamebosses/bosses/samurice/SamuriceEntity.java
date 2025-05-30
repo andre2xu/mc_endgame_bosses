@@ -214,6 +214,13 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         return this.distanceTo(entity) <= 6;
     }
 
+    protected void applyFrostTo(LivingEntity entity, int duration) {
+        int frost_effect_duration = 20 * duration; // seconds
+
+        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
+        entity.setTicksFrozen(frost_effect_duration);
+    }
+
     private void setAttackAction(Action.Attack attackAction) {
         int action_id = 0; // none
 
@@ -570,10 +577,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                     // damage target & apply a frost effect
                     this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
-
-                    int frost_effect_duration = 20 * 5; // 5 seconds
-                    this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
-                    this.target.setTicksFrozen(frost_effect_duration);
+                    this.samurice.applyFrostTo(this.target, 5);
                 }
 
                 if (this.pose_duration > 0) {
@@ -639,10 +643,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             // damage target & apply a frost effect
             if (this.targetIsWithinWeaponReach()) {
                 this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
-
-                int frost_effect_duration = 20 * 5; // 5 seconds
-                this.target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
-                this.target.setTicksFrozen(frost_effect_duration);
+                this.samurice.applyFrostTo(this.target, 5);
             }
 
             // reduce number of cuts left
