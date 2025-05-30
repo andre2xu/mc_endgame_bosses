@@ -672,11 +672,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             if (this.canAttack()) {
                 // OBJECTIVE: Get close to the target and perform a cut. Repeat until the no. cuts to make is zero or the target moves far away
 
-                if (this.num_of_cuts > 0) {
-                    if (this.cut_duration > 0) {
-                        this.cut_duration--;
-                    }
-                    else {
+                if (this.cut_duration > 0) {
+                    this.cut_duration--;
+                }
+                else {
+                    if (this.num_of_cuts > 0) {
                         // put guard up if it's down
                         if (!this.samurice.isGuardUp()) {
                             this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up");
@@ -700,10 +700,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                             this.cutTarget();
                         }
                     }
-                }
-                else {
-                    // stop attack
-                    this.attack_is_finished = true;
+                    else {
+                        // stop attack
+                        this.attack_is_finished = true;
+                    }
                 }
             }
             else {
