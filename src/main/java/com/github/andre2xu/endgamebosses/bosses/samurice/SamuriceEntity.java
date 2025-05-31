@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -308,6 +309,17 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     @Override
     public boolean canDrownInFluidType(FluidType type) {
         return false;
+    }
+
+    @Override
+    public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        boolean should_block = new Random().nextInt(1, 6) == 1;
+
+        if (should_block) {
+            this.setIsBlockingAttacks(true);
+        }
+
+        return super.hurt(pSource, pAmount);
     }
 
     @Override
