@@ -67,6 +67,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
     private static final EntityDataAccessor<Boolean> GUARD_IS_UP = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BLOCKING_ATTACKS = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
 
     // ACTIONS
@@ -176,6 +177,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         pBuilder.define(BOSS_PHASE, 1);
         pBuilder.define(HEAD_PITCH, 0.0f);
         pBuilder.define(GUARD_IS_UP, false);
+        pBuilder.define(BLOCKING_ATTACKS, false);
         pBuilder.define(ATTACK_ACTION, 0); // none
     }
 
@@ -189,6 +191,14 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     public void setIsGuardUp(boolean isGuardUp) {
         this.entityData.set(GUARD_IS_UP, isGuardUp);
+    }
+
+    public boolean isBlockingAttacks() {
+        return this.entityData.get(BLOCKING_ATTACKS);
+    }
+
+    public void setIsBlockingAttacks(boolean isBlocking) {
+        this.entityData.set(BLOCKING_ATTACKS, isBlocking);
     }
 
 
