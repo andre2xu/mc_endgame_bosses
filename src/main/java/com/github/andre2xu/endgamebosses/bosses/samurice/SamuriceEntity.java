@@ -813,6 +813,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 if (!this.is_blocking) {
                     this.samurice.triggerAnim("attack_trigger_anim_controller", "block");
                     this.is_blocking = true;
+
+                    this.samurice.setInvulnerable(true);
                 }
 
                 // face attacker (this can change so it's not cached)
@@ -829,6 +831,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     // go out of blocking pose when there's 0.5 seconds left (same time it takes to unblock)
                     if (this.block_duration == 10) {
                         this.samurice.triggerAnim("attack_trigger_anim_controller", "unblock");
+                        this.samurice.setInvulnerable(false);
                     }
                 }
                 else {
