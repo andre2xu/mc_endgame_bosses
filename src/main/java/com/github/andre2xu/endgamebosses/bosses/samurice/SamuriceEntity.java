@@ -759,6 +759,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private final SamuriceEntity samurice;
         private int block_duration = 0; // ticks
         private int block_delay = 0;
+        private boolean is_blocking = false;
         private boolean block_is_finished = false;
 
         public BlockGoal(SamuriceEntity samurice) {
@@ -769,6 +770,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private void resetData() {
             this.block_duration = 0;
             this.block_delay = 0;
+            this.is_blocking = false;
             this.block_is_finished = false;
         }
 
@@ -807,7 +809,18 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 this.block_delay--;
             }
             else {
-                System.out.println("BLOCKING");
+                // switch to blocking pose
+                if (!this.is_blocking) {
+                    this.samurice.triggerAnim("attack_trigger_anim_controller", "block");
+                    this.is_blocking = true;
+                }
+
+                // face attacker (this can change so it's not cached)
+                LivingEntity attacker = this.samurice.getTarget();
+
+                if (attacker != null) {
+                    this.samurice.getLookControl().setLookAt(attacker);
+                }
             }
         }
 
