@@ -753,6 +753,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     private static class BlockGoal extends Goal {
         private final SamuriceEntity samurice;
         private int block_duration = 0; // ticks
+        private int block_delay = 0;
         private boolean block_is_finished = false;
 
         public BlockGoal(SamuriceEntity samurice) {
@@ -762,11 +763,25 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         private void resetData() {
             this.block_duration = 0;
+            this.block_delay = 0;
             this.block_is_finished = false;
         }
 
         @Override
         public void start() {
+            if (!this.samurice.isGuardUp()) {
+                // put guard up if it's down
+
+                this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                this.samurice.setIsGuardUp(true);
+
+                this.block_delay = 10; // 0.5 seconds. This is the amount of time (in ticks) it takes the guard up animation to finish
+            }
+            else {
+                // stop moving but keep guard up
+                this.samurice.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+            }
+
             this.block_duration = 20 * new Random().nextInt(2, 5); // 2 to 4 seconds
 
             super.start();
@@ -779,6 +794,16 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.samurice.setIsBlockingAttacks(false); // allow the Samurice to follow target & make attack decisions again
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.block_delay > 0) {
+                this.block_delay--;
+            }
+            else {
+                System.out.println("BLOCKING");
+            }
         }
 
         @Override
