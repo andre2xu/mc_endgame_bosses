@@ -104,7 +104,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     protected static final RawAnimation DOWNWARD_CUT_ANIM = RawAnimation.begin().then("animation.samurice.downward_cut", Animation.LoopType.PLAY_ONCE);
 
     protected static final RawAnimation BLOCK_ANIM = RawAnimation.begin().then("animation.samurice.block", Animation.LoopType.HOLD_ON_LAST_FRAME);
-    protected static final RawAnimation UNBLOCK_ANIM = RawAnimation.begin().then("animation.samurice.unblock", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation UNBLOCK_ANIM = RawAnimation.begin().then("animation.samurice.unblock", Animation.LoopType.PLAY_ONCE);
 
 
 
