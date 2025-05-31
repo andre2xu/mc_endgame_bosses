@@ -517,7 +517,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
         }
 
         private void resetAttack() {
@@ -597,7 +597,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 }
             }
             else {
-                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode. Do the same if the Samurice is blocking
                 this.attack_is_finished = true;
             }
         }
@@ -657,7 +657,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && this.samurice.isWithinGuardDistance(this.target) && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator()));
+            return this.target != null && this.target.isAlive() && this.samurice.isWithinGuardDistance(this.target) && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
         }
 
         private void resetAttack() {
@@ -736,7 +736,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 }
             }
             else {
-                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode
+                // cancel attack if target doesn't exist, is dead, or is in creative/spectator mode. Do the same if the Samurice is blocking
                 this.attack_is_finished = true;
             }
         }
