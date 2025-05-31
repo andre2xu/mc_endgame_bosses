@@ -330,6 +330,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         // find and select a target
         this.targetSelector.addGoal(3, new SelectTargetGoal(this));
 
+        // handle blocking
+        this.goalSelector.addGoal(1, new BlockGoal(this));
+
         /*
         HOW ATTACKING WORKS:
         - There are two types: MELEE and RANGE (see Action.AttackType enums)
@@ -744,6 +747,43 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.MELEE && this.samurice.getAttackAction() == Action.Attack.CUTS;
+        }
+    }
+
+    private static class BlockGoal extends Goal {
+        private final SamuriceEntity samurice;
+        private int block_duration = 0; // ticks
+        private boolean block_is_finished = false;
+
+        public BlockGoal(SamuriceEntity samurice) {
+            this.samurice = samurice;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void resetData() {
+            this.block_duration = 0;
+            this.block_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            this.block_duration = 20 * new Random().nextInt(2, 5); // 2 to 4 seconds
+
+            super.start();
+        }
+
+        @Override
+        public void stop() {
+            this.resetData();
+
+            this.samurice.setIsBlockingAttacks(false); // allow the Samurice to follow target & make attack decisions again
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.block_is_finished && this.samurice.isBlockingAttacks();
         }
     }
 }
