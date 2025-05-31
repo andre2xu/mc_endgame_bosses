@@ -821,6 +821,20 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 if (attacker != null) {
                     this.samurice.getLookControl().setLookAt(attacker);
                 }
+
+                // decrease duration
+                if (this.block_duration > 0) {
+                    this.block_duration--;
+
+                    // go out of blocking pose when there's 0.5 seconds left (same time it takes to unblock)
+                    if (this.block_duration == 10) {
+                        this.samurice.triggerAnim("attack_trigger_anim_controller", "unblock");
+                    }
+                }
+                else {
+                    // stop blocking
+                    this.block_is_finished = true;
+                }
             }
         }
 
