@@ -757,7 +757,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     private static class BlockGoal extends Goal {
         private final SamuriceEntity samurice;
-        private int block_duration = 0; // ticks
+        private int block_duration = 0;
         private int block_delay = 0;
         private boolean is_blocking = false;
         private boolean block_is_finished = false;
