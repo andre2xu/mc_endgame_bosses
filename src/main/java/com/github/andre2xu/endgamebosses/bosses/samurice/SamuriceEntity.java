@@ -368,7 +368,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         if (target != null) {
             boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
-            if (!is_attacking) {
+            if (!is_attacking && !this.isBlockingAttacks()) {
                 this.getLookControl().setLookAt(target);
 
                 Vec3 target_pos = target.position();
