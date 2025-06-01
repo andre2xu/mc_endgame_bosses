@@ -102,6 +102,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     protected static final RawAnimation HORIZONTAL_CUT_ANIM = RawAnimation.begin().then("animation.samurice.horizontal_cut", Animation.LoopType.PLAY_ONCE);
     protected static final RawAnimation DIAGONAL_CUT_ANIM = RawAnimation.begin().then("animation.samurice.diagonal_cut", Animation.LoopType.PLAY_ONCE);
     protected static final RawAnimation DOWNWARD_CUT_ANIM = RawAnimation.begin().then("animation.samurice.downward_cut", Animation.LoopType.PLAY_ONCE);
+    protected static final RawAnimation SUMMON_ANIM = RawAnimation.begin().then("animation.samurice.summon", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation SUMMON_RESET_ANIM = RawAnimation.begin().then("animation.samurice.summon_reset", Animation.LoopType.PLAY_ONCE);
 
     protected static final RawAnimation BLOCK_ANIM = RawAnimation.begin().then("animation.samurice.block", Animation.LoopType.HOLD_ON_LAST_FRAME);
     protected static final RawAnimation UNBLOCK_ANIM = RawAnimation.begin().then("animation.samurice.unblock", Animation.LoopType.PLAY_ONCE);
@@ -144,6 +146,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 .triggerableAnim("downward_cut", DOWNWARD_CUT_ANIM)
                 .triggerableAnim("block", BLOCK_ANIM) // this is here to stop the attack animations
                 .triggerableAnim("unblock", UNBLOCK_ANIM) // this is here to stop the attack animations
+                .triggerableAnim("summon", SUMMON_ANIM)
+                .triggerableAnim("summon_reset", SUMMON_RESET_ANIM)
         );
     }
 
