@@ -733,6 +733,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 default:
             }
 
+            // play sword swing sound
+            this.samurice.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1f, 1f);
+
             // damage target & apply a frost effect
             if (this.targetIsWithinWeaponReach()) {
                 this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
