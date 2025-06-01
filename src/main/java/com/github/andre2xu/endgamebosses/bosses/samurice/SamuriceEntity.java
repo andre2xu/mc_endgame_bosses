@@ -54,7 +54,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // GENERAL
-    private int chase_delay = 0;
+    protected int chase_delay = 0;
     private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
 
     // BOSS FIGHT
@@ -270,6 +270,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
         entity.setTicksFrozen(frost_effect_duration);
+    }
+
+    protected void runBaseAiStep() {
+        // this is only for the clone
+        super.aiStep();
     }
 
     protected void setAttackAction(Action.Attack attackAction) {
