@@ -407,7 +407,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         this.server_boss_event.setProgress(boss_health_remaining);
 
         // update boss phase
-        if (this.entityData.get(BOSS_PHASE) == 1 && boss_health_remaining <= 0.5) {
+        if (this.entityData.get(BOSS_PHASE) == 1 && boss_health_remaining <= 0.7) {
             this.entityData.set(BOSS_PHASE, 2);
         }
 
