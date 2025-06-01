@@ -349,7 +349,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
         boolean should_block = new Random().nextInt(1, 6) == 1;
 
-        if (should_block) {
+        Action.Attack current_attack = this.getAttackAction();
+
+        if (should_block && (current_attack == Action.Attack.NONE || current_attack == Action.Attack.CUTS)) {
             this.setIsBlockingAttacks(true);
         }
 
