@@ -355,6 +355,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.setIsBlockingAttacks(true);
         }
 
+        // play damage sound
+        if (this.isBlockingAttacks()) {
+            this.playHurtSound(pSource);
+        }
+
         return super.hurt(pSource, pAmount);
     }
 
