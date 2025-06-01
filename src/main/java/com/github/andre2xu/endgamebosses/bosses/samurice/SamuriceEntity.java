@@ -664,6 +664,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     this.samurice.getLookControl().setLookAt(this.target);
                     this.samurice.moveTo(position_ahead_of_target);
                     this.samurice.triggerAnim("movement_trigger_anim_controller", "dash");
+                    this.samurice.playSound(SoundEvents.HORSE_BREATHE, 1f, 0.8f);
 
                     this.has_dashed = true;
 
