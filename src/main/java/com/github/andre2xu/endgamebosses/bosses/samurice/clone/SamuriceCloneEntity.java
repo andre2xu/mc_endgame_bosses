@@ -1,6 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice.clone;
 
 import com.github.andre2xu.endgamebosses.bosses.samurice.SamuriceEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,6 +26,15 @@ public class SamuriceCloneEntity extends SamuriceEntity {
                 .add(Attributes.MAX_HEALTH, 16)
                 .build();
     }
+
+
+
+    // DATA
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {}
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {}
 
 
 
