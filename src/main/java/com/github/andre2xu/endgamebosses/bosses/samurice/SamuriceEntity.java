@@ -895,11 +895,20 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private final SamuriceEntity samurice;
         private int num_of_clones = 0;
         private int summon_delay = 0;
+        private int attack_cooldown = 0;
         private boolean attack_is_finished = false;
 
         public SummonClones(SamuriceEntity samurice) {
             this.samurice = samurice;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void decrementAttackCooldown() {
+            if (this.attack_cooldown > 0) {
+                this.attack_cooldown--;
+
+                this.samurice.setAttackAction(Action.Attack.NONE); // ensure the Samurice is allowed to a follow target & make attack decisions while there's a cooldown
+            }
         }
 
         private void generateParticles() {
@@ -922,6 +931,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         private void resetAttack() {
             this.summon_delay = 0;
+            this.attack_cooldown = 20 * 5; // 5 seconds
             this.attack_is_finished = false;
         }
 
@@ -981,7 +991,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.SUMMON && this.samurice.getAttackAction() == Action.Attack.CLONES;
+            this.decrementAttackCooldown();
+
+            return this.attack_cooldown == 0 && !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.SUMMON && this.samurice.getAttackAction() == Action.Attack.CLONES;
         }
     }
 }
