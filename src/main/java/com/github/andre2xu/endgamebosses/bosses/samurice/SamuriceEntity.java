@@ -458,7 +458,25 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                             boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
 
                             if (should_attack) {
-                                this.setAttackAction(Action.Attack.CUTS);
+                                int boss_phase = this.entityData.get(BOSS_PHASE);
+
+                                if (boss_phase == 1) {
+                                    this.setAttackAction(Action.Attack.CUTS);
+                                }
+                                else if (boss_phase == 2) {
+                                    int random_number = new Random().nextInt(1, 4);
+
+                                    switch (random_number) {
+                                        case 1:
+                                            this.setAttackAction(Action.Attack.CUTS);
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            this.setAttackAction(Action.Attack.CLONES);
+                                            break;
+                                        default:
+                                    }
+                                }
                             }
                         }
                     }
