@@ -1005,6 +1005,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void tick() {
+            if (!this.samurice.isAlive()) {
+                this.attack_is_finished = true;
+                return;
+            }
+
             this.generateParticles();
 
             if (this.summon_delay > 0) {
