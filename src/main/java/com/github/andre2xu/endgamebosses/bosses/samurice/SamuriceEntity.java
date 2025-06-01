@@ -1,5 +1,7 @@
 package com.github.andre2xu.endgamebosses.bosses.samurice;
 
+import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
+import com.github.andre2xu.endgamebosses.bosses.samurice.clone.SamuriceCloneEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -888,6 +890,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     private static class SummonClones extends Goal {
         private final SamuriceEntity samurice;
+        private int num_of_clones = 0;
+        private int summon_delay = 0;
         private boolean attack_is_finished = false;
 
         public SummonClones(SamuriceEntity samurice) {
@@ -896,7 +900,22 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private void resetAttack() {
-            this.attack_is_finished = true;
+            this.summon_delay = 0;
+            this.attack_is_finished = false;
+        }
+
+        @Override
+        public void start() {
+            // set the no. clones to summon
+            this.num_of_clones = new Random().nextInt(1, 4); // 1 to 3 clones
+
+            // get into summon pose
+            this.samurice.triggerAnim("attack_trigger_anim_controller", "summon");
+
+            // set summon delay
+            this.summon_delay = 20 * 2; // 2 seconds
+
+            super.start();
         }
 
         @Override
@@ -906,6 +925,35 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.samurice.setAttackAction(Action.Attack.NONE); // allow the Samurice to follow target & make attack decisions again
 
             super.stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.summon_delay > 0) {
+                this.summon_delay--;
+            }
+            else {
+                if (this.num_of_clones > 0) {
+                    if (this.samurice.level() instanceof ServerLevel server_level) {
+                        // spawn clone
+                        SamuriceCloneEntity clone = MiscEntityRegistry.SAMURICE_CLONE.get().create(this.samurice.level());
+
+                        if (clone != null) {
+                            clone.setPos(this.samurice.position());
+
+                            server_level.addFreshEntity(clone);
+                        }
+                    }
+
+                    this.num_of_clones--;
+                }
+                else {
+                    // get out of summon pose
+                    this.samurice.triggerAnim("attack_trigger_anim_controller", "summon_reset");
+
+                    this.attack_is_finished = true;
+                }
+            }
         }
 
         @Override
