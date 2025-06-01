@@ -15,6 +15,7 @@ import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMis
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileRenderer;
 import com.github.andre2xu.endgamebosses.bosses.samurice.SamuriceEntity;
 import com.github.andre2xu.endgamebosses.bosses.samurice.SamuriceRenderer;
+import com.github.andre2xu.endgamebosses.bosses.samurice.clone.SamuriceCloneEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonEntity;
 import com.github.andre2xu.endgamebosses.bosses.tragon.TragonRenderer;
 import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleEntity;
@@ -172,6 +173,7 @@ public class EndgameBosses {
             // misc
             event.registerEntityRenderer(MiscEntityRegistry.MAMA_EGG_SAC.get(), MamaEggSacRenderer::new);
             event.registerEntityRenderer(MiscEntityRegistry.SPIDERLING.get(), SpiderlingRenderer::new);
+            event.registerEntityRenderer(MiscEntityRegistry.SAMURICE_CLONE.get(), SamuriceRenderer::new);
 
             // projectiles
             event.registerEntityRenderer(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileRenderer::new);
@@ -199,6 +201,7 @@ public class EndgameBosses {
             // misc
             event.put(MiscEntityRegistry.MAMA_EGG_SAC.get(), MamaEggSacEntity.createAttributes());
             event.put(MiscEntityRegistry.SPIDERLING.get(), SpiderlingEntity.createAttributes());
+            event.put(MiscEntityRegistry.SAMURICE_CLONE.get(), SamuriceCloneEntity.createAttributes());
 
             // projectiles
             event.put(ProjectilesRegistry.MECHALODON_MISSILE.get(), MechalodonMissileEntity.createAttributes());
