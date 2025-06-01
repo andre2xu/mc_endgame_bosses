@@ -367,6 +367,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         */
         this.goalSelector.addGoal(1, new DashAttackGoal(this));
         this.goalSelector.addGoal(1, new CutsAttackGoal(this));
+        this.goalSelector.addGoal(1, new SummonClones(this));
     }
 
     @Override
@@ -864,6 +865,34 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             return !this.block_is_finished && this.samurice.isBlockingAttacks();
+        }
+    }
+
+    private static class SummonClones extends Goal {
+        private final SamuriceEntity samurice;
+        private boolean attack_is_finished = false;
+
+        public SummonClones(SamuriceEntity samurice) {
+            this.samurice = samurice;
+            this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void resetAttack() {
+            this.attack_is_finished = true;
+        }
+
+        @Override
+        public void stop() {
+            this.resetAttack(); // this is needed because the goal instance is re-used which means all the data needs to be reset to allow it to pass the 'canUse' test next time
+
+            this.samurice.setAttackAction(Action.Attack.NONE); // allow the Samurice to follow target & make attack decisions again
+
+            super.stop();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.attack_is_finished && this.samurice.getAttackType() == Action.AttackType.SUMMON && this.samurice.getAttackAction() == Action.Attack.CLONES;
         }
     }
 }
