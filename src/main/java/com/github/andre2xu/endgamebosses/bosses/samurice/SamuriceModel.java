@@ -36,7 +36,7 @@ public class SamuriceModel extends GeoModel<SamuriceEntity> {
         if (current_animation != null) {
             String running_animation_name = current_animation.animation().name();
 
-            if (Objects.equals(running_animation_name, "animation.samurice.swim") || Objects.equals(running_animation_name, "animation.samurice.horizontal_cut") || Objects.equals(running_animation_name, "animation.samurice.diagonal_cut") || Objects.equals(running_animation_name, "animation.samurice.downward_cut")) {
+            if (Objects.equals(running_animation_name, "animation.samurice.swim") || Objects.equals(running_animation_name, "animation.samurice.horizontal_cut") || Objects.equals(running_animation_name, "animation.samurice.diagonal_cut") || Objects.equals(running_animation_name, "animation.samurice.downward_cut") || Objects.equals(running_animation_name, "animation.samurice.dash") || Objects.equals(running_animation_name, "animation.samurice.dash_reset") || Objects.equals(running_animation_name, "animation.samurice.summon") || Objects.equals(running_animation_name, "animation.samurice.summon_reset")) {
                 rotate_head = false;
             }
         }
