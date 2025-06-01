@@ -3,6 +3,8 @@ package com.github.andre2xu.endgamebosses.bosses.samurice;
 import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
 import com.github.andre2xu.endgamebosses.bosses.samurice.clone.SamuriceCloneEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
@@ -899,6 +902,24 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
         }
 
+        private void generateParticles() {
+            // surround body with ice particles
+
+            if (this.samurice.level() instanceof ServerLevel server_level) {
+                Vec3 current_pos = this.samurice.position();
+
+                for (int i=0; i < 3; i++) {
+                    server_level.sendParticles(
+                            new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState()),
+                            current_pos.x, current_pos.y + i, current_pos.z,
+                            3, // particle count
+                            0, 0, 0, // particle offset
+                            0 // speed
+                    );
+                }
+            }
+        }
+
         private void resetAttack() {
             this.summon_delay = 0;
             this.attack_is_finished = false;
@@ -929,6 +950,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void tick() {
+            this.generateParticles();
+
             if (this.summon_delay > 0) {
                 this.summon_delay--;
             }
@@ -936,7 +959,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 if (this.num_of_clones > 0) {
                     if (this.samurice.level() instanceof ServerLevel server_level) {
                         // spawn clone
-                        SamuriceCloneEntity clone = MiscEntityRegistry.SAMURICE_CLONE.get().create(this.samurice.level());
+                        SamuriceCloneEntity clone = MiscEntityRegistry.SAMURICE_CLONE.get().create(server_level);
 
                         if (clone != null) {
                             clone.setPos(this.samurice.position());
