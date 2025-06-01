@@ -30,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -350,6 +352,22 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         return super.hurt(pSource, pAmount);
+    }
+
+    @Override
+    public void die(@NotNull DamageSource pDamageSource) {
+        // get rid of clones upon death
+        if (!(this instanceof SamuriceCloneEntity) && this.level() instanceof ServerLevel server_level) {
+            AABB surrounding_area = this.getBoundingBox().inflate(100);
+
+            List<SamuriceCloneEntity> clones = server_level.getEntitiesOfClass(SamuriceCloneEntity.class, surrounding_area);
+
+            for (SamuriceCloneEntity clone : clones) {
+                clone.kill();
+            }
+        }
+
+        super.die(pDamageSource);
     }
 
     @Override
