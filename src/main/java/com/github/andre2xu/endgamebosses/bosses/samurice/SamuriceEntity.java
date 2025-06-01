@@ -76,7 +76,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         // these determine which attack goal is run
 
         public enum AttackType {
-            MELEE
+            MELEE,
+            SUMMON
         }
 
         public enum Attack {
@@ -84,7 +85,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
             // melee
             DASH,
-            CUTS
+            CUTS,
+
+            // summon
+            CLONES
         }
     }
 
@@ -289,6 +293,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 action_id = 2;
                 this.attack_type = Action.AttackType.MELEE;
                 break;
+            case Action.Attack.CLONES:
+                action_id = 3;
+                this.attack_type = Action.AttackType.SUMMON;
+                break;
             default:
         }
 
@@ -306,6 +314,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 break;
             case 2:
                 attack_action = Action.Attack.CUTS;
+                break;
+            case 3:
+                attack_action = Action.Attack.CLONES;
                 break;
             default:
         }
