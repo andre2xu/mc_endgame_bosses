@@ -569,7 +569,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
+            return this.target != null && this.target.isAlive() && this.samurice.isAlive() && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
         }
 
         private void resetAttack() {
@@ -709,7 +709,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
 
         private boolean canAttack() {
-            return this.target != null && this.target.isAlive() && this.samurice.isWithinGuardDistance(this.target) && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
+            return this.target != null && this.target.isAlive() && this.samurice.isAlive() && this.samurice.isWithinGuardDistance(this.target) && !(this.target instanceof Player player && (player.isCreative() || player.isSpectator())) && !this.samurice.isBlockingAttacks();
         }
 
         private void resetAttack() {
@@ -849,6 +849,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         @Override
         public void tick() {
+            if (!this.samurice.isAlive()) {
+                this.block_is_finished = true;
+                return;
+            }
+
             if (this.block_delay > 0) {
                 this.block_delay--;
             }
