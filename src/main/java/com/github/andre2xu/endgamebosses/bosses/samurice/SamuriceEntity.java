@@ -13,6 +13,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -367,6 +369,9 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             }
         }
 
+        // play death sound
+        this.playSound(SoundEvents.PLAYER_HURT_FREEZE, 1f, 0.4f);
+
         super.die(pDamageSource);
     }
 
@@ -513,6 +518,19 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 this.setIsGuardUp(false);
             }
         }
+    }
+
+
+
+    // SOUNDS
+    @Override
+    protected void playHurtSound(@NotNull DamageSource pSource) {
+        this.playSound(SoundEvents.PLAYER_HURT_FREEZE, 1f, 1f);
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return null;
     }
 
 
