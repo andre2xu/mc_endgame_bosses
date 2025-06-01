@@ -195,19 +195,19 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         return this.entityData.get(HEAD_PITCH);
     }
 
-    public boolean isGuardUp() {
+    protected boolean isGuardUp() {
         return this.entityData.get(GUARD_IS_UP);
     }
 
-    public void setIsGuardUp(boolean isGuardUp) {
+    protected void setIsGuardUp(boolean isGuardUp) {
         this.entityData.set(GUARD_IS_UP, isGuardUp);
     }
 
-    public boolean isBlockingAttacks() {
+    protected boolean isBlockingAttacks() {
         return this.entityData.get(BLOCKING_ATTACKS);
     }
 
-    public void setIsBlockingAttacks(boolean isBlocking) {
+    protected void setIsBlockingAttacks(boolean isBlocking) {
         this.entityData.set(BLOCKING_ATTACKS, isBlocking);
     }
 
@@ -231,11 +231,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
-    private boolean isWithinGuardDistance(LivingEntity entity) {
+    protected boolean isWithinGuardDistance(LivingEntity entity) {
         return this.distanceTo(entity) <= 6;
     }
 
-    private void followTarget(LivingEntity target, double speed) {
+    protected void followTarget(LivingEntity target, double speed) {
         Vec3 vector_to_target = target.position().subtract(this.position());
 
         if (Math.abs(this.getY() - target.getY()) <= 1) {
@@ -265,14 +265,14 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private void applyFrostTo(LivingEntity entity, int duration) {
+    protected void applyFrostTo(LivingEntity entity, int duration) {
         int frost_effect_duration = 20 * duration; // seconds
 
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, frost_effect_duration));
         entity.setTicksFrozen(frost_effect_duration);
     }
 
-    private void setAttackAction(Action.Attack attackAction) {
+    protected void setAttackAction(Action.Attack attackAction) {
         int action_id = 0; // none
 
         switch (attackAction) {
@@ -290,7 +290,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         this.entityData.set(ATTACK_ACTION, action_id);
     }
 
-    private Action.Attack getAttackAction() {
+    protected Action.Attack getAttackAction() {
         Action.Attack attack_action = Action.Attack.NONE;
 
         int action_id = this.entityData.get(ATTACK_ACTION);
@@ -308,7 +308,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         return attack_action;
     }
 
-    public Action.AttackType getAttackType() {
+    protected Action.AttackType getAttackType() {
         return this.attack_type;
     }
 
@@ -460,7 +460,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // CONTROLS
-    private static class SamuriceLookControl extends LookControl {
+    protected static class SamuriceLookControl extends LookControl {
         public SamuriceLookControl(Mob pMob) {
             super(pMob);
         }
@@ -494,7 +494,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
 
     // CUSTOM GOALS
-    private static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
+    protected static class SelectTargetGoal extends NearestAttackableTargetGoal<Player> {
         public SelectTargetGoal(Mob pMob) {
             // this is a custom constructor made to reduce the amount of parameters. It doesn't override any constructor from the parent
 
@@ -515,7 +515,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private static class DashAttackGoal extends Goal {
+    protected static class DashAttackGoal extends Goal {
         private final SamuriceEntity samurice;
         private LivingEntity target = null;
         private boolean has_dashed = false;
@@ -620,7 +620,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private static class CutsAttackGoal extends Goal {
+    protected static class CutsAttackGoal extends Goal {
         private final SamuriceEntity samurice;
         private LivingEntity target = null;
         private int num_of_cuts = 0;
@@ -759,7 +759,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         }
     }
 
-    private static class BlockGoal extends Goal {
+    protected static class BlockGoal extends Goal {
         private final SamuriceEntity samurice;
         private int block_duration = 0;
         private int block_delay = 0;
