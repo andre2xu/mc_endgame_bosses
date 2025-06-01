@@ -6,6 +6,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +35,20 @@ public class SamuriceCloneEntity extends SamuriceEntity {
 
     // AI
     @Override
-    protected void registerGoals() {}
+    protected void registerGoals() {
+        // target the player that hurt the clone
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
+
+        // find and select a target
+        this.targetSelector.addGoal(3, new SelectTargetGoal(this));
+
+        // handle blocking (see SamuriceEntity for the goal definition)
+        this.goalSelector.addGoal(1, new BlockGoal(this));
+
+        // handle attacks (see SamuriceEntity for the goal definitions)
+        this.goalSelector.addGoal(1, new DashAttackGoal(this));
+        this.goalSelector.addGoal(1, new CutsAttackGoal(this));
+    }
 
     @Override
     public void aiStep() {}
