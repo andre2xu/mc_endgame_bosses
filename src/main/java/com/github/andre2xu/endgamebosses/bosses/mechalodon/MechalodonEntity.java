@@ -1007,7 +1007,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
 
                         this.target.knockback(
-                                2f,
+                                4f,
                                 current_pos.x - target_pos.x,
                                 current_pos.z - target_pos.z
                         );
