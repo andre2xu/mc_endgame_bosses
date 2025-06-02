@@ -64,7 +64,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     // GENERAL
     protected int chase_delay = 0;
-    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+    private Action.AttackType attack_type = Action.AttackType.MELEE;
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -78,7 +78,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Samurice's head in the model class
     private static final EntityDataAccessor<Boolean> GUARD_IS_UP = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BLOCKING_ATTACKS = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(SamuriceEntity.class, EntityDataSerializers.INT);
 
     // ACTIONS
     public enum Action {;
@@ -97,7 +97,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             CUTS,
 
             // summon
-            CLONES
+            CLONES // only in phase 2
         }
     }
 
@@ -395,7 +395,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         /*
         HOW ATTACKING WORKS:
-        - There are two types: MELEE and RANGE (see Action.AttackType enums)
+        - There are two types: MELEE and SUMMON (see Action.AttackType enums)
         - All attack goals have Minecraft's 'TARGET' flag set which means they will conflict with the target selector goals. The priority of 1 means they will be executed instead of a target selector goal
         - Only one attack goal can run at a time so it doesn't matter that they all share the same priority number. The priority's only purpose is to stop the target selector goals when an attack goal is run
         - To determine which attack goal is run, their 'canUse' methods check which Action enums are active. These enums are set/replaced in the aiStep method
