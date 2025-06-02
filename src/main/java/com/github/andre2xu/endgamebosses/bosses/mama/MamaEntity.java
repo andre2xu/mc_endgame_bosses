@@ -67,7 +67,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     // GENERAL
     private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings increment/decrement Mama's child count so they need this id to find the correct Mama instance
     private final PartEntity<?>[] hitboxes;
-    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+    private Action.AttackType attack_type = Action.AttackType.MELEE;
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -79,7 +79,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Integer> CHILD_COUNT = SynchedEntityData.defineId(MamaEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MamaEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MamaEntity.class, EntityDataSerializers.INT);
 
     // ACTIONS
     public enum Action {;
@@ -94,11 +94,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             NONE,
 
             // melee
-            CHARGE,
-            LEAP_FORWARD,
+            CHARGE, // only in phase 2
+            LEAP_FORWARD, // only in phase 2
 
             // range
-            WEB_SHOOT
+            WEB_SHOOT // only in phase 1
         }
     }
 
