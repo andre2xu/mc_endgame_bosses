@@ -1143,8 +1143,14 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                 boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                 if (has_collided_with_target && this.mechalodon.distanceTo(this.target) <= 3) {
-                    // damage target
+                    // damage & knock back target
                     this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+
+                    this.target.knockback(
+                            2f,
+                            current_pos.x - target_pos.x,
+                            current_pos.z - target_pos.z
+                    );
 
                     // play sound for colliding
                     this.mechalodon.playMeleeAttackSound(5f, 1f);
