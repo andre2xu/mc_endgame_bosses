@@ -59,6 +59,7 @@ public class HitboxEntity extends PartEntity<PathfinderMob> {
     @Override
     public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
         if (this.parent instanceof TragonEntity tragon) {
+            // this block is executed when the neck of a Tragon head is attacked
             return tragon.hurt(this.getHitboxName(), pSource, pAmount);
         }
 
