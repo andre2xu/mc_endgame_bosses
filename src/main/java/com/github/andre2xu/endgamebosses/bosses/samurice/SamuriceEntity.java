@@ -427,95 +427,101 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         LivingEntity target = this.getTarget();
 
         if (target != null) {
-            boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
+            if (!target.isFallFlying()) {
+                boolean is_attacking = this.getAttackAction() != Action.Attack.NONE;
 
-            if (!is_attacking && !this.isBlockingAttacks()) {
-                this.getLookControl().setLookAt(target);
+                if (!is_attacking && !this.isBlockingAttacks()) {
+                    this.getLookControl().setLookAt(target);
 
-                Vec3 target_pos = target.position();
-                Vec3 current_pos = this.position();
+                    Vec3 target_pos = target.position();
+                    Vec3 current_pos = this.position();
 
-                boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
+                    boolean same_xz_position_as_target = Math.abs(current_pos.x - target_pos.x) <= 0.5 && Math.abs(current_pos.z - target_pos.z) <= 0.5;
 
-                if (!this.isWithinGuardDistance(target)) {
-                    // put guard down before running
-                    if (this.isGuardUp()) {
-                        this.triggerAnim("movement_trigger_anim_controller", "guard_down");
-                        this.setIsGuardUp(false);
-                    }
-
-                    // run towards target
-                    if (this.chase_delay > 0) {
-                        this.chase_delay--;
-                    }
-                    else {
-                        this.followTarget(target, 0.6);
-
-                        if (!same_xz_position_as_target) {
-                            if (this.isInFluidType() && this.isUnderWater()) {
-                                this.triggerAnim("movement_trigger_anim_controller", "swim");
-                            }
-                            else {
-                                this.triggerAnim("movement_trigger_anim_controller", "run");
-                            }
+                    if (!this.isWithinGuardDistance(target)) {
+                        // put guard down before running
+                        if (this.isGuardUp()) {
+                            this.triggerAnim("movement_trigger_anim_controller", "guard_down");
+                            this.setIsGuardUp(false);
                         }
 
-                        // decide whether to dash towards target or not
-                        boolean should_dash_towards_target = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
-
-                        if (should_dash_towards_target) {
-                            this.setAttackAction(Action.Attack.DASH);
-                        }
-                    }
-                }
-                else {
-                    // OBJECTIVE: When close to the target, put guard up and slowly move towards them
-
-                    if (!this.isGuardUp()) {
-                        this.triggerAnim("movement_trigger_anim_controller", "guard_up");
-                        this.setIsGuardUp(true);
-
-                        this.chase_delay = 20; // let target move far away for 1 second and then run towards them (this is for later)
-                    }
-                    else {
-                        if (this.distanceTo(target) > 3) {
-                            this.followTarget(target, 0.2);
-
-                            if (!same_xz_position_as_target) {
-                                this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
-                            }
+                        // run towards target
+                        if (this.chase_delay > 0) {
+                            this.chase_delay--;
                         }
                         else {
-                            // hold guard position when very close to the target
-                            this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+                            this.followTarget(target, 0.6);
 
-                            // decide whether to attack or not
-                            boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
-
-                            if (should_attack) {
-                                int boss_phase = this.entityData.get(BOSS_PHASE);
-
-                                if (boss_phase == 1) {
-                                    this.setAttackAction(Action.Attack.CUTS);
+                            if (!same_xz_position_as_target) {
+                                if (this.isInFluidType() && this.isUnderWater()) {
+                                    this.triggerAnim("movement_trigger_anim_controller", "swim");
                                 }
-                                else if (boss_phase == 2) {
-                                    int random_number = new Random().nextInt(1, 4);
+                                else {
+                                    this.triggerAnim("movement_trigger_anim_controller", "run");
+                                }
+                            }
 
-                                    switch (random_number) {
-                                        case 1:
-                                            this.setAttackAction(Action.Attack.CUTS);
-                                            break;
-                                        case 2:
-                                        case 3:
-                                            this.setAttackAction(Action.Attack.CLONES);
-                                            break;
-                                        default:
+                            // decide whether to dash towards target or not
+                            boolean should_dash_towards_target = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
+
+                            if (should_dash_towards_target) {
+                                this.setAttackAction(Action.Attack.DASH);
+                            }
+                        }
+                    }
+                    else {
+                        // OBJECTIVE: When close to the target, put guard up and slowly move towards them
+
+                        if (!this.isGuardUp()) {
+                            this.triggerAnim("movement_trigger_anim_controller", "guard_up");
+                            this.setIsGuardUp(true);
+
+                            this.chase_delay = 20; // let target move far away for 1 second and then run towards them (this is for later)
+                        }
+                        else {
+                            if (this.distanceTo(target) > 3) {
+                                this.followTarget(target, 0.2);
+
+                                if (!same_xz_position_as_target) {
+                                    this.triggerAnim("movement_trigger_anim_controller", "guard_up_move");
+                                }
+                            }
+                            else {
+                                // hold guard position when very close to the target
+                                this.triggerAnim("movement_trigger_anim_controller", "guard_up_stop_moving");
+
+                                // decide whether to attack or not
+                                boolean should_attack = new Random().nextInt(1, 11) == 1; // 1 in 10 chances
+
+                                if (should_attack) {
+                                    int boss_phase = this.entityData.get(BOSS_PHASE);
+
+                                    if (boss_phase == 1) {
+                                        this.setAttackAction(Action.Attack.CUTS);
+                                    }
+                                    else if (boss_phase == 2) {
+                                        int random_number = new Random().nextInt(1, 4);
+
+                                        switch (random_number) {
+                                            case 1:
+                                                this.setAttackAction(Action.Attack.CUTS);
+                                                break;
+                                            case 2:
+                                            case 3:
+                                                this.setAttackAction(Action.Attack.CLONES);
+                                                break;
+                                            default:
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+            else {
+                // watch target
+                this.getLookControl().setLookAt(target);
             }
         }
         else {
