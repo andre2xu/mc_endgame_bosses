@@ -80,7 +80,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private final String lightning_head_neck_id = "lightning_head_neck";
     private final String ice_head_neck_id = "ice_head_neck";
     private final HashMap<String, TragonHead> heads = new HashMap<>();
-    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+    private Action.AttackType attack_type = Action.AttackType.MELEE;
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -99,7 +99,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Vector3f> ICE_HEAD_MOUTH_POSITION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Float> HEAD_PITCH = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Tragon's heads in the model class
     private static final EntityDataAccessor<Boolean> IS_HIDING_IN_SHELL = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.BOOLEAN); // this is used in the Tragon's model class as a flag
-    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(TragonEntity.class, EntityDataSerializers.INT);
 
     // ACTIONS
     public enum Action {;
@@ -118,9 +118,9 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             JUMP_ON_TARGET,
 
             // range
-            ONE_HEAD_ATTACK, // only used when 1 head remains
+            ONE_HEAD_ATTACK,
             TWO_HEAD_ATTACK,
-            THREE_HEAD_ATTACK // in phase 2 only
+            THREE_HEAD_ATTACK
         }
     }
 
