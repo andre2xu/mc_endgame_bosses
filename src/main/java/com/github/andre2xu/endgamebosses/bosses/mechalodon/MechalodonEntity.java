@@ -71,7 +71,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private Iterator<Integer> circle_point_angles_array_iterator;
     private int num_of_circle_points_to_visit = 0;
     private Vec3 current_circle_point_to_visit = null;
-    private Action.AttackType attack_type = Action.AttackType.MELEE; // this doesn't need to be synched between client and server so don't store it in an entity data accessor
+    private Action.AttackType attack_type = Action.AttackType.MELEE;
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -79,12 +79,12 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
             BossEvent.BossBarColor.RED,
             BossEvent.BossBarOverlay.NOTCHED_12
     );
-    private int boss_phase = 1; // only needed on the server side. No need to save to persistent storage since it's tied to the boss health which is already saved
+    private int boss_phase = 1;
 
     // DATA ACCESSORS
     private static final EntityDataAccessor<Float> BODY_PITCH = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.FLOAT); // this is for adjusting the pitch of the Mechalodon's body in the model class
-    private static final EntityDataAccessor<Integer> MOVE_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
-    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT); // actions need to be synched between client and server for animations
+    private static final EntityDataAccessor<Integer> MOVE_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ATTACK_ACTION = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Vector3f> ANCHOR_POINT = SynchedEntityData.defineId(MechalodonEntity.class, EntityDataSerializers.VECTOR3); // this is used for circling around the target. It is the target's position when the circling first starts
 
     // model bone positions
