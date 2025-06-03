@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
@@ -30,7 +29,7 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                     new LootTableIdCondition.Builder(loot_table_file_path)
                             .and(LootItemRandomChanceCondition.randomChance(drop.probability))
                             .build()
-            }, drop.item);
+            }, drop.item, drop.min, drop.max);
 
             // create loot modifier JSON file
             this.add(bossRegistryName + "_drop_" + drop.name, new_drop);
@@ -44,6 +43,6 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
 
 
 
-    private record BossLoot(String name, Item item, float probability) {
+    private record BossLoot(String name, Item item, float probability, int min, int max) {
     }
 }
