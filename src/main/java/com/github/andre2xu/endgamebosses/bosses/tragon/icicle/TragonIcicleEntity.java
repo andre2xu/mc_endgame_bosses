@@ -102,6 +102,11 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
         // immune to fall damage
     }

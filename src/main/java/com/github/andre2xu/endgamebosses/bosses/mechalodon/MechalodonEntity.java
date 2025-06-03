@@ -412,6 +412,11 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
     public boolean fireImmune() {
         return true;
     }

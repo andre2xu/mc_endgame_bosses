@@ -105,6 +105,11 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
     // AI
     @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
     @Override
