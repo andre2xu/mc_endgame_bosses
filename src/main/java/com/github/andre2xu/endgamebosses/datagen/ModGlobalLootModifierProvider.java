@@ -39,7 +39,15 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
 
     @Override
     protected void start(HolderLookup.@NotNull Provider registries) {
-
+        this.addBossDrops("mechalodon", new BossLoot[] {
+                new BossLoot("ancient_debris", new ItemStack(Items.ANCIENT_DEBRIS), 1, 1, 4),
+                new BossLoot("iron", new ItemStack(Items.IRON_INGOT), 1, 8, 64),
+                new BossLoot("redstone", new ItemStack(Items.REDSTONE), 1, 32, 64),
+                new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.7f, 12, 32),
+                new BossLoot("gold", new ItemStack(Items.GOLD_INGOT), 0.7f, 12, 32),
+                new BossLoot("diamond", new ItemStack(Items.DIAMOND), 0.5f, 6, 20),
+                new BossLoot("wither_skeleton_skull", new ItemStack(Items.WITHER_SKELETON_SKULL), 0.3f, 1, 2)
+        });
     }
 
 
