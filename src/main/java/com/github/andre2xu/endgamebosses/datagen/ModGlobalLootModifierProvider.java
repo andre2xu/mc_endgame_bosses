@@ -5,7 +5,8 @@ import com.github.andre2xu.endgamebosses.bosses.loot.BossLootModifier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
@@ -43,6 +44,6 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
 
 
 
-    private record BossLoot(String name, Item item, float probability, int min, int max) {
+    private record BossLoot(String name, ItemStack item, float probability, int min, int max) {
     }
 }
