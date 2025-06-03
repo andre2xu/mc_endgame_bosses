@@ -7,8 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -61,7 +60,16 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                 new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.7f, 12, 32),
                 new BossLoot("gold", new ItemStack(Items.GOLD_INGOT), 0.7f, 12, 32),
                 new BossLoot("diamond", new ItemStack(Items.DIAMOND), 0.5f, 6, 20),
+                new BossLoot("iron_sword", new ItemStack(Items.IRON_SWORD), 0.4f, 1, 1),
+                new BossLoot("iron_pickaxe", new ItemStack(Items.IRON_PICKAXE), 0.4f, 1, 1),
+                new BossLoot("iron_shovel", new ItemStack(Items.IRON_SHOVEL), 0.4f, 1, 1),
+                new BossLoot("iron_axe", new ItemStack(Items.IRON_AXE), 0.4f, 1, 1),
+                new BossLoot("iron_helmet", new ItemStack(Items.IRON_HELMET), 0.3f, 1, 1),
+                new BossLoot("iron_chestplate", new ItemStack(Items.IRON_CHESTPLATE), 0.3f, 1, 1),
+                new BossLoot("iron_leggings", new ItemStack(Items.IRON_LEGGINGS), 0.3f, 1, 1),
+                new BossLoot("iron_boots", new ItemStack(Items.IRON_BOOTS), 0.3f, 1, 1),
                 new BossLoot("wither_skeleton_skull", new ItemStack(Items.WITHER_SKELETON_SKULL), 0.3f, 1, 2),
+                new BossLoot("nether_star", new ItemStack(Items.NETHER_STAR), 0.1f, 1, 1),
                 new BossLoot("mending", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.MENDING, 1)
                 }), 0.1f, 1, 1)
