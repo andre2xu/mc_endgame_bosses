@@ -763,7 +763,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 attack_damage = switch (difficulty) {
                     case Difficulty.EASY -> 15; // 1 heart
                     case Difficulty.NORMAL -> 20; // 4 hearts
-                    case Difficulty.HARD -> 23; // 9 hearts
+                    case Difficulty.HARD -> 20; // 6.5 hearts
                     default -> 0;
                 };
             }
