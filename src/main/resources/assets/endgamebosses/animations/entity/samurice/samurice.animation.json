@@ -1484,6 +1484,17 @@
 					"scale": {
 						"vector": [1, 1, 1]
 					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
 				}
 			}
 		},
@@ -1575,6 +1586,17 @@
 				"right_leg": {
 					"rotation": {
 						"vector": [-15, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [0, 0, 0]
 					},
 					"position": {
 						"vector": [0, 0, 0]
