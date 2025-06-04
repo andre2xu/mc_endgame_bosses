@@ -2,7 +2,9 @@ package com.github.andre2xu.endgamebosses.bosses.samurice.clone;
 
 import com.github.andre2xu.endgamebosses.bosses.samurice.SamuriceEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -48,6 +50,24 @@ public class SamuriceCloneEntity extends SamuriceEntity {
 
 
     // AI
+    @Override
+    protected int getBaseExperienceReward() {
+        int xp = 0;
+
+        if (this.level() instanceof ServerLevel server_level) {
+            Difficulty difficulty = server_level.getDifficulty();
+
+            xp = switch (difficulty) {
+                case Difficulty.EASY -> 100;
+                case Difficulty.NORMAL -> 200;
+                case Difficulty.HARD -> 300;
+                default -> xp;
+            };
+        }
+
+        return xp;
+    }
+
     @Override
     protected boolean shouldDropLoot() {
         return false;
