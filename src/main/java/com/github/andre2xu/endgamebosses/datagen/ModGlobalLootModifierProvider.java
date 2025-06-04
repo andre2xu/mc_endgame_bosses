@@ -101,9 +101,9 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
         this.addBossDrops("tragon", new BossLoot[] {
                 new BossLoot("ancient_debris", new ItemStack(Items.ANCIENT_DEBRIS), 1, 2, 6),
                 new BossLoot("iron", new ItemStack(Items.IRON_INGOT), 1, 16, 32),
-                new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.5f, 16, 64),
-                new BossLoot("gold", new ItemStack(Items.GOLD_INGOT), 0.7f, 16, 64),
                 new BossLoot("diamond", new ItemStack(Items.DIAMOND), 0.8f, 16, 64),
+                new BossLoot("gold", new ItemStack(Items.GOLD_INGOT), 0.7f, 16, 64),
+                new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.5f, 16, 64),
                 new BossLoot("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), 0.4f, 1, 1),
                 new BossLoot("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), 0.4f, 1, 1),
                 new BossLoot("diamond_shovel", new ItemStack(Items.DIAMOND_SHOVEL), 0.4f, 1, 1),
