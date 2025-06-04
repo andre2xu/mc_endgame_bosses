@@ -625,14 +625,15 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private boolean has_dashed = false;
         private int pose_duration = 0; // how long in ticks the Samurice will stay in the dash pose at the end of the attack
-        private final float attack_damage;
         private boolean attack_is_finished = false;
 
         public DashAttackGoal(SamuriceEntity samurice) {
             this.samurice = samurice;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
 
-            // set attack damage (relative to full un-enchanted diamond armor)
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
             float attack_damage = 0;
 
             if (this.samurice.level() instanceof ServerLevel server_level) {
@@ -645,8 +646,10 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                     default -> 0;
                 };
             }
-            
-            this.attack_damage = attack_damage;
+
+            // damage target & apply a frost effect
+            this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), attack_damage);
+            this.samurice.applyFrostTo(this.target, 5);
         }
 
         private boolean canAttack() {
@@ -713,9 +716,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
                     this.has_dashed = true;
 
-                    // damage target & apply a frost effect
-                    this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
-                    this.samurice.applyFrostTo(this.target, 5);
+                    this.hurtTarget();
                 }
 
                 if (this.pose_duration > 0) {
