@@ -94,7 +94,7 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                 }), 0.1f, 1, 1),
                 new BossLoot("channeling", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.CHANNELING, 1)
-                }), 0.1f, 1, 1),
+                }), 0.1f, 1, 1)
         });
 
         // TRAGON
