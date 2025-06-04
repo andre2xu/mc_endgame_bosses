@@ -75,6 +75,12 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                 new BossLoot("blast_protection_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.BLAST_PROTECTION, 3)
                 }), 0.2f, 1, 1),
+                new BossLoot("protection_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PROTECTION, 3)
+                }), 0.2f, 1, 1),
+                new BossLoot("protection_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PROTECTION, 4)
+                }), 0.1f, 1, 1),
                 new BossLoot("nether_star", new ItemStack(Items.NETHER_STAR), 0.1f, 1, 1),
                 new BossLoot("mending", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.MENDING, 1)
