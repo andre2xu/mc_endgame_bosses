@@ -241,6 +241,7 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                 new BossLoot("diamond", new ItemStack(Items.DIAMOND), 0.7f, 16, 32),
                 new BossLoot("spider_eye", new ItemStack(Items.SPIDER_EYE), 0.7f, 1, 6),
                 new BossLoot("cobweb", new ItemStack(Items.COBWEB), 0.7f, 4, 20),
+                new BossLoot("rotten_flesh", new ItemStack(Items.ROTTEN_FLESH), 0.7f, 8, 64),
                 new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.6f, 16, 64),
                 new BossLoot("bane_of_arthropods_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.BANE_OF_ARTHROPODS, 4)
