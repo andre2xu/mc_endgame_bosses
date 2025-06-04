@@ -54,7 +54,6 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     TODO:
     - Increase MAX_HEALTH attribute
-    - Increase damage dealt to target from dashing
     - Increase damage dealt to target from cuts
 
     OPTIONAL:
@@ -639,12 +638,28 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private boolean has_dashed = false;
         private int pose_duration = 0; // how long in ticks the Samurice will stay in the dash pose at the end of the attack
-        private final float attack_damage = 1f; // CHANGE LATER
+        private final float attack_damage;
         private boolean attack_is_finished = false;
 
         public DashAttackGoal(SamuriceEntity samurice) {
             this.samurice = samurice;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+
+            // set attack damage (relative to full un-enchanted diamond armor)
+            float attack_damage = 0;
+
+            if (this.samurice.level() instanceof ServerLevel server_level) {
+                Difficulty difficulty = server_level.getDifficulty();
+
+                attack_damage = switch (difficulty) {
+                    case Difficulty.EASY -> 26; // 2 hearts
+                    case Difficulty.NORMAL -> 25; // 5.5 hearts
+                    case Difficulty.HARD -> 25; // 10 hearts
+                    default -> 0;
+                };
+            }
+            
+            this.attack_damage = attack_damage;
         }
 
         private boolean canAttack() {
