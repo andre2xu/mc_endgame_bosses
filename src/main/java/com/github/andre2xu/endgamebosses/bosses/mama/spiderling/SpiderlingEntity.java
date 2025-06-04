@@ -3,8 +3,10 @@ package com.github.andre2xu.endgamebosses.bosses.mama.spiderling;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -104,6 +106,24 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
 
     // AI
+    @Override
+    protected int getBaseExperienceReward() {
+        int xp = 0;
+
+        if (this.level() instanceof ServerLevel server_level) {
+            Difficulty difficulty = server_level.getDifficulty();
+
+            xp = switch (difficulty) {
+                case Difficulty.EASY -> 500;
+                case Difficulty.NORMAL -> 1000;
+                case Difficulty.HARD -> 1500;
+                default -> xp;
+            };
+        }
+
+        return xp;
+    }
+    
     @Override
     protected boolean shouldDespawnInPeaceful() {
         return true;
