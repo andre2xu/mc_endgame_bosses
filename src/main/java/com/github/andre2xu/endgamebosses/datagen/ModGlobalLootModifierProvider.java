@@ -219,6 +219,119 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                         new CustomEnchantment(Enchantments.FORTUNE, 3)
                 }), 0.05f, 1, 1)
         });
+
+        // MAMA
+        this.addBossDrops("mama", new BossLoot[] {
+                new BossLoot("ancient_debris", new ItemStack(Items.ANCIENT_DEBRIS), 1, 2, 4),
+                new BossLoot("iron", new ItemStack(Items.IRON_INGOT), 0.8f, 8, 32),
+                new BossLoot("gold", new ItemStack(Items.GOLD_INGOT), 0.7f, 8, 16),
+                new BossLoot("diamond", new ItemStack(Items.DIAMOND), 0.7f, 16, 32),
+                new BossLoot("emerald", new ItemStack(Items.EMERALD), 0.6f, 16, 64),
+                new BossLoot("bane_of_arthropods_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.BANE_OF_ARTHROPODS, 4)
+                }), 0.6f, 1, 1),
+                new BossLoot("silk_touch", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.SILK_TOUCH, 1)
+                }), 0.6f, 1, 1),
+                new BossLoot("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), 0.5f, 1, 1),
+                new BossLoot("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), 0.5f, 1, 1),
+                new BossLoot("diamond_shovel", new ItemStack(Items.DIAMOND_SHOVEL), 0.5f, 1, 1),
+                new BossLoot("diamond_axe", new ItemStack(Items.DIAMOND_AXE), 0.5f, 1, 1),
+                new BossLoot("diamond_helmet", new ItemStack(Items.DIAMOND_HELMET), 0.5f, 1, 1),
+                new BossLoot("diamond_chestplate", new ItemStack(Items.DIAMOND_CHESTPLATE), 0.4f, 1, 1),
+                new BossLoot("diamond_leggings", new ItemStack(Items.DIAMOND_LEGGINGS), 0.4f, 1, 1),
+                new BossLoot("diamond_boots", new ItemStack(Items.DIAMOND_BOOTS), 0.4f, 1, 1),
+                new BossLoot("bane_of_arthropods_5", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.BANE_OF_ARTHROPODS, 5)
+                }), 0.4f, 1, 1),
+                new BossLoot("mending", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.MENDING, 1)
+                }), 0.4f, 1, 1),
+                new BossLoot("looting_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.LOOTING, 2)
+                }), 0.4f, 1, 1),
+                new BossLoot("feather_falling_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.FEATHER_FALLING, 3)
+                }), 0.4f, 1, 1),
+                new BossLoot("protection_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PROTECTION, 3)
+                }), 0.4f, 1, 1),
+                new BossLoot("thorns_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.THORNS, 3)
+                }), 0.4f, 1, 1),
+                new BossLoot("knockback_1", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.KNOCKBACK, 1)
+                }), 0.4f, 1, 1),
+                new BossLoot("sweeping_edge_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.SWEEPING_EDGE, 2)
+                }), 0.4f, 1, 1),
+                new BossLoot("feather_falling_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.FEATHER_FALLING, 4)
+                }), 0.3f, 1, 1),
+                new BossLoot("sweeping_edge_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.SWEEPING_EDGE, 3)
+                }), 0.3f, 1, 1),
+                new BossLoot("looting_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.LOOTING, 3)
+                }), 0.3f, 1, 1),
+                new BossLoot("protection_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PROTECTION, 4)
+                }), 0.3f, 1, 1),
+                new BossLoot("thorns_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.THORNS, 4)
+                }), 0.3f, 1, 1),
+                new BossLoot("fire_aspect_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.FIRE_ASPECT, 2)
+                }), 0.3f, 1, 1),
+                new BossLoot("unbreaking_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.UNBREAKING, 2)
+                }), 0.3f, 1, 1),
+                new BossLoot("flame", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.FLAME, 1)
+                }), 0.3f, 1, 1),
+                new BossLoot("infinity", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.INFINITY, 1)
+                }), 0.3f, 1, 1),
+                new BossLoot("multishot", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.MULTISHOT, 1)
+                }), 0.3f, 1, 1),
+                new BossLoot("quick_charge_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.QUICK_CHARGE, 2)
+                }), 0.3f, 1, 1),
+                new BossLoot("netherite_sword", new ItemStack(Items.NETHERITE_SWORD), 0.3f, 1, 1),
+                new BossLoot("netherite_pickaxe", new ItemStack(Items.NETHERITE_PICKAXE), 0.3f, 1, 1),
+                new BossLoot("netherite_helmet", new ItemStack(Items.NETHERITE_HELMET), 0.3f, 1, 1),
+                new BossLoot("netherite_chestplate", new ItemStack(Items.NETHERITE_CHESTPLATE), 0.2f, 1, 1),
+                new BossLoot("netherite_leggings", new ItemStack(Items.NETHERITE_LEGGINGS), 0.2f, 1, 1),
+                new BossLoot("netherite_boots", new ItemStack(Items.NETHERITE_BOOTS), 0.2f, 1, 1),
+                new BossLoot("unbreaking_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.UNBREAKING, 3)
+                }), 0.2f, 1, 1),
+                new BossLoot("sharpness_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.SHARPNESS, 4)
+                }), 0.2f, 1, 1),
+                new BossLoot("piercing_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PIERCING, 3)
+                }), 0.2f, 1, 1),
+                new BossLoot("power_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.POWER, 4)
+                }), 0.2f, 1, 1),
+                new BossLoot("punch_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PUNCH, 2)
+                }), 0.2f, 1, 1),
+                new BossLoot("sharpness_5", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.SHARPNESS, 5)
+                }), 0.1f, 1, 1),
+                new BossLoot("piercing_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.PIERCING, 4)
+                }), 0.1f, 1, 1),
+                new BossLoot("power_5", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.POWER, 5)
+                }), 0.1f, 1, 1),
+                new BossLoot("quick_charge_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.QUICK_CHARGE, 3)
+                }), 0.1f, 1, 1)
+        });
     }
 
 
