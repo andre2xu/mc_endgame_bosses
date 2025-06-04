@@ -23,6 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
@@ -614,6 +615,24 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         }
 
         return is_hurt;
+    }
+
+    @Override
+    protected int getBaseExperienceReward() {
+        int xp = 0;
+
+        if (this.level() instanceof ServerLevel server_level) {
+            Difficulty difficulty = server_level.getDifficulty();
+
+            xp = switch (difficulty) {
+                case Difficulty.EASY -> 1000;
+                case Difficulty.NORMAL -> 3000;
+                case Difficulty.HARD -> 6000;
+                default -> xp;
+            };
+        }
+
+        return xp;
     }
 
     @Override
