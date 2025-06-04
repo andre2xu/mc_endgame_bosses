@@ -49,6 +49,11 @@ public class SamuriceCloneEntity extends SamuriceEntity {
 
     // AI
     @Override
+    protected boolean shouldDropLoot() {
+        return false;
+    }
+
+    @Override
     protected void registerGoals() {
         // target the player that hurt the clone
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
