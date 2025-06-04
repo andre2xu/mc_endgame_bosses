@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -335,6 +336,24 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     protected Action.AttackType getAttackType() {
         return this.attack_type;
+    }
+
+    @Override
+    protected int getBaseExperienceReward() {
+        int xp = 0;
+
+        if (this.level() instanceof ServerLevel server_level) {
+            Difficulty difficulty = server_level.getDifficulty();
+
+            xp = switch (difficulty) {
+                case Difficulty.EASY -> 500;
+                case Difficulty.NORMAL -> 1000;
+                case Difficulty.HARD -> 2000;
+                default -> xp;
+            };
+        }
+
+        return xp;
     }
 
     @Override
