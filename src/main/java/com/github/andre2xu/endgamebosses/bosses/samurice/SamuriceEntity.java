@@ -362,6 +362,12 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
+        // non-organic so immune to all potions
+        return false;
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
     @Override
