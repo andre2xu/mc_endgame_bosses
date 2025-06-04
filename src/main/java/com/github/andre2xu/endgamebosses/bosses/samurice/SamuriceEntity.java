@@ -748,14 +748,15 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int num_of_cuts = 0;
         private int cut_duration = 0; // in ticks. This determines how long until the Samurice can follow the target again
-        private final float attack_damage;
         private boolean attack_is_finished = false;
 
         public CutsAttackGoal(SamuriceEntity samurice) {
             this.samurice = samurice;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
 
-            // set attack damage (relative to full un-enchanted diamond armor)
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
             float attack_damage = 0;
 
             if (this.samurice.level() instanceof ServerLevel server_level) {
@@ -769,7 +770,11 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
                 };
             }
 
-            this.attack_damage = attack_damage;
+            // damage target & apply a frost effect
+            if (this.targetIsWithinWeaponReach()) {
+                this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), attack_damage);
+                this.samurice.applyFrostTo(this.target, 5);
+            }
         }
 
         private boolean targetIsWithinWeaponReach() {
@@ -798,11 +803,8 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
             // play sword swing sound
             this.samurice.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1f, 1f);
 
-            // damage target & apply a frost effect
-            if (this.targetIsWithinWeaponReach()) {
-                this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), this.attack_damage);
-                this.samurice.applyFrostTo(this.target, 5);
-            }
+            // apply damage & status effect(s) to target
+            this.hurtTarget();
 
             // reduce number of cuts left
             if (this.num_of_cuts > 0) {
