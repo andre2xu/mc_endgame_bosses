@@ -69,10 +69,25 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
                 new BossLoot("iron_leggings", new ItemStack(Items.IRON_LEGGINGS), 0.3f, 1, 1),
                 new BossLoot("iron_boots", new ItemStack(Items.IRON_BOOTS), 0.3f, 1, 1),
                 new BossLoot("wither_skeleton_skull", new ItemStack(Items.WITHER_SKELETON_SKULL), 0.3f, 1, 2),
+                new BossLoot("unbreaking_2", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.UNBREAKING, 2)
+                }), 0.2f, 1, 1),
+                new BossLoot("blast_protection_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.BLAST_PROTECTION, 3)
+                }), 0.2f, 1, 1),
                 new BossLoot("nether_star", new ItemStack(Items.NETHER_STAR), 0.1f, 1, 1),
                 new BossLoot("mending", this.createEnchantedBook(registries, new CustomEnchantment[] {
                         new CustomEnchantment(Enchantments.MENDING, 1)
-                }), 0.1f, 1, 1)
+                }), 0.1f, 1, 1),
+                new BossLoot("unbreaking_3", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.UNBREAKING, 3)
+                }), 0.1f, 1, 1),
+                new BossLoot("blast_protection_4", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.BLAST_PROTECTION, 4)
+                }), 0.1f, 1, 1),
+                new BossLoot("channeling", this.createEnchantedBook(registries, new CustomEnchantment[] {
+                        new CustomEnchantment(Enchantments.CHANNELING, 1)
+                }), 0.1f, 1, 1),
         });
     }
 
