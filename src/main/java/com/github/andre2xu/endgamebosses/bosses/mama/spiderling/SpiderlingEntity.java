@@ -130,6 +130,16 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
+        if (pEffectInstance.is(MobEffects.POISON)) {
+            // immune to poison
+            return false;
+        }
+
+        return super.canBeAffected(pEffectInstance);
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
     @Override
