@@ -25,7 +25,7 @@ public class SamuriceCloneEntity extends SamuriceEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 16)
+                .add(Attributes.MAX_HEALTH, 8) // 4 hearts
                 .build();
     }
 
