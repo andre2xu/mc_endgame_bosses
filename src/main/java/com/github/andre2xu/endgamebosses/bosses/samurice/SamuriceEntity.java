@@ -49,18 +49,6 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class SamuriceEntity extends PathfinderMob implements GeoEntity {
-    /*
-    See 'CHANGE LATER' comments
-
-    TODO:
-    - Increase MAX_HEALTH attribute
-
-    OPTIONAL:
-    - Add boss music for Samurice
-    */
-
-
-
     // GENERAL
     protected int chase_delay = 0;
     private Action.AttackType attack_type = Action.AttackType.MELEE;
@@ -131,7 +119,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.MAX_HEALTH, 200)
                 .build();
     }
 
