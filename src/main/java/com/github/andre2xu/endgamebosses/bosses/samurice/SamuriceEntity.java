@@ -54,7 +54,6 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     TODO:
     - Increase MAX_HEALTH attribute
-    - Increase damage dealt to target from cuts
 
     OPTIONAL:
     - Add boss music for Samurice
@@ -760,12 +759,28 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private int num_of_cuts = 0;
         private int cut_duration = 0; // in ticks. This determines how long until the Samurice can follow the target again
-        private final float attack_damage = 1f; // CHANGE LATER
+        private final float attack_damage;
         private boolean attack_is_finished = false;
 
         public CutsAttackGoal(SamuriceEntity samurice) {
             this.samurice = samurice;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+
+            // set attack damage (relative to full un-enchanted diamond armor)
+            float attack_damage = 0;
+
+            if (this.samurice.level() instanceof ServerLevel server_level) {
+                Difficulty difficulty = server_level.getDifficulty();
+
+                attack_damage = switch (difficulty) {
+                    case Difficulty.EASY -> 15; // 1 heart
+                    case Difficulty.NORMAL -> 20; // 4 hearts
+                    case Difficulty.HARD -> 23; // 9 hearts
+                    default -> 0;
+                };
+            }
+
+            this.attack_damage = attack_damage;
         }
 
         private boolean targetIsWithinWeaponReach() {
