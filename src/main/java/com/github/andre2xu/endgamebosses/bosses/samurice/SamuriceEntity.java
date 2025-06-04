@@ -1044,7 +1044,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         @Override
         public void start() {
             // set the no. clones to summon
-            this.num_of_clones = new Random().nextInt(3, 6); // 3 to 5 clones
+            this.num_of_clones = new Random().nextInt(1, 4); // 1 to 3 clones
 
             // get into summon pose
             this.samurice.triggerAnim("attack_trigger_anim_controller", "summon");
