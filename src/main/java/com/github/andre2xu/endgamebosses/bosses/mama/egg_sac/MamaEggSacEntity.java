@@ -57,6 +57,17 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
 
     // AI
     @Override
+    public boolean isPersistenceRequired() {
+        // prevent despawn
+        return true;
+    }
+
+    @Override
+    public void checkDespawn() {
+        // prevent despawn
+    }
+
+    @Override
     protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
 
     @Override
