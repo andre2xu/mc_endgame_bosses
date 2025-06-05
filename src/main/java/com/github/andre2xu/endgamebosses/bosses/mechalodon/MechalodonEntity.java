@@ -47,18 +47,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class MechalodonEntity extends PathfinderMob implements GeoEntity {
-    /*
-    See 'CHANGE LATER' comments
-
-    TODO:
-    - Increase MAX_HEALTH attribute
-
-    OPTIONAL:
-    - Add boss music for Mechalodon
-    */
-
-
-
     // GENERAL
     private Vec3 current_point_in_circle = new Vec3(0,0,0);
     private int angle_needed_to_find_next_circle_point;
