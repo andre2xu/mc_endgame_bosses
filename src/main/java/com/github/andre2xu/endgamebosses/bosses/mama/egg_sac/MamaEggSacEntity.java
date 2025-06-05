@@ -112,7 +112,7 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
             BossStateData boss_state_data = BossStateData.createOrGet(server);
 
             if (boss_state_data.isBossAlive("ender_dragon")) {
-                attacker.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mamaeggsachint"));
+                attacker.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mama_egg_sac_hint"));
                 return false;
             }
         }

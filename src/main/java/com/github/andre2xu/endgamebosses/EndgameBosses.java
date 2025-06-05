@@ -121,7 +121,7 @@ public class EndgameBosses {
 
                             // send a message to all players
                             for (Player p : serverLevel.players()) {
-                                p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                                p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragon_death")); // see lang folder in resources
                             }
                         }
                     }
@@ -155,7 +155,7 @@ public class EndgameBosses {
 
                         // send a message to all players
                         for (Player p : serverLevel.players()) {
-                            p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragondeath")); // see lang folder in resources
+                            p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragon_death")); // see lang folder in resources
                         }
                     }
                 }
