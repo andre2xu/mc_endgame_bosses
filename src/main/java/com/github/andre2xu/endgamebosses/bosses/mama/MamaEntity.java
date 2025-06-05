@@ -52,6 +52,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings increment/decrement Mama's child count so they need this id to find the correct Mama instance
     private final PartEntity<?>[] hitboxes;
     private Action.AttackType attack_type = Action.AttackType.MELEE;
+    private int child_count_delay = 20 * 2; // 2 seconds. How long to wait until the child count is considered for switching to phase 2 (see aiStep). This is needed because the remaining spiderlings need time to increment Mama's child count
 
     // BOSS FIGHT
     private final ServerBossEvent server_boss_event = new ServerBossEvent(
@@ -406,7 +407,11 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         this.server_boss_event.setProgress(boss_health_remaining);
 
         // update boss phase
-        if (this.boss_phase == 1 && (boss_health_remaining <= 0.4 || this.entityData.get(CHILD_COUNT) <= 10)) {
+        if (this.child_count_delay > 0) {
+            this.child_count_delay--;
+        }
+
+        if (this.boss_phase == 1 && (boss_health_remaining <= 0.4 || (this.child_count_delay == 0 && this.entityData.get(CHILD_COUNT) <= 10))) {
             this.boss_phase = 2;
         }
 
