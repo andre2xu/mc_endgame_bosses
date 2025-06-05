@@ -238,8 +238,18 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
             }
             else {
+                // determine attack damage (relative to full un-enchanted diamond armor)
+                Difficulty difficulty = this.level().getDifficulty();
+
+                float attack_damage = switch (difficulty) {
+                    case Difficulty.EASY -> 5; // less than 1 heart
+                    case Difficulty.NORMAL -> 8; // 1 heart
+                    case Difficulty.HARD -> 7; // 1.5 hearts
+                    default -> 0;
+                };
+
                 // bite target
-                target.hurt(this.damageSources().mobAttack(this), 1f);
+                target.hurt(this.damageSources().mobAttack(this), attack_damage);
 
                 // inflict small dose of poison
                 MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 20); // 1 second
