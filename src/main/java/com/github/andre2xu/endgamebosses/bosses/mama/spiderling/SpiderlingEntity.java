@@ -215,7 +215,7 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
         // handle behaviour towards target
         LivingEntity target = this.getTarget();
 
-        if (target != null) {
+        if (target != null && this.isAlive()) {
             // rotate horizontally to face target
             this.getLookControl().setLookAt(target);
 
