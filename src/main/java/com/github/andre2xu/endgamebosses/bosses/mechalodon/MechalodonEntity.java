@@ -1246,13 +1246,27 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
         private Vec3 target_pos = null;
-        private final float attack_damage = 1f; // CHANGE LATER
         private float attack_cooldown = 0; // no cooldown for the first bite
         private boolean attack_is_finished = false;
 
         public BiteAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mechalodon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 26; // 2 hearts
+                case Difficulty.NORMAL -> 17; // 3 hearts
+                case Difficulty.HARD -> 14; // 4 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), attack_damage);
         }
 
         private void decrementCooldown() {
@@ -1331,7 +1345,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                     this.mechalodon.triggerAnim("attack_trigger_anim_controller", "bite");
 
                     // damage target
-                    this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                    this.hurtTarget();
 
                     // play sound
                     this.mechalodon.playMeleeAttackSound(5f, 1f);
