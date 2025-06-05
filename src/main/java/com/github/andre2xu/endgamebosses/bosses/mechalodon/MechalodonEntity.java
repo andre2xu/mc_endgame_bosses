@@ -1542,12 +1542,26 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private Vec3 target_pos = null;
         private int attack_delay;
-        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public DiveFromAboveAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mechalodon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 40; // 4 hearts
+                case Difficulty.NORMAL -> 29; // 7 hearts
+                case Difficulty.HARD -> 26; // 10 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), attack_damage);
         }
 
         private void decrementAttackDelay() {
@@ -1642,7 +1656,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                         if (has_collided_with_target && this.mechalodon.distanceTo(this.target) <= 3) {
-                            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                            this.hurtTarget();
 
                             // play collision sound
                             this.mechalodon.playMeleeAttackSound(5f, 1f);
