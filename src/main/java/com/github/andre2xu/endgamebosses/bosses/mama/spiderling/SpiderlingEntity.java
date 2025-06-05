@@ -53,7 +53,7 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.MAX_HEALTH, 8) // 4 hearts
                 .build();
     }
 
