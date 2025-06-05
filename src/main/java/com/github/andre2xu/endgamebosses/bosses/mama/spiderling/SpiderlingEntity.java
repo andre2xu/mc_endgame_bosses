@@ -231,8 +231,14 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
 
                 if (Math.abs(target.getY() - this.getY()) <= 1) {
                     // move towards the target
-                    Vec3 vector_to_target = target.position().subtract(this.position());
-                    this.setDeltaMovement(vector_to_target.normalize().multiply(1, 0, 1).scale(speed));
+                    Vec3 vector_to_target = target.position().subtract(this.position()).normalize();
+
+                    if (vector_to_target.y > 1 && !this.isUnderWater()) {
+                        // prevent flying
+                        vector_to_target = vector_to_target.multiply(1, 0, 1);
+                    }
+
+                    this.setDeltaMovement(vector_to_target.scale(speed));
 
                     if (this.horizontalCollision && this.onGround()) {
                         this.jumpFromGround();
@@ -241,6 +247,11 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                 else {
                     // find a way up to the target
                     this.getNavigation().moveTo(target, speed);
+                }
+
+                // swim up if submerged
+                if (this.isUnderWater()) {
+                    this.getJumpControl().jump();
                 }
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
