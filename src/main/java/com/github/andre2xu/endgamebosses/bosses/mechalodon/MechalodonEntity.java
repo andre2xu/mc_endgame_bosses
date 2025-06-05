@@ -158,7 +158,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return FlyingMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.MAX_HEALTH, 400) // 200 hearts
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0) // immune to knockback
                 .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 1.0) // immune to explosion knockback
                 .build();
