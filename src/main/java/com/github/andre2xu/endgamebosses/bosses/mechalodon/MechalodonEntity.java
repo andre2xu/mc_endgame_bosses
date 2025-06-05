@@ -952,13 +952,27 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
     private static class ChargeAttackGoal extends Goal {
         private final MechalodonEntity mechalodon;
         private LivingEntity target = null;
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration; // see resetAttack
         private boolean attack_is_finished = false;
 
         public ChargeAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mechalodon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 26; // 2 hearts
+                case Difficulty.NORMAL -> 20; // 4 hearts
+                case Difficulty.HARD -> 18; // 6 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), attack_damage);
         }
 
         private void decrementAttackDuration() {
@@ -1028,7 +1042,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                     if (has_collided_with_target) {
                         // damage & knock back target
-                        this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                        this.hurtTarget();
 
                         this.target.knockback(
                                 4f,
