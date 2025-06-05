@@ -93,7 +93,7 @@ public class MechalodonMissileEntity extends PathfinderMob implements GeoEntity 
                     Explosion.getDefaultDamageSource(level, this),
                     new CustomExplosionDamageCalculator(), // this calculator has code to prevent accidental self harm
                     this.getX(), this.getY(), this.getZ(),
-                    4, // radius
+                    2, // radius
                     false, // no fire
                     Level.ExplosionInteraction.MOB
             );
