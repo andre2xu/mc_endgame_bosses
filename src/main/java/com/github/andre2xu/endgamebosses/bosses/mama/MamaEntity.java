@@ -54,8 +54,6 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
     TODO:
     - Make egg sac invincible until the Ender Dragon has been defeated
     - Increase MAX_HEALTH attribute
-    - Increase damage dealt to target from charging
-    - Increase damage dealt to target from leaping forward
 
     OPTIONAL:
     - Add boss music for Mama
