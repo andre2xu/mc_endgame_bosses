@@ -578,7 +578,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
             if (this.target_pos != null && this.mama.level() instanceof ServerLevel server_level) {
                 BlockPos center = new BlockPos((int) this.target_pos.x, (int) this.target_pos.y, (int) this.target_pos.z);
 
-                int radius = 2;
+                int radius = 1;
 
                 for (int dx = -radius; dx <= radius; dx++) {
                     for (int dy = -3; dy <= 0; dy++) {
