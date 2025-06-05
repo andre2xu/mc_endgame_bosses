@@ -1381,13 +1381,27 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private Vec3 target_pos = null;
         private boolean has_resurfaced = false;
         private float stop_attack_delay; // this delay makes the animation reset, which occurs after the attack, look smoother
-        private final float attack_damage = 1f; // CHANGE LATER
         private float attack_countdown; // countdown for surprise attack (starts decrementing when Mechalodon is directly below target)
         private boolean attack_is_finished = false;
 
         public SurpriseFromBelowAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mechalodon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 15; // 1 heart
+                case Difficulty.NORMAL -> 17; // 3 hearts
+                case Difficulty.HARD -> 15; // 4.5 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), attack_damage);
         }
 
         private void decrementStopAttackDelay() {
@@ -1481,9 +1495,9 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
                         boolean has_collided_with_target = this.mechalodon.getBoundingBox().intersects(this.target.getBoundingBox());
 
                         if (has_collided_with_target) {
-                            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                            this.hurtTarget();
 
-                            // launch target up
+                            // launch target up (fall damage)
                             Vec3 target_delta_movement = this.target.getDeltaMovement();
                             this.target.setDeltaMovement(target_delta_movement.x, target_delta_movement.normalize().y * 1.5, target_delta_movement.z);
 
