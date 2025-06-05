@@ -832,13 +832,27 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private double halfway_distance_to_landing_pos = 0;
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration = 0;
         private boolean attack_is_finished = false;
 
         public LeapForwardAttackGoal(MamaEntity mama) {
             this.mama = mama;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK, Flag.JUMP));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mama.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 23; // 2 hearts
+                case Difficulty.NORMAL -> 18; // 3 hearts
+                case Difficulty.HARD -> 14; // 4 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), attack_damage);
         }
 
         private void playLandSound() {
@@ -953,8 +967,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         boolean has_collided_with_target = this.mama.getBoundingBox().intersects(this.target.getBoundingBox());
 
                         if (has_collided_with_target && this.mama.distanceTo(this.target) <= 6) {
-                            // damage target
-                            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                            this.hurtTarget();
 
                             this.playLandSound();
                         }
