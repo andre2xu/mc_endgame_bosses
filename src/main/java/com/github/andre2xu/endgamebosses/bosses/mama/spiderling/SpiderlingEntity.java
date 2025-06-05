@@ -229,10 +229,18 @@ public class SpiderlingEntity extends PathfinderMob implements GeoEntity {
                     speed = 0.5; // speed boost to catch up to target
                 }
 
-                this.setDeltaMovement(target.position().subtract(this.position()).normalize().scale(speed));
+                if (Math.abs(target.getY() - this.getY()) <= 1) {
+                    // move towards the target
+                    Vec3 vector_to_target = target.position().subtract(this.position());
+                    this.setDeltaMovement(vector_to_target.normalize().multiply(1, 0, 1).scale(speed));
 
-                if (this.horizontalCollision && this.onGround()) {
-                    this.jumpFromGround();
+                    if (this.horizontalCollision && this.onGround()) {
+                        this.jumpFromGround();
+                    }
+                }
+                else {
+                    // find a way up to the target
+                    this.getNavigation().moveTo(target, speed);
                 }
 
                 this.triggerAnim("movement_trigger_anim_controller", "walk");
