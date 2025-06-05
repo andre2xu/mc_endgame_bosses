@@ -52,12 +52,6 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
     TODO:
     - Increase MAX_HEALTH attribute
-    - Increase damage dealt to target from charging
-    - Increase damage dealt to target from leaping forward
-    - Increase damage dealt to target from biting
-    - Increase damage dealt to target from the underground surprise attack
-    - Increase damage dealt to target from the dive from above attack
-    - Increase damage dealt to flying target from bites
 
     OPTIONAL:
     - Add boss music for Mechalodon
