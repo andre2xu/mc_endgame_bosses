@@ -119,7 +119,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 200)
+                .add(Attributes.MAX_HEALTH, 200) // 100 hearts
                 .build();
     }
 
