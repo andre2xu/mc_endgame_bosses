@@ -48,18 +48,6 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class MamaEntity extends PathfinderMob implements GeoEntity {
-    /*
-    See 'CHANGE LATER' comments
-
-    TODO:
-    - Make egg sac invincible until the Ender Dragon has been defeated
-
-    OPTIONAL:
-    - Add boss music for Mama
-    */
-
-
-
     // GENERAL
     private Long mama_id = null; // this is given to spiderlings so they know which Mama they belong to. The spiderlings increment/decrement Mama's child count so they need this id to find the correct Mama instance
     private final PartEntity<?>[] hitboxes;
