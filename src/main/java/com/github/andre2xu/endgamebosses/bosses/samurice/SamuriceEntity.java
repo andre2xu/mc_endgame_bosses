@@ -634,18 +634,14 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         private void hurtTarget() {
             // determine attack damage (relative to full un-enchanted diamond armor)
-            float attack_damage = 0;
+            Difficulty difficulty = this.samurice.level().getDifficulty();
 
-            if (this.samurice.level() instanceof ServerLevel server_level) {
-                Difficulty difficulty = server_level.getDifficulty();
-
-                attack_damage = switch (difficulty) {
-                    case Difficulty.EASY -> 26; // 2 hearts
-                    case Difficulty.NORMAL -> 25; // 5.5 hearts
-                    case Difficulty.HARD -> 25; // 10 hearts
-                    default -> 0;
-                };
-            }
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 26; // 2 hearts
+                case Difficulty.NORMAL -> 25; // 5.5 hearts
+                case Difficulty.HARD -> 25; // 10 hearts
+                default -> 0;
+            };
 
             // damage target & apply a frost effect
             this.target.hurt(this.samurice.damageSources().mobAttack(this.samurice), attack_damage);
@@ -757,18 +753,14 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         private void hurtTarget() {
             // determine attack damage (relative to full un-enchanted diamond armor)
-            float attack_damage = 0;
+            Difficulty difficulty = this.samurice.level().getDifficulty();
 
-            if (this.samurice.level() instanceof ServerLevel server_level) {
-                Difficulty difficulty = server_level.getDifficulty();
-
-                attack_damage = switch (difficulty) {
-                    case Difficulty.EASY -> 15; // 1 heart
-                    case Difficulty.NORMAL -> 20; // 4 hearts
-                    case Difficulty.HARD -> 20; // 6.5 hearts
-                    default -> 0;
-                };
-            }
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 15; // 1 heart
+                case Difficulty.NORMAL -> 20; // 4 hearts
+                case Difficulty.HARD -> 20; // 6.5 hearts
+                default -> 0;
+            };
 
             // damage target & apply a frost effect
             if (this.targetIsWithinWeaponReach()) {
