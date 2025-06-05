@@ -687,13 +687,27 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
         private int defensive_pose_duration = 0;
         private boolean is_in_defensive_pose = false;
         private int attack_sound_cooldown = 0; // no cooldown for first attack
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_duration = 0;
         private boolean attack_is_finished = false;
 
         public ChargeAttackGoal(MamaEntity mama) {
             this.mama = mama;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mama.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 15; // 1 heart
+                case Difficulty.NORMAL -> 13; // 2 hearts
+                case Difficulty.HARD -> 12; // 3 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), attack_damage);
         }
 
         private boolean canAttack() {
@@ -768,7 +782,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
                         }
                         else {
                             // damage target upon reaching them
-                            this.target.hurt(this.mama.damageSources().mobAttack(this.mama), this.attack_damage);
+                            this.hurtTarget();
 
                             // inflict poison
                             MobEffectInstance poison = new MobEffectInstance(MobEffects.POISON, 20 * 8); // 8 seconds
