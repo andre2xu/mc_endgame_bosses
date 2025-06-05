@@ -1077,12 +1077,26 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         private LivingEntity target = null;
         private Vec3 landing_position = null;
         private float leap_highest_point;
-        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public LeapForwardAttackGoal(MechalodonEntity mechalodon) {
             this.mechalodon = mechalodon;
             this.setFlags(EnumSet.of(Flag.TARGET, Flag.MOVE, Flag.LOOK, Flag.JUMP));
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.mechalodon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 18; // 1.5 hearts
+                case Difficulty.NORMAL -> 19; // 3.5 hearts
+                case Difficulty.HARD -> 17; // 5.5 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), attack_damage);
         }
 
         private void resetAttack() {
@@ -1182,7 +1196,7 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                 if (has_collided_with_target && this.mechalodon.distanceTo(this.target) <= 3) {
                     // damage & knock back target
-                    this.target.hurt(this.mechalodon.damageSources().mobAttack(this.mechalodon), this.attack_damage);
+                    this.hurtTarget();
 
                     this.target.knockback(
                             2f,
