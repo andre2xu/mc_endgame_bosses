@@ -4,12 +4,16 @@ import com.github.andre2xu.endgamebosses.bosses.BossRegistry;
 import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mama.MamaEntity;
 import com.github.andre2xu.endgamebosses.bosses.mama.spiderling.SpiderlingEntity;
+import com.github.andre2xu.endgamebosses.data.BossStateData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -98,6 +102,22 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
     @Override
     public boolean canBeAffected(@NotNull MobEffectInstance pEffectInstance) {
         return false;
+    }
+
+    @Override
+    public boolean hurt(@NotNull DamageSource pSource, float pAmount) {
+        Entity attacker = pSource.getEntity();
+
+        if (attacker != null && attacker.getServer() instanceof MinecraftServer server) {
+            BossStateData boss_state_data = BossStateData.createOrGet(server);
+
+            if (boss_state_data.isBossAlive("ender_dragon")) {
+                attacker.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mamaeggsachint"));
+                return false;
+            }
+        }
+
+        return super.hurt(pSource, pAmount);
     }
 
     @Override
