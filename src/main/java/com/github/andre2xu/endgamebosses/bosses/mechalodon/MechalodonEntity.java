@@ -838,7 +838,17 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
 
                     // bite if close
                     if (this.getBoundingBox().intersects(target.getBoundingBox())) {
-                        target.hurt(this.damageSources().mobAttack(this), 1f); // CHANGE LATER
+                        // determine attack damage (relative to full un-enchanted diamond armor)
+                        Difficulty difficulty = this.level().getDifficulty();
+
+                        float attack_damage = switch (difficulty) {
+                            case Difficulty.EASY -> 26; // 2 hearts
+                            case Difficulty.NORMAL -> 17; // 3 hearts
+                            case Difficulty.HARD -> 14; // 4 hearts
+                            default -> 0;
+                        };
+
+                        target.hurt(this.damageSources().mobAttack(this), attack_damage);
 
                         this.triggerAnim("attack_trigger_anim_controller", "bite");
                     }
