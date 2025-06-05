@@ -53,7 +53,6 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     TODO:
     - Make egg sac invincible until the Ender Dragon has been defeated
-    - Increase MAX_HEALTH attribute
 
     OPTIONAL:
     - Add boss music for Mama
@@ -127,7 +126,7 @@ public class MamaEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10) // CHANGE LATER
+                .add(Attributes.MAX_HEALTH, 240) // 120 hearts
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8) // resistant to knockback but not immune
                 .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 0.8) // resistant to explosion knockback but not immune
                 .build();
