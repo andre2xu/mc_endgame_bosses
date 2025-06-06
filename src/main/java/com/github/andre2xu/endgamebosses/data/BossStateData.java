@@ -1,5 +1,6 @@
 package com.github.andre2xu.endgamebosses.data;
 
+import com.github.andre2xu.endgamebosses.EndgameBosses;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
@@ -103,6 +104,13 @@ public class BossStateData extends SavedData {
 
     public static BossStateData load(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
         // OBJECTIVE: Get data from .dat file and pass them to the new instance
+
+        // add bosses
+        for (String boss_name : EndgameBosses.BOSSES) {
+            if (pTag.contains(boss_name)) {
+                BOSS_STATES.put(boss_name, State.ALIVE);
+            }
+        }
 
         // load boss states
         BossStateData boss_state_data = new BossStateData();
