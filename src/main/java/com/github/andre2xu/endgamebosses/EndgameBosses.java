@@ -170,6 +170,18 @@ public class EndgameBosses {
     }
 
     @SubscribeEvent
+    public void onServerTick(final TickEvent.ServerTickEvent event) {
+        MinecraftServer server = event.getServer();
+
+        if (server != null) {
+            // decrement boss spawn cooldown (if there's an active boss)
+            BossStateData boss_state_data = BossStateData.createOrGet(server);
+
+            boss_state_data.updateBossSpawnCooldown();
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerTick(final TickEvent.PlayerTickEvent event) {
         // prevent double execution
         if (event.phase != TickEvent.Phase.END) {
