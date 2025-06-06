@@ -165,7 +165,7 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10 * 3) // CHANGE LATER
+                .add(Attributes.MAX_HEALTH, 600) // 300 hearts
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0) // immune to knockback
                 .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE, 1.0) // immune to explosion knockback
                 .add(Attributes.SAFE_FALL_DISTANCE, 100)
