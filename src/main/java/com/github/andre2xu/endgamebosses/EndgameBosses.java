@@ -24,20 +24,26 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleRender
 import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
@@ -159,6 +165,34 @@ public class EndgameBosses {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(final TickEvent.PlayerTickEvent event) {
+        // prevent double execution
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+
+        // check what biome a player is in every 10 seconds
+        if (event.player.tickCount % 200 == 0) {
+            Level level = event.player.level();
+
+            if (level instanceof ServerLevel server_level) {
+                 BlockPos player_block_pos = BlockPos.containing(event.player.position());
+                 Holder<Biome> player_biome = server_level.getBiome(player_block_pos);
+
+                 if (player_biome.is(Tags.Biomes.IS_DESERT)) {
+                     System.out.println("Spawning the Mechalodon");
+                 }
+                 else if (player_biome.is(BiomeTags.IS_OCEAN)) {
+                     System.out.println("Spawning the Tragon");
+                 }
+                 else if (player_biome.is(Tags.Biomes.IS_SNOWY)) {
+                     System.out.println("Spawning the Samurice");
+                 }
             }
         }
     }
