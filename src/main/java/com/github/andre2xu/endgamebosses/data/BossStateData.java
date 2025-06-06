@@ -14,7 +14,7 @@ import java.util.Map;
 public class BossStateData extends SavedData {
     public enum State {ALIVE, DEAD, DOES_NOT_EXIST}
     private static final HashMap<String, State> BOSS_STATES = new HashMap<>();
-    private String active_boss = null;
+    private static String active_boss = null;
     private static int boss_spawn_cooldown = 0; // in ticks. This is for auto resetting the active boss to prevent spawning issues
 
 
@@ -56,17 +56,17 @@ public class BossStateData extends SavedData {
 
     public void setActiveBoss(@Nullable String bossName) {
         if (BOSS_STATES.containsKey(bossName)) {
-            this.active_boss = bossName;
+            active_boss = bossName;
 
             boss_spawn_cooldown = 20 * 60 * 60 * 2; // 2 hours
         }
         else {
-            this.active_boss = null;
+            active_boss = null;
         }
     }
 
     public @Nullable String getActiveBoss() {
-        return this.active_boss;
+        return active_boss;
     }
 
     public void updateBossSpawnCooldown() {
@@ -77,7 +77,7 @@ public class BossStateData extends SavedData {
 
             // force reset the active boss when the cooldown hits zero
             if (boss_spawn_cooldown == 0) {
-                this.active_boss = null;
+                active_boss = null;
             }
         }
     }
@@ -143,7 +143,7 @@ public class BossStateData extends SavedData {
         }
 
         // save active boss
-        pTag.putString("active_boss", this.active_boss);
+        pTag.putString("active_boss", active_boss);
 
         // save boss spawn cooldown
         pTag.putInt("boss_spawn_cooldown", boss_spawn_cooldown);
