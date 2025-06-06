@@ -1,0 +1,31 @@
+{
+  "type": "endgamebosses:boss_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:all_of",
+      "terms": [
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "endgamebosses:entities/samurice"
+        },
+        {
+          "chance": 0.4,
+          "condition": "minecraft:random_chance"
+        }
+      ]
+    }
+  ],
+  "custom_loot": {
+    "components": {
+      "minecraft:stored_enchantments": {
+        "levels": {
+          "minecraft:feather_falling": 2
+        }
+      }
+    },
+    "count": 1,
+    "id": "minecraft:enchanted_book"
+  },
+  "max": 1,
+  "min": 1
+}

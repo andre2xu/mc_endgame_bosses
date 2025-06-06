@@ -1,0 +1,24 @@
+{
+  "type": "endgamebosses:boss_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:all_of",
+      "terms": [
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "endgamebosses:entities/mechalodon"
+        },
+        {
+          "chance": 0.1,
+          "condition": "minecraft:random_chance"
+        }
+      ]
+    }
+  ],
+  "custom_loot": {
+    "count": 1,
+    "id": "minecraft:nether_star"
+  },
+  "max": 1,
+  "min": 1
+}
