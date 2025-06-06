@@ -8,6 +8,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -198,12 +200,32 @@ public class FireHead extends TragonHead {
         private ArrayList<Vec3> breath_path = new ArrayList<>();
         private int breath_duration = 0;
         private boolean breath_touches_target = false;
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public FireBreath(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void hurtTarget() {
+            if (!this.target.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+                // determine attack damage (relative to full un-enchanted diamond armor)
+                Difficulty difficulty = this.tragon.level().getDifficulty();
+
+                float attack_damage = switch (difficulty) {
+                    case Difficulty.EASY -> 2; // 1 heart per second
+                    case Difficulty.NORMAL -> 4; // 2 hearts per second
+                    case Difficulty.HARD -> 8; // 4 hearts per second
+                    default -> 0;
+                };
+
+                // damage target
+                this.target.hurt(this.tragon.damageSources().dragonBreath(), attack_damage);
+            }
+
+            // set target on fire
+            int ignite_effect_duration = 20 * 2; // 2 seconds
+            this.target.setRemainingFireTicks(ignite_effect_duration);
         }
 
         private void calculateBreathPath(Vec3 startPos, Vec3 endPos) {
@@ -361,13 +383,9 @@ public class FireHead extends TragonHead {
                             }
                         }
 
-                        // inflict damage to target & set them on fire
+                        // burn target
                         if (this.breath_touches_target) {
-                            this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
-
-                            int ignite_effect_duration = 20 * 2; // 2 seconds
-
-                            this.target.setRemainingFireTicks(ignite_effect_duration);
+                            this.hurtTarget();
                         }
 
                         // reset flag
