@@ -115,6 +115,10 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
                 attacker.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mama_egg_sac_hint"));
                 return false;
             }
+            else if (!boss_state_data.getActiveBoss().isEmpty()) {
+                attacker.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mama_spawn_lock"));
+                return false;
+            }
         }
 
         return super.hurt(pSource, pAmount);

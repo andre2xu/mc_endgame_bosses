@@ -1,6 +1,7 @@
 {
   "endgamebosses.sysmsg.dragon_death": "§4§l§oThe last guardian has been slain. The ancient ones have awakened.",
   "endgamebosses.sysmsg.mama_egg_sac_hint": "§6§oYou must kill the Ender Dragon first.",
+  "endgamebosses.sysmsg.mama_spawn_lock": "§6§oThere is another endgame boss in the world. You must kill it first.",
 
   "entity.endgamebosses.mechalodon": "Mechalodon",
   "entity.endgamebosses.mechalodon_missile": "Mechalodon's missile",
