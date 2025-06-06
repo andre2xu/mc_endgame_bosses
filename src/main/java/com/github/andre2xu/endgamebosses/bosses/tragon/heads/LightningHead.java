@@ -186,12 +186,32 @@ public class LightningHead extends TragonHead {
         private Vec3 target_pos = null;
         private ArrayList<Vec3> beam_path = new ArrayList<>();
         private boolean beam_touches_target = false;
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public LaserBeam(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.tragon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 6; // 3 hearts
+                case Difficulty.NORMAL -> 10; // 5 hearts
+                case Difficulty.HARD -> 14; // 7 hearts
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.tragon.damageSources().dragonBreath(), attack_damage);
+
+            // blind target
+            int blindness_effect_duration = 20 * 4; // 4 seconds
+
+            MobEffectInstance blindness = new MobEffectInstance(MobEffects.BLINDNESS, blindness_effect_duration);
+            this.target.addEffect(blindness);
         }
 
         private void calculateBeamPath(Vec3 startPos, Vec3 endPos) {
@@ -304,12 +324,7 @@ public class LightningHead extends TragonHead {
 
                     // inflict damage to target & blindness
                     if (this.beam_touches_target) {
-                        this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
-
-                        int blindness_effect_duration = 20 * 4; // 4 seconds
-
-                        MobEffectInstance blindness = new MobEffectInstance(MobEffects.BLINDNESS, blindness_effect_duration);
-                        this.target.addEffect(blindness);
+                        this.hurtTarget();
                     }
 
                     // reset flag
