@@ -427,7 +427,7 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
 
         // heal in water
         if (this.isInWater() && this.isAlive() && this.tickCount % 20 == 0) {
-            this.setHealth(this.getHealth() + 2); // 1 heart per second
+            this.setHealth(this.getHealth() + (2 * 5)); // 5 hearts per second
         }
 
         // update boss health bar
