@@ -58,23 +58,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class TragonEntity extends PathfinderMob implements GeoEntity {
-    /*
-    See 'CHANGE LATER' comments
-
-    TODO:
-    - Increase MAX_HEALTH attribute
-    - Increase damage dealt to target from frost breath
-    - Increase damage dealt to target from fire breath
-    - Increase damage dealt to target from laser beam
-    - Increase damage dealt to target from shell spin attack
-    - Make damages inflicted to targets underwater less than that of land
-
-    OPTIONAL:
-    - Add boss music for Tragon
-    */
-
-
-
     // GENERAL
     private PartEntity<?>[] hitboxes;
     private final String fire_head_neck_id = "fire_head_neck";
