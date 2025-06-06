@@ -176,23 +176,34 @@ public class EndgameBosses {
             return;
         }
 
-        // check what biome a player is in every 10 seconds
-        if (event.player.tickCount % 200 == 0) {
-            Level level = event.player.level();
+        // handle boss spawning
+        MinecraftServer player_server = event.player.getServer();
 
-            if (level instanceof ServerLevel server_level) {
-                 BlockPos player_block_pos = BlockPos.containing(event.player.position());
-                 Holder<Biome> player_biome = server_level.getBiome(player_block_pos);
+        if (player_server != null) {
+            BossStateData boss_state_data = BossStateData.createOrGet(player_server);
 
-                 if (player_biome.is(Tags.Biomes.IS_DESERT)) {
-                     System.out.println("Spawning the Mechalodon");
-                 }
-                 else if (player_biome.is(BiomeTags.IS_OCEAN)) {
-                     System.out.println("Spawning the Tragon");
-                 }
-                 else if (player_biome.is(Tags.Biomes.IS_SNOWY)) {
-                     System.out.println("Spawning the Samurice");
-                 }
+            // check what biome a player is in every 10 seconds
+            if (!boss_state_data.isBossAlive("ender_dragon") && event.player.tickCount % 200 == 0 && event.player.level() instanceof ServerLevel server_level) {
+                String active_boss = boss_state_data.getActiveBoss();
+
+                if (active_boss == null) {
+                    // OBJECTIVE: Spawn the appropriate boss for the player's biome and set them as the active one. Do not let another boss spawn until the active one is killed or the variable is reset (see the BossStateData class)
+
+                    BlockPos player_block_pos = BlockPos.containing(event.player.position());
+                    Holder<Biome> player_biome = server_level.getBiome(player_block_pos);
+
+                    if (player_biome.is(Tags.Biomes.IS_DESERT)) {
+                        boss_state_data.setActiveBoss("mechalodon");
+                    }
+                    else if (player_biome.is(BiomeTags.IS_OCEAN)) {
+                        boss_state_data.setActiveBoss("tragon");
+                    }
+                    else if (player_biome.is(Tags.Biomes.IS_SNOWY)) {
+                        boss_state_data.setActiveBoss("samurice");
+                    }
+
+                    // NOTE: See MamaEggSacEntity::hurt & MamaEggSacEntity::die for Mama's spawning mechanism
+                }
             }
         }
     }
