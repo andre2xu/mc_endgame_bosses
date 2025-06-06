@@ -1374,12 +1374,22 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
 
         private void explodeLandingSpot() {
             if (this.landing_spot != null && this.tragon.level() instanceof ServerLevel server_level) {
+                // determine blast radius (relative to full un-enchanted diamond armor)
+                Difficulty difficulty = server_level.getDifficulty();
+
+                float radius = switch (difficulty) {
+                    case Difficulty.EASY -> 7;
+                    case Difficulty.NORMAL -> 9;
+                    case Difficulty.HARD -> 11;
+                    default -> 0;
+                };
+
                 server_level.explode(
                         this.tragon,
                         Explosion.getDefaultDamageSource(server_level, this.tragon),
                         new CustomExplosionDamageCalculator(), // this calculator has code to prevent the Tragon from taking damage
                         this.tragon.getX(), this.tragon.getY(), this.tragon.getZ(),
-                        9, // radius
+                        radius, // radius
                         false, // no fire
                         Level.ExplosionInteraction.MOB
                 );
