@@ -7,6 +7,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
-    private final float damage = 20f;
+    private float damage = 0f; // dynamically adjusted (see aiStep)
     private boolean entity_was_impaled = false;
     private boolean has_landed = false;
     private int despawn_delay = 5; // in ticks. This is needed so the icicle doesn't disappear before it hits the ground
@@ -142,6 +143,16 @@ public class TragonIcicleEntity extends PathfinderMob implements GeoEntity {
         super.aiStep();
 
         Level level = this.level();
+
+        // determine attack damage (relative to full un-enchanted diamond armor)
+        Difficulty difficulty = level.getDifficulty();
+
+        this.damage = switch (difficulty) {
+            case Difficulty.EASY -> 45; // 3 hearts
+            case Difficulty.NORMAL -> 35; // 6 hearts
+            case Difficulty.HARD -> 33; // 10 hearts
+            default -> 0;
+        };
 
         // handle impaling target
         if (!this.entity_was_impaled) {
