@@ -186,7 +186,7 @@ public class EndgameBosses {
             if (!boss_state_data.isBossAlive("ender_dragon") && event.player.tickCount % 200 == 0 && event.player.level() instanceof ServerLevel server_level) {
                 String active_boss = boss_state_data.getActiveBoss();
 
-                if (active_boss == null) {
+                if (!active_boss.isEmpty()) {
                     // OBJECTIVE: Spawn the appropriate boss for the player's biome and set them as the active one. Do not let another boss spawn until the active one is killed or the variable is reset (see the BossStateData class)
 
                     BlockPos player_block_pos = BlockPos.containing(event.player.position());
