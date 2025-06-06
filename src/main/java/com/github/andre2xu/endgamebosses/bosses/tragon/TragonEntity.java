@@ -1155,7 +1155,6 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
         private int launch_delay = 0;
         private int tick_counter = 0;
         private int attack_duration = 0;
-        private final float attack_damage = 1f; // CHANGE LATER
         private boolean attack_is_finished = false;
 
         public ShellSpinAttackGoal(TragonEntity tragon) {
@@ -1174,7 +1173,17 @@ public class TragonEntity extends PathfinderMob implements GeoEntity {
             if (this.is_spinning && this.entities_in_surrounding_area != null && this.tick_counter % 3 == 0) {
                 for (Entity entity : this.entities_in_surrounding_area) {
                     if (entity instanceof LivingEntity living_entity && !(living_entity instanceof TragonIcicleEntity) && this.tragon.distanceTo(living_entity) <= 8) {
-                        entity.hurt(this.tragon.damageSources().mobAttack(this.tragon), this.attack_damage);
+                        // determine attack damage (relative to full un-enchanted diamond armor)
+                        Difficulty difficulty = this.tragon.level().getDifficulty();
+
+                        float attack_damage = switch (difficulty) {
+                            case Difficulty.EASY -> 33; // 3 hearts
+                            case Difficulty.NORMAL -> 24; // 5 hearts
+                            case Difficulty.HARD -> 19.5f; // 7 hearts
+                            default -> 0;
+                        };
+
+                        entity.hurt(this.tragon.damageSources().mobAttack(this.tragon), attack_damage);
 
                         living_entity.knockback(
                                 4f,
