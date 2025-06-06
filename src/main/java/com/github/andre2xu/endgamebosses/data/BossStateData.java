@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class BossStateData extends SavedData {
     public enum State {ALIVE, DEAD, DOES_NOT_EXIST}
     private static final HashMap<String, State> BOSS_STATES = new HashMap<>();
+    private String active_boss = null;
 
 
 
@@ -51,6 +53,19 @@ public class BossStateData extends SavedData {
         return this.getBossState(bossName) == State.ALIVE;
     }
 
+    public void setActiveBoss(@Nullable String bossName) {
+        if (BOSS_STATES.containsKey(bossName)) {
+            this.active_boss = bossName;
+        }
+        else {
+            this.active_boss = null;
+        }
+    }
+
+    public @Nullable String getActiveBoss() {
+        return this.active_boss;
+    }
+
 
 
     public static BossStateData createOrGet(MinecraftServer server) {
@@ -69,8 +84,9 @@ public class BossStateData extends SavedData {
     }
 
     public static BossStateData load(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
-        // get data from .dat file and pass them to the new instance
+        // OBJECTIVE: Get data from .dat file and pass them to the new instance
 
+        // load boss states
         BossStateData boss_state_data = new BossStateData();
 
         for (String boss_name : BOSS_STATES.keySet()) {
@@ -84,13 +100,17 @@ public class BossStateData extends SavedData {
             }
         }
 
+        // load active boss
+        boss_state_data.setActiveBoss(pTag.getString("active_boss"));
+
         return boss_state_data;
     }
 
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
-        // save the instance's data to the .dat file (must call the 'setDirty' method for this method to run)
+        // OBJECTIVE: Save the instance's data to the .dat file (must call the 'setDirty' method for this method to run)
 
+        // save boss states
         for (Map.Entry<String, State> boss : BOSS_STATES.entrySet()) {
             String boss_name = boss.getKey();
             State boss_state = boss.getValue();
@@ -102,6 +122,9 @@ public class BossStateData extends SavedData {
                 pTag.putInt(boss_name, 0);
             }
         }
+
+        // save active boss
+        pTag.putString("active_boss", this.active_boss);
 
         return pTag;
     }
