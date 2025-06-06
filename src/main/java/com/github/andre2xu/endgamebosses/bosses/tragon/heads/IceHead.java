@@ -9,6 +9,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,12 +49,35 @@ public class IceHead extends TragonHead {
         private ArrayList<Vec3> breath_path = new ArrayList<>();
         private int breath_duration = 0;
         private boolean breath_touches_target = false;
-        private final float attack_damage = 1f; // CHANGE LATER
         private int attack_delay = 0;
         private boolean attack_is_finished = false;
 
         public FrostBreath(TragonEntity tragon) {
             this.tragon = tragon;
+        }
+
+        private void hurtTarget() {
+            // determine attack damage (relative to full un-enchanted diamond armor)
+            Difficulty difficulty = this.tragon.level().getDifficulty();
+
+            float attack_damage = switch (difficulty) {
+                case Difficulty.EASY -> 2; // 1 heart per second
+                case Difficulty.NORMAL -> 4; // 2 hearts per second
+                case Difficulty.HARD -> 6; // 3 hearts per second
+                default -> 0;
+            };
+
+            // damage target
+            this.target.hurt(this.tragon.damageSources().dragonBreath(), attack_damage);
+
+            int freezing_effect_duration = 20 * 2; // 2 seconds
+
+            // make the target slower
+            MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezing_effect_duration);
+            this.target.addEffect(slowness);
+
+            // give them Minecraft's 'freeze' effect
+            this.target.setTicksFrozen(freezing_effect_duration);
         }
 
         private void calculateBreathPath(Vec3 startPos, Vec3 endPos) {
@@ -231,17 +255,7 @@ public class IceHead extends TragonHead {
 
                         // inflict damage & freezing to target
                         if (this.breath_touches_target) {
-                            this.target.hurt(this.tragon.damageSources().dragonBreath(), this.attack_damage);
-
-                            int freezing_effect_duration = 20 * 2; // 2 seconds
-
-                            // make the target slower
-                            MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezing_effect_duration);
-
-                            this.target.addEffect(slowness);
-
-                            // give them Minecraft's 'freeze' effect
-                            this.target.setTicksFrozen(freezing_effect_duration);
+                            this.hurtTarget();
                         }
 
                         // reset flag
