@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -131,12 +132,25 @@ public class LightningHead extends TragonHead {
                                         server_level,
                                         null,
                                         this.target_pos,
-                                        MobSpawnType.EVENT,
+                                        MobSpawnType.MOB_SUMMONED,
                                         false,
                                         false
                                 );
 
                                 if (lightning != null) {
+                                    // determine attack damage (relative to full un-enchanted diamond armor)
+                                    Difficulty difficulty = server_level.getDifficulty();
+
+                                    float attack_damage = switch (difficulty) {
+                                        case Difficulty.EASY -> 14; // 2 hearts
+                                        case Difficulty.NORMAL -> 20; // 4 hearts
+                                        case Difficulty.HARD -> 27; // 6 hearts
+                                        default -> 0;
+                                    };
+
+                                    lightning.setDamage(attack_damage);
+
+                                    // spawn lightning
                                     server_level.addFreshEntity(lightning);
                                 }
 
