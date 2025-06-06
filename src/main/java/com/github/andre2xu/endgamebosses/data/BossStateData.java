@@ -62,6 +62,8 @@ public class BossStateData extends SavedData {
         }
         else {
             active_boss = null;
+
+            boss_spawn_cooldown = 0;
         }
     }
 
