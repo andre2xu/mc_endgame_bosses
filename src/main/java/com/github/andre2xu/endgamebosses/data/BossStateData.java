@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class BossStateData extends SavedData {
     public enum State {ALIVE, DEAD, DOES_NOT_EXIST}
-    private static final HashMap<String, State> BOSS_STATES = new HashMap<>();
+    private static HashMap<String, State> BOSS_STATES = new HashMap<>();
     private static String active_boss = "";
     private static int boss_spawn_cooldown = 0; // in ticks. This is for auto resetting the active boss to prevent spawning issues
 
@@ -53,6 +53,14 @@ public class BossStateData extends SavedData {
 
     public boolean isBossAlive(String bossName) {
         return this.getBossState(bossName) == State.ALIVE;
+    }
+
+    public void reset() {
+        BOSS_STATES = new HashMap<>();
+        BOSS_STATES.put("ender_dragon", State.ALIVE);
+
+        active_boss = "";
+        boss_spawn_cooldown = 0;
     }
 
     public void setActiveBoss(@Nullable String bossName) {
