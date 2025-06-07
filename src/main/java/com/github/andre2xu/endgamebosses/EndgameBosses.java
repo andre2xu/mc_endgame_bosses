@@ -259,6 +259,28 @@ public class EndgameBosses {
                     }
                     else if (player_biome.is(Tags.Biomes.IS_SNOWY) && boss_state_data.isBossAlive("samurice")) {
                         boss_state_data.setActiveBoss("samurice");
+
+                        // alert nearby players of boss spawn
+                        List<Player> nearby_players = server_level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(40));
+
+                        for (Player player : nearby_players) {
+                            player.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.samurice_spawn_alert"));
+                        }
+
+                        // spawn Samurice
+                        SamuriceEntity samurice = BossRegistry.SAMURICE.get().create(server_level);
+
+                        if (samurice != null) {
+                            Vec3 player_pos = event.player.position();
+
+                            samurice.setPos(new Vec3(
+                                    player_pos.x,
+                                    player_pos.y + 3, // appear above the player
+                                    player_pos.z
+                            ));
+
+                            server_level.addFreshEntity(samurice);
+                        }
                     }
 
                     // NOTE: See MamaEggSacEntity::hurt & MamaEggSacEntity::die for Mama's spawning mechanism
