@@ -24,13 +24,15 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleRender
 import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
@@ -178,8 +180,6 @@ public class EndgameBosses {
                 }
             }
             else {
-                Minecraft mc = Minecraft.getInstance();
-
                 boolean play_victory_effects = false;
                 String boss_name = "";
 
@@ -202,9 +202,15 @@ public class EndgameBosses {
                 }
 
                 if (play_victory_effects) {
-                    mc.gui.setTitle(Component.literal("§e§o" + boss_name));
-                    mc.gui.setSubtitle(Component.translatable("endgamebosses.msg.victory_subtitle"));
+                    List<ServerPlayer> all_players = server_level.players();
 
+                    // tell clients to display the victory message
+                    for (ServerPlayer player : all_players) {
+                        player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§e§o" + boss_name)));
+                        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable("endgamebosses.msg.victory_subtitle")));
+                    }
+
+                    // tell clients to play the victory sound
                     server_level.playSound(
                             null, // all players
                             BlockPos.containing(entity.position()),
