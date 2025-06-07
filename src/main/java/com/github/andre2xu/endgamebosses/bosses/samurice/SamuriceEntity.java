@@ -2,6 +2,7 @@ package com.github.andre2xu.endgamebosses.bosses.samurice;
 
 import com.github.andre2xu.endgamebosses.bosses.MiscEntityRegistry;
 import com.github.andre2xu.endgamebosses.bosses.samurice.clone.SamuriceCloneEntity;
+import com.github.andre2xu.endgamebosses.data.BossStateData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +47,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -396,6 +399,28 @@ public class SamuriceEntity extends PathfinderMob implements GeoEntity {
         this.playSound(SoundEvents.PLAYER_HURT_FREEZE, 1f, 0.4f);
 
         super.die(pDamageSource);
+    }
+
+    @Override
+    public void remove(@NotNull RemovalReason pReason) {
+        MinecraftServer server = this.getServer();
+
+        if (server != null && (pReason == RemovalReason.KILLED || pReason == RemovalReason.DISCARDED)) {
+            BossStateData boss_state_data = BossStateData.createOrGet(server);
+            String active_boss = boss_state_data.getActiveBoss();
+
+            String boss_name = "samurice";
+
+            if (Objects.equals(active_boss, boss_name)) {
+                if (pReason == RemovalReason.KILLED) {
+                    boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+                }
+
+                boss_state_data.setActiveBoss(null);
+            }
+        }
+
+        super.remove(pReason);
     }
 
     @Override
