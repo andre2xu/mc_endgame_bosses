@@ -39,6 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -56,6 +57,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 @Mod(EndgameBosses.MODID)
 public class EndgameBosses {
@@ -206,6 +209,28 @@ public class EndgameBosses {
 
                     if (player_biome.is(Tags.Biomes.IS_DESERT) && boss_state_data.isBossAlive("mechalodon")) {
                         boss_state_data.setActiveBoss("mechalodon");
+
+                        // alert nearby players of boss spawn
+                        List<Player> nearby_players = server_level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(60));
+
+                        for (Player player : nearby_players) {
+                            player.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mechalodon_spawn_alert"));
+                        }
+
+                        // spawn Mechalodon
+                        MechalodonEntity mechalodon = BossRegistry.MECHALODON.get().create(server_level);
+
+                        if (mechalodon != null) {
+                            Vec3 player_pos = event.player.position();
+
+                            mechalodon.setPos(new Vec3(
+                                    player_pos.x,
+                                    player_pos.y - 20, // appear below the player
+                                    player_pos.z
+                            ));
+
+                            server_level.addFreshEntity(mechalodon);
+                        }
                     }
                     else if (player_biome.is(BiomeTags.IS_OCEAN) && boss_state_data.isBossAlive("tragon")) {
                         boss_state_data.setActiveBoss("tragon");
