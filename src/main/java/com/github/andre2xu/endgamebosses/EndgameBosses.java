@@ -35,6 +35,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -46,6 +47,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -168,6 +170,21 @@ public class EndgameBosses {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityJoin(final EntityJoinLevelEvent event) {
+        // check if the Ender Dragon was revived
+        if (event.getEntity() instanceof EnderDragon ender_dragon && ender_dragon.level().dimension() == Level.END) {
+            MinecraftServer server = ender_dragon.getServer();
+
+            if (server != null) {
+                BossStateData boss_state_data = BossStateData.createOrGet(server);
+
+                // mark Ender Dragon as alive and delete the states of other bosses (so they can be re-added when the dragon is killed again)
+                boss_state_data.reset();
             }
         }
     }
