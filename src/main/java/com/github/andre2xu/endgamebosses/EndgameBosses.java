@@ -234,6 +234,28 @@ public class EndgameBosses {
                     }
                     else if (player_biome.is(BiomeTags.IS_OCEAN) && boss_state_data.isBossAlive("tragon")) {
                         boss_state_data.setActiveBoss("tragon");
+
+                        // alert nearby players of boss spawn
+                        List<Player> nearby_players = server_level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(60));
+
+                        for (Player player : nearby_players) {
+                            player.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.tragon_spawn_alert"));
+                        }
+
+                        // spawn Tragon
+                        TragonEntity tragon = BossRegistry.TRAGON.get().create(server_level);
+
+                        if (tragon != null) {
+                            Vec3 player_pos = event.player.position();
+
+                            tragon.setPos(new Vec3(
+                                    player_pos.x,
+                                    player_pos.y + 30, // appear above the player
+                                    player_pos.z
+                            ));
+
+                            server_level.addFreshEntity(tragon);
+                        }
                     }
                     else if (player_biome.is(Tags.Biomes.IS_SNOWY) && boss_state_data.isBossAlive("samurice")) {
                         boss_state_data.setActiveBoss("samurice");
