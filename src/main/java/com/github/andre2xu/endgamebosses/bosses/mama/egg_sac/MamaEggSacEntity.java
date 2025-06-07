@@ -18,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +29,8 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.List;
 
 public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache geo_cache = GeckoLibUtil.createInstanceCache(this);
@@ -129,15 +132,30 @@ public class MamaEggSacEntity extends PathfinderMob implements GeoEntity {
         super.die(pDamageSource);
 
         // handle spawning
-        if (this.level() instanceof ServerLevel server_level) {
+        MinecraftServer server = this.getServer();
+
+        if (this.level() instanceof ServerLevel server_level && server != null) {
             MamaEntity mama = BossRegistry.MAMA.get().create(server_level);
 
             if (mama != null) {
                 Vec3 egg_sac_position = this.position();
 
-                // spawn Mama
-                mama.setPos(egg_sac_position);
-                server_level.addFreshEntity(mama);
+                BossStateData boss_state_data = BossStateData.createOrGet(server);
+
+                if (boss_state_data.isBossAlive("mama")) {
+                    // alert nearby players of boss spawn
+                    List<Player> nearby_players = server_level.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(30));
+
+                    for (Player player : nearby_players) {
+                        player.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.mama_spawn_alert"));
+                    }
+
+                    // spawn Mama
+                    mama.setPos(egg_sac_position);
+                    server_level.addFreshEntity(mama);
+
+                    boss_state_data.setActiveBoss("mama");
+                }
 
                 // spawn her spiderlings
                 int num_of_spiderlings = 30;
