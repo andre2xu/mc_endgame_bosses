@@ -8,6 +8,8 @@
   "endgamebosses.sysmsg.mama_spawn_alert": "§4§l§oYou feel your skin crawl.",
   "endgamebosses.sysmsg.samurice_spawn_alert": "§4§l§oYou feel a chill run down your spine.",
 
+  "endgamebosses.msg.victory_subtitle": "§e§ohas been defeated",
+
   "entity.endgamebosses.mechalodon": "Mechalodon",
   "entity.endgamebosses.mechalodon_missile": "Mechalodon's missile",
   "entity.endgamebosses.tragon": "Tragon",

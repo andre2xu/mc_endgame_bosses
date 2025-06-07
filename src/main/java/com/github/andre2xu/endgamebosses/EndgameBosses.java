@@ -24,12 +24,15 @@ import com.github.andre2xu.endgamebosses.bosses.tragon.icicle.TragonIcicleRender
 import com.github.andre2xu.endgamebosses.data.BossStateData;
 import com.github.andre2xu.endgamebosses.networking.MainChannel;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
@@ -145,30 +148,70 @@ public class EndgameBosses {
     public void onEntityDeath(final LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
 
-        // check if the entity that died is an Ender Dragon and if it was killed by a player
-        if (entity.getType() == EntityType.ENDER_DRAGON && entity.level() instanceof ServerLevel serverLevel) {
-            Entity killer = event.getSource().getEntity();
+        if (entity.level() instanceof ServerLevel server_level) {
+            if (entity.getType() == EntityType.ENDER_DRAGON) {
+                // check if the entity that died is an Ender Dragon and if it was killed by a player
 
-            if (killer != null && killer.getType() == EntityType.PLAYER) {
-                MinecraftServer server = killer.getServer();
+                Entity killer = event.getSource().getEntity();
 
-                if (server != null) {
-                    // get data storage
-                    BossStateData boss_state_data = BossStateData.createOrGet(server);
-                    String boss_name = "ender_dragon";
+                if (killer != null && killer.getType() == EntityType.PLAYER) {
+                    MinecraftServer server = killer.getServer();
 
-                    if (boss_state_data.isBossAlive(boss_name)) {
-                        // mark the Ender Dragon as dead (set persistent flag)
-                        boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+                    if (server != null) {
+                        // get data storage
+                        BossStateData boss_state_data = BossStateData.createOrGet(server);
+                        String boss_name = "ender_dragon";
 
-                        // add new bosses
-                        boss_state_data.addBosses(BOSSES);
+                        if (boss_state_data.isBossAlive(boss_name)) {
+                            // mark the Ender Dragon as dead (set persistent flag)
+                            boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
 
-                        // send a message to all players
-                        for (Player p : serverLevel.players()) {
-                            p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragon_death")); // see lang folder in resources
+                            // add new bosses
+                            boss_state_data.addBosses(BOSSES);
+
+                            // send a message to all players
+                            for (Player p : server_level.players()) {
+                                p.sendSystemMessage(Component.translatable("endgamebosses.sysmsg.dragon_death")); // see lang folder in resources
+                            }
                         }
                     }
+                }
+            }
+            else {
+                Minecraft mc = Minecraft.getInstance();
+
+                boolean play_victory_effects = false;
+                String boss_name = "";
+
+                //noinspection IfCanBeSwitch
+                if (entity instanceof MechalodonEntity) {
+                    boss_name = "Mechalodon";
+                    play_victory_effects = true;
+                }
+                else if (entity instanceof TragonEntity) {
+                    boss_name = "Tragon";
+                    play_victory_effects = true;
+                }
+                else if (entity instanceof MamaEntity) {
+                    boss_name = "Mama";
+                    play_victory_effects = true;
+                }
+                else if (entity instanceof SamuriceEntity) {
+                    boss_name = "Samurice";
+                    play_victory_effects = true;
+                }
+
+                if (play_victory_effects) {
+                    mc.gui.setTitle(Component.literal("§e§o" + boss_name));
+                    mc.gui.setSubtitle(Component.translatable("endgamebosses.msg.victory_subtitle"));
+
+                    server_level.playSound(
+                            null, // all players
+                            BlockPos.containing(entity.position()),
+                            SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
+                            SoundSource.PLAYERS,
+                            1f, 1f
+                    );
                 }
             }
         }
