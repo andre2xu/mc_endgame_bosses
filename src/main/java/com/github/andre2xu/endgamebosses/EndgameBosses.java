@@ -204,13 +204,13 @@ public class EndgameBosses {
                     BlockPos player_block_pos = BlockPos.containing(event.player.position());
                     Holder<Biome> player_biome = server_level.getBiome(player_block_pos);
 
-                    if (player_biome.is(Tags.Biomes.IS_DESERT)) {
+                    if (player_biome.is(Tags.Biomes.IS_DESERT) && boss_state_data.isBossAlive("mechalodon")) {
                         boss_state_data.setActiveBoss("mechalodon");
                     }
-                    else if (player_biome.is(BiomeTags.IS_OCEAN)) {
+                    else if (player_biome.is(BiomeTags.IS_OCEAN) && boss_state_data.isBossAlive("tragon")) {
                         boss_state_data.setActiveBoss("tragon");
                     }
-                    else if (player_biome.is(Tags.Biomes.IS_SNOWY)) {
+                    else if (player_biome.is(Tags.Biomes.IS_SNOWY) && boss_state_data.isBossAlive("samurice")) {
                         boss_state_data.setActiveBoss("samurice");
                     }
 
