@@ -3,6 +3,11 @@
   "endgamebosses.sysmsg.mama_egg_sac_hint": "§6§oYou must kill the Ender Dragon first.",
   "endgamebosses.sysmsg.mama_spawn_lock": "§6§oThere is another endgame boss in the world. You must kill it first.",
 
+  "endgamebosses.sysmsg.mechalodon_spawn_alert": "§4§l§oYour legs begin to tremble.",
+  "endgamebosses.sysmsg.tragon_spawn_alert": "§4§l§oYou sense a looming figure nearby.",
+  "endgamebosses.sysmsg.mama_spawn_alert": "§4§l§oYou feel your skin crawl.",
+  "endgamebosses.sysmsg.samurice_spawn_alert": "§4§l§oYou feel a chill run down your spine.",
+
   "entity.endgamebosses.mechalodon": "Mechalodon",
   "entity.endgamebosses.mechalodon_missile": "Mechalodon's missile",
   "entity.endgamebosses.tragon": "Tragon",
