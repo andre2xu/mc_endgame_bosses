@@ -2,6 +2,7 @@ package com.github.andre2xu.endgamebosses.bosses.mechalodon;
 
 import com.github.andre2xu.endgamebosses.bosses.ProjectilesRegistry;
 import com.github.andre2xu.endgamebosses.bosses.mechalodon.missile.MechalodonMissileEntity;
+import com.github.andre2xu.endgamebosses.data.BossStateData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -462,6 +464,28 @@ public class MechalodonEntity extends PathfinderMob implements GeoEntity {
         }
 
         this.calculateEntityAnimation(false);
+    }
+
+    @Override
+    public void remove(@NotNull RemovalReason pReason) {
+        MinecraftServer server = this.getServer();
+
+        if (server != null && (pReason == RemovalReason.KILLED || pReason == RemovalReason.DISCARDED)) {
+            BossStateData boss_state_data = BossStateData.createOrGet(server);
+            String active_boss = boss_state_data.getActiveBoss();
+
+            String boss_name = "mechalodon";
+
+            if (Objects.equals(active_boss, boss_name)) {
+                if (pReason == RemovalReason.KILLED) {
+                    boss_state_data.setBossState(boss_name, BossStateData.State.DEAD);
+                }
+
+                boss_state_data.setActiveBoss(null);
+            }
+        }
+
+        super.remove(pReason);
     }
 
     @Override
