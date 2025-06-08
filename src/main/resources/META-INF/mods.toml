@@ -69,7 +69,7 @@ description='''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId="geckolib"
     mandatory=true
-    versionRange="[4.5.8,)" # version in gradle.properties
+    versionRange="[4.5.8]" # version in gradle.properties
     ordering="NONE"
     side="BOTH"
 
